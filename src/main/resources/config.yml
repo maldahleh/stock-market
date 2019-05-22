@@ -1,2 +1,69 @@
+inventories:
+  tutorial:
+    inventory:
+      name: "&6Stocks &8- &eTutorial"
+      size: 9
+    items:
+      0:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6What are stocks?"
+        lore:
+          - "&8- A stock market is where"
+          - "&8stocks are sold and bought."
+          - "&8- A stock is obtained by paying"
+          - "&8a sum of money which in return"
+          - "&8rewards you with a small piece of"
+          - "&8ownership in the company."
+      2:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6Why do people buy stocks?"
+        lore:
+          - "&8Shareholders, the people who buy stocks,"
+          - "&8want to buy stocks hoping that the value"
+          - "&8of their stock will go up."
+          - "&8- Shareholders usually have an"
+          - "&8interest in a company's"
+          - "&8products or services and"
+          - "&8it's room for growth."
+      4:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6What companies are on the stock market?"
+        lore:
+          - "&8Do you play on a PlayStation or Xbox?"
+          - "&8Both products are developed by"
+          - "&8companies that are listed on the"
+          - "&8stock market, PlayStation is created by"
+          - "&8Sony (Symbol: SNE),"
+          - "&8while Xbox is created by"
+          - "&8Microsoft (Symbol: MSFT)."
+          - "&8Both are public companies owned by"
+          - "&8shareholders, including many more which"
+          - "&8you may know such as &eMcDonalds&8, &eCoca-Cola"
+          - "&8and &eApple&8."
+          - "&8You can see the thousands of companies on"
+          - "&8the Stock Market at"
+          - "&ehttps://finance.yahoo.com"
+      6:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6What is volume?"
+        lore:
+          - "&8Companies usually split their"
+          - "&8ownership into millions of shares,"
+          - "&8the number of shares issued is the volume."
+      8:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6How can I learn how to use the stock market?"
+        lore:
+          - "&8To learn how to use the stock market, do &e/stock help"
 messages:
   no-permission: "&4You do not have permission to use that command."
