@@ -100,7 +100,7 @@ public class SQL implements Storage {
     return transactions;
   }
 
-  public List<Transaction> getAllStockTransactions(String symbol) {
+  public List<Transaction> getStockTransactions(String symbol) {
     List<Transaction> transactions = new ArrayList<>();
 
     try (Connection connection = pool.getConnection();

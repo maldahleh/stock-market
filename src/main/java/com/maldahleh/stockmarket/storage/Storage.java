@@ -12,5 +12,5 @@ public interface Storage {
 
   List<Transaction> getPlayerTransactions(UUID uuid);
 
-  List<Transaction> getAllStockTransactions(String symbol);
+  List<Transaction> getStockTransactions(String symbol);
 }
