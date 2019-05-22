@@ -1,5 +1,6 @@
-package com.maldahleh.stockmarket.storage;
+package com.maldahleh.stockmarket.storage.types;
 
+import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 import org.bukkit.configuration.ConfigurationSection;
 
-public class SQL {
+public class SQL implements Storage {
   private static final String CREATE_QUERY = "CREATE TABLE IF NOT EXISTS "
       + "sm_transactions(uuid CHAR(36), tran_type ENUM('purchase', 'sale'), "
       + "tran_date DATETIME, symbol VARCHAR(12), quantity INTEGER, single_price DOUBLE, "
