@@ -65,5 +65,266 @@ inventories:
         name: "&6How can I learn how to use the stock market?"
         lore:
           - "&8To learn how to use the stock market, do &e/stock help"
+  list:
+    inventory:
+      name: "&6Stocks &8- &eList"
+      size: 36
+    items:
+      0:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lAmazon"
+        symbol: "AMZN"
+        lore:
+          - "&eAMZN"
+      1:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lApple"
+        symbol: "AAPL"
+        lore:
+          - "&eAAPL"
+      2:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lAT&T"
+        symbol: "T"
+        lore:
+          - "&eT"
+      3:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lBoeing"
+        symbol: "BA"
+        lore:
+          - "&eBA"
+      4:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lCedar Fair"
+        symbol: "FUN"
+        lore:
+          - "&eFUN"
+      5:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lChipotle"
+        symbol: "CMG"
+        lore:
+          - "&eCMG"
+      6:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lCoca-Cola"
+        symbol: "KO"
+        lore:
+          - "&eKO"
+      7:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lCostco"
+        symbol: "COST"
+        lore:
+          - "&eCOST"
+      8:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lFacebook"
+        symbol: "FB"
+        lore:
+          - "&eFB"
+      9:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lFedEx"
+        symbol: "FDX"
+        lore:
+          - "&eFDX"
+      10:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lFord"
+        symbol: "F"
+        lore:
+          - "&eF"
+      11:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lGeneral Motors"
+        symbol: "GM"
+        lore:
+          - "&eGM"
+      12:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lGoogle"
+        symbol: "GOOG"
+        lore:
+          - "&eGOOG"
+      13:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lHome Depot"
+        symbol: "HD"
+        lore:
+          - "&eHD"
+      14:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lKellogg's"
+        symbol: "K"
+        lore:
+          - "&eK"
+      15:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lLowe's"
+        symbol: "LOW"
+        lore:
+          - "&eLOW"
+      16:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lMastercard"
+        symbol: "MA"
+        lore:
+          - "&eMA"
+      17:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lMcDonald's"
+        symbol: "MCD"
+        lore:
+          - "&eMCD"
+      18:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lMicrosoft"
+        symbol: "MSFT"
+        lore:
+          - "&eMSFT"
+      19:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lNetflix"
+        symbol: "NFLX"
+        lore:
+          - "&eNFLX"
+      20:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lNvidia"
+        symbol: "NVDA"
+        lore:
+          - "&eNVDA"
+      21:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lStarbux"
+        symbol: "SBUX"
+        lore:
+          - "&eSBUX"
+      22:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lUber"
+        symbol: "UBER"
+        lore:
+          - "&eUBER"
+      23:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lUnited"
+        symbol: "UAL"
+        lore:
+          - "&eUAL"
+      24:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lVisa"
+        symbol: "V"
+        lore:
+          - "&eV"
+      25:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lTime Warner"
+        symbol: "TWX"
+        lore:
+          - "&eTWX"
+      26:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lTwitter"
+        symbol: "TWTR"
+        lore:
+          - "&eTWTR"
+      30:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lWalmart"
+        symbol: "WMT"
+        lore:
+          - "&eWMT"
+      31:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lWalt Disney Company"
+        symbol: "DIS"
+        lore:
+          - "&eDIS"
+      32:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lWhole Foods"
+        symbol: "WFM"
+        lore:
+          - "&eWFM"
+      27:
+        material: "ENCHANTED_BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lThousands more at:"
+        symbol: ""
+        lore:
+          - "&ehttps://finance.yahoo.com/"
+      35:
+        material: "ENCHANTED_BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lThousands more at:"
+        symbol: ""
+        lore:
+          - "&ehttps://finance.yahoo.com/"
 messages:
   no-permission: "&4You do not have permission to use that command."
