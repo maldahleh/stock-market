@@ -1,5 +1,10 @@
 package com.maldahleh.stockmarket;
 
+import com.maldahleh.stockmarket.commands.StockMarketCommand;
+import com.maldahleh.stockmarket.config.Messages;
+import com.maldahleh.stockmarket.config.Settings;
+import com.maldahleh.stockmarket.inventories.InventoryManager;
+import com.maldahleh.stockmarket.stocks.StockManager;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -14,6 +19,15 @@ public class StockMarket extends JavaPlugin {
       getLogger().severe("Vault/economy plugin not found.");
       return;
     }
+
+    saveDefaultConfig();
+    StockManager stockManager = new StockManager(getConfig().getConfigurationSection("stocks"));
+    Messages messages = new Messages(getConfig().getConfigurationSection("messages"));
+    Settings settings = new Settings(getConfig().getConfigurationSection("settings"));
+    InventoryManager inventoryManager = new InventoryManager(this, stockManager,
+        getConfig(), messages, settings);
+
+    getCommand("stockmarket").setExecutor(new StockMarketCommand(inventoryManager, messages));
   }
 
   private boolean setupEconomy() {

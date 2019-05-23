@@ -1,0 +1,11 @@
+name: ${project.name}
+version: ${project.version}
+description: Buy and sell stocks in the stock market!
+author: maldahleh
+main: ${project.groupId}.${project.artifactId}.${project.name}
+depend: [Vault]
+
+commands:
+  stockmarket:
+    description: Use the stock market
+    aliases: [sm]

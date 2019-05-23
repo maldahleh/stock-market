@@ -25,7 +25,7 @@ inventories:
         durability: 0
         name: "&6Why do people buy stocks?"
         lore:
-          - "&8Shareholders, the people who buy stocks,"
+          - "&8- Shareholders, the people who buy stocks,"
           - "&8want to buy stocks hoping that the value"
           - "&8of their stock will go up."
           - "&8- Shareholders usually have an"

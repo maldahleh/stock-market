@@ -162,16 +162,17 @@ public class LookupInventory {
           Integer slot = historicalSlots.get(index);
           try {
             HistoricalQuote quote = stock.getHistory().get(index);
-            inventory.setItem(slot, Utils.updateItemStack(historicalStack, ImmutableMap
+            inventory.setItem(slot, Utils.updateItemStack(historicalStack.clone(), ImmutableMap
                 .<String, Object>builder()
                 .put("<date>", quote.getDate().getTime().toString())
+                .put("<market-currency>", stock.getCurrency())
                 .put("<day-open>", stockMarket.getEcon().format(quote.getOpen().doubleValue()))
                 .put("<day-close>", stockMarket.getEcon().format(quote.getClose().doubleValue()))
                 .put("<volume>", Utils.sigFigNumber(quote.getVolume()))
                 .put("<day-high>", stockMarket.getEcon().format(quote.getHigh().doubleValue()))
                 .put("<day-low>", stockMarket.getEcon().format(quote.getLow().doubleValue()))
                 .build()));
-          } catch (IndexOutOfBoundsException | IOException e) {
+          } catch (IndexOutOfBoundsException | IOException | NullPointerException e) {
             inventory.setItem(slot, noHistoricalStack);
           }
         }
