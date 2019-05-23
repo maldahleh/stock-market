@@ -1,3 +1,6 @@
+stocks:
+  cache:
+    expire-minutes: 5
 inventories:
   tutorial:
     inventory:
@@ -326,5 +329,192 @@ inventories:
         symbol: ""
         lore:
           - "&ehttps://finance.yahoo.com/"
+  lookup:
+    inventory:
+      name: "&6Stocks &8- &e<symbol>"
+      size: 36
+    cache:
+      use-cache: true
+      cache-minutes: 5
+    items:
+      0:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lName"
+        lore:
+          - "&e<name>"
+      1:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lStock Exchange"
+        lore:
+          - "&e<exchange>"
+      2:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lMarket Cap"
+        lore:
+          - "&e<cap> <market-currency>"
+      3:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lServer Price"
+        lore:
+          - "&e<server-price> <server-currency>"
+          - "&6+ Broker Flat Rate"
+          - "&e<broker-flat>"
+          - "&6+ Broker Percent Rate"
+          - "&e<broker-percent>%"
+      4:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lMarket Price"
+        lore:
+          - "&e<market-price> <market-currency>"
+          - "&6Change from close:"
+          - "&e<change-close>"
+          - "&6Change from year high:"
+          - "&e<change-year-high>"
+          - "&6Change from year low:"
+          - "&e<change-year-low>"
+          - "&6Change from 50 day moving average:"
+          - "&e<change-50-moving-avg>"
+          - "&6Change from 200 day moving average:"
+          - "&e<change-200-moving-avg>"
+      5:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lServer Price"
+        lore:
+          - "&e<server-price> <server-currency>"
+          - "&6+ Broker Flat Rate"
+          - "&e<broker-flat>"
+          - "&6+ Broker Percent Rate"
+          - "&e<broker-percent>%"
+      6:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lAnnual Yield"
+        lore:
+          - "&e<yield>%"
+      7:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lCurrency"
+        lore:
+          - "&e<market-currency>"
+      8:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lSymbol"
+        lore:
+          - "&e<symbol>"
+      10:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lDay High"
+        lore:
+          - "&e<day-high> <market-currency>"
+      11:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lDay Low"
+        lore:
+          - "&e<day-low> <market-currency>"
+      12:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lOpen Price"
+        lore:
+          - "&e<open-price> <market-currency>"
+      13:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lVolume"
+        lore:
+          - "&e<volume>"
+      14:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lPrevious Close Price"
+        lore:
+          - "&e<close-price> <market-currency>"
+      15:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lYear High"
+        lore:
+          - "&e<year-high> <market-currency>"
+      16:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lYear Low"
+        lore:
+          - "&e<year-low> <market-currency>"
+    historical:
+      data:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&l<date>"
+        lore:
+          - "&6Day Open:"
+          - "&e<day-open> <market-currency>"
+          - "&6Day Close:"
+          - "&e<day-close> <market-currency>"
+          - "&6Volume:"
+          - "&e<volume>"
+          - "&6Day High:"
+          - "&e<day-high> <market-currency>"
+          - "&6Day Low:"
+          - "&e<day-low> <market-currency>"
+      no-data:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lNo Historical Data"
+        lore:
+          - "&eNo Data Available"
+      slots:
+        - 18
+        - 19
+        - 20
+        - 21
+        - 22
+        - 23
+        - 24
+        - 25
+        - 26
+        - 30
+        - 31
+        - 32
+settings:
+  minimum-price: 5.0
+  price-multiplier: 20
+  broker-flat: 10.50
+  broker-percent: 0.20
+  allowed-currencies:
+    - "USD"
+    - "CAD"
+  allowed-exchanges: []
 messages:
+  low-price-stock: "&4The specified stock has a price which is too low."
+  disabled-stock: "&4You can only lookup stocks in the US and Canadian stock markets."
+  invalid-stock: "&4You specified an invalid stock symbol."
   no-permission: "&4You do not have permission to use that command."
