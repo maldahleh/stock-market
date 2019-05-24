@@ -83,34 +83,16 @@ public class LookupInventory {
 
     Bukkit.getScheduler().runTaskAsynchronously(stockMarket, () -> {
       Stock stock = stockManager.getStock(symbol);
-      if (stock == null || stock.getName().equalsIgnoreCase("N/A")) {
+      if (stockManager.canNotUseStock(player, stock, settings, messages)) {
+        return;
+      }
+
+      BigDecimal price = stockManager.getServerPrice(stock, settings.getPriceMultiplier());
+      if (price == null) {
         messages.sendInvalidStock(player);
         return;
       }
 
-      if (!settings.isAllowedCurrency(stock.getCurrency())
-          || !settings.isAllowedExchange(stock.getStockExchange())) {
-        messages.sendDisabledStock(player);
-        return;
-      }
-
-      if (!settings.isAboveMinimumPrice(stock.getQuote().getPrice())) {
-        messages.sendLowPriceStock(player);
-        return;
-      }
-
-      BigDecimal price = stock.getQuote().getPrice().multiply(settings.getPriceMultiplier());
-      if (!stock.getCurrency().equalsIgnoreCase("USD")) {
-        BigDecimal conversionFactor = stockManager.getFxRate(stock.getCurrency());
-        if (conversionFactor == null) {
-          messages.sendInvalidStock(player);
-          return;
-        }
-
-        price = price.multiply(conversionFactor);
-      }
-
-      BigDecimal finalPrice = price;
       Bukkit.getScheduler().runTask(stockMarket, () -> {
         Inventory inventory = Bukkit.createInventory(null, inventorySize, inventoryName
             .replace("<symbol>", stock.getSymbol().toUpperCase()));
@@ -125,7 +107,7 @@ public class LookupInventory {
                   .put("<market-price>", Utils.format(stock.getQuote().getPrice(),
                       settings.getUnknownData()))
                   .put("<market-currency>", stock.getCurrency())
-                  .put("<server-price>", Utils.format(finalPrice, settings.getUnknownData()))
+                  .put("<server-price>", Utils.format(price, settings.getUnknownData()))
                   .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
                   .put("<broker-flat>", settings.getBrokerFlatString())
                   .put("<broker-percent>", settings.getBrokerPercentString())

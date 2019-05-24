@@ -2,6 +2,8 @@ package com.maldahleh.stockmarket.commands;
 
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
+import com.maldahleh.stockmarket.processor.StockProcessor;
+import com.maldahleh.stockmarket.utils.Utils;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,6 +12,7 @@ import org.bukkit.entity.Player;
 
 @AllArgsConstructor
 public class StockMarketCommand implements CommandExecutor {
+  private final StockProcessor stockProcessor;
   private final InventoryManager inventoryManager;
   private final Messages messages;
 
@@ -54,6 +57,17 @@ public class StockMarketCommand implements CommandExecutor {
       }
 
       inventoryManager.openLookupInventory(player, strings[1]);
+      return true;
+    }
+
+    if (strings.length == 3 && strings[0].equalsIgnoreCase("buy")) {
+      Integer quantity = Utils.getInteger(strings[2]);
+      if (quantity == null || quantity <= 0) {
+        messages.sendInvalidQuantity(player);
+        return true;
+      }
+
+      stockProcessor.buyStock(player, strings[1], quantity);
       return true;
     }
 

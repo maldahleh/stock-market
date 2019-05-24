@@ -14,9 +14,9 @@ public class StockPurchaseEvent extends Event {
   private final Player player;
   private final String stockSymbol;
   private final int quantity;
-  private final String stockValue;
-  private final String brokerFees;
-  private final String grandTotal;
+  private final double stockValue;
+  private final double brokerFees;
+  private final double grandTotal;
 
   @Override
   public HandlerList getHandlers() {

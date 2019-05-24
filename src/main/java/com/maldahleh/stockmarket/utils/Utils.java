@@ -2,8 +2,11 @@ package com.maldahleh.stockmarket.utils;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -65,6 +68,21 @@ public class Utils {
     return stack;
   }
 
+  public static String getCurrentTime() {
+    SimpleDateFormat dateFormat = new SimpleDateFormat();
+    dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+    return dateFormat.format(new Date());
+  }
+
+  public static Integer getInteger (String string) {
+    try {
+      return Integer.parseInt(string);
+    } catch (NumberFormatException e) {
+      return null;
+    }
+  }
+
   public static String format(BigDecimal input, String unknown) {
     if (input == null) {
       return unknown;
@@ -99,7 +117,7 @@ public class Utils {
     return String.format("%.1f%c", input / Math.pow(1000, exponent), suffixes.charAt(exponent - 1));
   }
 
-  private static String formatCurrency(double input) {
+  public static String formatCurrency(double input) {
     DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
     return decimalFormat.format(input);
   }

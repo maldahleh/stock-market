@@ -2,10 +2,13 @@ package com.maldahleh.stockmarket.stocks;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.maldahleh.stockmarket.config.Messages;
+import com.maldahleh.stockmarket.config.Settings;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.concurrent.TimeUnit;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 import yahoofinance.quotes.fx.FxQuote;
@@ -55,5 +58,39 @@ public class StockManager {
       e.printStackTrace();
       return null;
     }
+  }
+
+  public BigDecimal getServerPrice(Stock stock, BigDecimal multiplier) {
+    BigDecimal price = stock.getQuote().getPrice().multiply(multiplier);
+    if (!stock.getCurrency().equalsIgnoreCase("USD")) {
+      BigDecimal conversionFactor = getFxRate(stock.getCurrency());
+      if (conversionFactor == null) {
+        return null;
+      }
+
+      price = price.multiply(conversionFactor);
+    }
+
+    return price;
+  }
+
+  public boolean canNotUseStock(Player player, Stock stock, Settings settings, Messages messages) {
+    if (stock == null || stock.getName().equalsIgnoreCase("N/A")) {
+      messages.sendInvalidStock(player);
+      return true;
+    }
+
+    if (!settings.isAllowedCurrency(stock.getCurrency())
+        || !settings.isAllowedExchange(stock.getStockExchange())) {
+      messages.sendDisabledStock(player);
+      return true;
+    }
+
+    if (!settings.isAboveMinimumPrice(stock.getQuote().getPrice())) {
+      messages.sendLowPriceStock(player);
+      return true;
+    }
+
+    return false;
   }
 }

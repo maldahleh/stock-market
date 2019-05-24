@@ -4,7 +4,10 @@ import com.maldahleh.stockmarket.commands.StockMarketCommand;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
+import com.maldahleh.stockmarket.processor.StockProcessor;
 import com.maldahleh.stockmarket.stocks.StockManager;
+import com.maldahleh.stockmarket.storage.Storage;
+import com.maldahleh.stockmarket.storage.types.SQL;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -26,8 +29,12 @@ public class StockMarket extends JavaPlugin {
     Settings settings = new Settings(getConfig().getConfigurationSection("settings"));
     InventoryManager inventoryManager = new InventoryManager(this, stockManager,
         getConfig(), messages, settings);
+    Storage storage = new SQL(getConfig().getConfigurationSection("storage.mysql"));
+    StockProcessor stockProcessor = new StockProcessor(this, stockManager, storage,
+        settings, messages);
 
-    getCommand("stockmarket").setExecutor(new StockMarketCommand(inventoryManager, messages));
+    getCommand("stockmarket").setExecutor(new StockMarketCommand(stockProcessor,
+        inventoryManager, messages));
   }
 
   private boolean setupEconomy() {

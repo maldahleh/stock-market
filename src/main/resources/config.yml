@@ -518,4 +518,12 @@ messages:
   low-price-stock: "&4The specified stock has a price which is too low."
   disabled-stock: "&4You can only lookup stocks in the US and Canadian stock markets."
   invalid-stock: "&4You specified an invalid stock symbol."
+  invalid-quantity: "&4You specified an invalid quantity."
+  insufficient-funds: "&4You do not have enough money to make that purchase."
   no-permission: "&4You do not have permission to use that command."
+  bought-stock:
+    - "&4Purchase Summary (<date>):"
+    - "&4You purchased &c<quantity> &4of &c<company> (<symbol>)"
+    - "&4Stock Value: &c<stock-value>"
+    - "&4Broker Fees: &c<broker-fees>"
+    - "&4Grand Total: &c<total>"
