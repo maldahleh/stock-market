@@ -1,3 +1,10 @@
+storage:
+  mysql:
+    ip: "localhost"
+    port: 3306
+    database: "database"
+    username: "username"
+    password: "password"
 stocks:
   cache:
     expire-minutes: 5
