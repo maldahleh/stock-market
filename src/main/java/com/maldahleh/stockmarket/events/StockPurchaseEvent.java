@@ -1,0 +1,29 @@
+package com.maldahleh.stockmarket.events;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
+
+@Getter
+@RequiredArgsConstructor
+public class StockPurchaseEvent extends Event {
+  private static final HandlerList HANDLER_LIST = new HandlerList();
+
+  private final Player player;
+  private final String stockSymbol;
+  private final int quantity;
+  private final String stockValue;
+  private final String brokerFees;
+  private final String grandTotal;
+
+  @Override
+  public HandlerList getHandlers() {
+    return HANDLER_LIST;
+  }
+
+  public static HandlerList getHandlerList() {
+    return HANDLER_LIST;
+  }
+}
