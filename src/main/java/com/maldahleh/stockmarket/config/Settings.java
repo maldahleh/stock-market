@@ -2,12 +2,15 @@ package com.maldahleh.stockmarket.config;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import lombok.Getter;
+import org.apache.commons.lang.LocaleUtils;
 import org.bukkit.configuration.ConfigurationSection;
 
 @Getter
 public class Settings {
+  private final Locale locale;
   private final String unknownData;
   private final BigDecimal minimumPrice;
   private final BigDecimal priceMultiplier;
@@ -19,6 +22,7 @@ public class Settings {
   private final Set<String> allowedExchanges;
 
   public Settings(ConfigurationSection section) {
+    this.locale = LocaleUtils.toLocale(section.getString("locale"));
     this.unknownData = section.getString("unknown-data");
     this.minimumPrice = BigDecimal.valueOf(section.getDouble("minimum-price"));
     this.priceMultiplier = BigDecimal.valueOf(section.getInt("price-multiplier"));

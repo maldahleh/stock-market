@@ -1,10 +1,14 @@
 package com.maldahleh.stockmarket.utils;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import org.bukkit.ChatColor;
@@ -83,12 +87,12 @@ public class Utils {
     }
   }
 
-  public static String format(BigDecimal input, String unknown) {
+  public static String format(BigDecimal input, String unknown, Locale locale) {
     if (input == null) {
       return unknown;
     }
 
-    return formatCurrency(input.doubleValue());
+    return formatCurrency(input.doubleValue(), locale);
   }
 
   public static String formatSigFig(Long input, String unknown) {
@@ -99,12 +103,12 @@ public class Utils {
     return sigFigNumber(input);
   }
 
-  public static String formatSingle(BigDecimal input, String unknown) {
+  public static String formatSingle(BigDecimal input, String unknown, Locale locale) {
     if (input == null) {
       return unknown;
     }
 
-    return singleDecimal(input.doubleValue());
+    return singleDecimal(input.doubleValue(), locale);
   }
 
   public static String sigFigNumber(double input) {
@@ -117,13 +121,20 @@ public class Utils {
     return String.format("%.1f%c", input / Math.pow(1000, exponent), suffixes.charAt(exponent - 1));
   }
 
-  public static String formatCurrency(double input) {
-    DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
+  public static String formatDate(Date date, Locale locale) {
+    DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy", locale);
+    return dateFormat.format(date);
+  }
+
+  public static String formatCurrency(double input, Locale locale) {
+    NumberFormat decimalFormat = new DecimalFormat("#,###.00", DecimalFormatSymbols
+        .getInstance(locale));
     return decimalFormat.format(input);
   }
 
-  private static String singleDecimal(double input) {
-    DecimalFormat decimalFormat = new DecimalFormat("0.#");
+  private static String singleDecimal(double input, Locale locale) {
+    NumberFormat decimalFormat = new DecimalFormat("0.#", DecimalFormatSymbols
+        .getInstance(locale));
     return decimalFormat.format(input);
   }
 }

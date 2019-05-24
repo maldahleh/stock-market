@@ -89,38 +89,39 @@ public class CompareInventory {
                 .put("<exchange>", stock.getStockExchange())
                 .put("<cap>", Utils.sigFigNumber(stock.getStats().getMarketCap().doubleValue()))
                 .put("<market-price>", Utils.format(stock.getQuote().getPrice(),
-                    settings.getUnknownData()))
+                    settings.getUnknownData(), settings.getLocale()))
                 .put("<market-currency>", stock.getCurrency())
-                .put("<server-price>", Utils.format(entry.getValue(), settings.getUnknownData()))
+                .put("<server-price>", Utils.format(entry.getValue(), settings.getUnknownData(),
+                    settings.getLocale()))
                 .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
                 .put("<broker-flat>", settings.getBrokerFlatString())
                 .put("<broker-percent>", settings.getBrokerPercentString())
                 .put("<change-close>", Utils.format(stock.getQuote().getChange(),
-                    settings.getUnknownData()))
+                    settings.getUnknownData(), settings.getLocale()))
                 .put("<change-year-high>", Utils.format(stock.getQuote().getChangeFromYearHigh(),
-                    settings.getUnknownData()))
+                    settings.getUnknownData(), settings.getLocale()))
                 .put("<change-year-low>", Utils.format(stock.getQuote().getChangeFromYearLow(),
-                    settings.getUnknownData()))
+                    settings.getUnknownData(), settings.getLocale()))
                 .put("<change-50-moving-avg>", Utils.format(stock.getQuote().getChangeFromAvg50(),
-                    settings.getUnknownData()))
+                    settings.getUnknownData(), settings.getLocale()))
                 .put("<change-200-moving-avg>", Utils.format(stock.getQuote().getChangeFromAvg200(),
-                    settings.getUnknownData()))
+                    settings.getUnknownData(), settings.getLocale()))
                 .put("<yield>", Utils.formatSingle(stock.getDividend().getAnnualYieldPercent(),
-                    settings.getUnknownData()))
+                    settings.getUnknownData(), settings.getLocale()))
                 .put("<symbol>", stock.getSymbol().toUpperCase())
                 .put("<day-high>", Utils.format(stock.getQuote().getDayHigh(),
-                    settings.getUnknownData()))
+                    settings.getUnknownData(), settings.getLocale()))
                 .put("<day-low>", Utils.format(stock.getQuote().getDayLow(),
-                    settings.getUnknownData()))
+                    settings.getUnknownData(), settings.getLocale()))
                 .put("<open-price>", Utils.format(stock.getQuote().getOpen(),
-                    settings.getUnknownData()))
+                    settings.getUnknownData(), settings.getLocale()))
                 .put("<volume>", Utils.sigFigNumber(stock.getQuote().getVolume()))
                 .put("<close-price>", Utils.format(stock.getQuote().getPreviousClose(),
-                    settings.getUnknownData()))
+                    settings.getUnknownData(), settings.getLocale()))
                 .put("<year-high>", Utils.format(stock.getQuote().getYearHigh(),
-                    settings.getUnknownData()))
+                    settings.getUnknownData(), settings.getLocale()))
                 .put("<year-low>", Utils.format(stock.getQuote().getYearLow(),
-                    settings.getUnknownData()))
+                    settings.getUnknownData(), settings.getLocale()))
                 .build()));
           }
         }

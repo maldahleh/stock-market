@@ -98,46 +98,46 @@ public class LookupInventory {
             .replace("<symbol>", stock.getSymbol().toUpperCase()));
 
         for (String key : section.getConfigurationSection("items").getKeys(false)) {
-          inventory.setItem(Integer.valueOf(key),
-              Utils.createItemStack(section.getConfigurationSection("items." + key), ImmutableMap
-                  .<String, Object>builder()
-                  .put("<name>", stock.getName())
-                  .put("<exchange>", stock.getStockExchange())
-                  .put("<cap>", Utils.sigFigNumber(stock.getStats().getMarketCap().doubleValue()))
-                  .put("<market-price>", Utils.format(stock.getQuote().getPrice(),
-                      settings.getUnknownData()))
-                  .put("<market-currency>", stock.getCurrency())
-                  .put("<server-price>", Utils.format(price, settings.getUnknownData()))
-                  .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
-                  .put("<broker-flat>", settings.getBrokerFlatString())
-                  .put("<broker-percent>", settings.getBrokerPercentString())
-                  .put("<change-close>", Utils.format(stock.getQuote().getChange(),
-                      settings.getUnknownData()))
-                  .put("<change-year-high>", Utils.format(stock.getQuote().getChangeFromYearHigh(),
-                      settings.getUnknownData()))
-                  .put("<change-year-low>", Utils.format(stock.getQuote().getChangeFromYearLow(),
-                      settings.getUnknownData()))
-                  .put("<change-50-moving-avg>", Utils.format(stock.getQuote().getChangeFromAvg50(),
-                      settings.getUnknownData()))
-                  .put("<change-200-moving-avg>", Utils.format(stock.getQuote()
-                      .getChangeFromAvg200(), settings.getUnknownData()))
-                  .put("<yield>", Utils.formatSingle(stock.getDividend().getAnnualYieldPercent(),
-                      settings.getUnknownData()))
-                  .put("<symbol>", stock.getSymbol().toUpperCase())
-                  .put("<day-high>", Utils.format(stock.getQuote().getDayHigh(),
-                      settings.getUnknownData()))
-                  .put("<day-low>", Utils.format(stock.getQuote().getDayLow(),
-                      settings.getUnknownData()))
-                  .put("<open-price>", Utils.format(stock.getQuote().getOpen(),
-                      settings.getUnknownData()))
-                  .put("<volume>", Utils.sigFigNumber(stock.getQuote().getVolume()))
-                  .put("<close-price>", Utils.format(stock.getQuote().getPreviousClose(),
-                      settings.getUnknownData()))
-                  .put("<year-high>", Utils.format(stock.getQuote().getYearHigh(),
-                      settings.getUnknownData()))
-                  .put("<year-low>", Utils.format(stock.getQuote().getYearLow(),
-                      settings.getUnknownData()))
-                  .build()));
+          inventory.setItem(Integer.valueOf(key), Utils.createItemStack(section
+              .getConfigurationSection("items." + key), ImmutableMap.<String, Object>builder()
+              .put("<name>", stock.getName())
+              .put("<exchange>", stock.getStockExchange())
+              .put("<cap>", Utils.sigFigNumber(stock.getStats().getMarketCap().doubleValue()))
+              .put("<market-price>", Utils.format(stock.getQuote().getPrice(),
+                  settings.getUnknownData(), settings.getLocale()))
+              .put("<market-currency>", stock.getCurrency())
+              .put("<server-price>", Utils.format(price, settings.getUnknownData(),
+                  settings.getLocale()))
+              .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
+              .put("<broker-flat>", settings.getBrokerFlatString())
+              .put("<broker-percent>", settings.getBrokerPercentString())
+              .put("<change-close>", Utils.format(stock.getQuote().getChange(),
+                  settings.getUnknownData(), settings.getLocale()))
+              .put("<change-year-high>", Utils.format(stock.getQuote().getChangeFromYearHigh(),
+                  settings.getUnknownData(), settings.getLocale()))
+              .put("<change-year-low>", Utils.format(stock.getQuote().getChangeFromYearLow(),
+                  settings.getUnknownData(), settings.getLocale()))
+              .put("<change-50-moving-avg>", Utils.format(stock.getQuote().getChangeFromAvg50(),
+                  settings.getUnknownData(), settings.getLocale()))
+              .put("<change-200-moving-avg>", Utils.format(stock.getQuote().getChangeFromAvg200(),
+                  settings.getUnknownData(), settings.getLocale()))
+              .put("<yield>", Utils.formatSingle(stock.getDividend().getAnnualYieldPercent(),
+                  settings.getUnknownData(), settings.getLocale()))
+              .put("<symbol>", stock.getSymbol().toUpperCase())
+              .put("<day-high>", Utils.format(stock.getQuote().getDayHigh(),
+                  settings.getUnknownData(), settings.getLocale()))
+              .put("<day-low>", Utils.format(stock.getQuote().getDayLow(),
+                  settings.getUnknownData(), settings.getLocale()))
+              .put("<open-price>", Utils.format(stock.getQuote().getOpen(),
+                  settings.getUnknownData(), settings.getLocale()))
+              .put("<volume>", Utils.sigFigNumber(stock.getQuote().getVolume()))
+              .put("<close-price>", Utils.format(stock.getQuote().getPreviousClose(),
+                  settings.getUnknownData(), settings.getLocale()))
+              .put("<year-high>", Utils.format(stock.getQuote().getYearHigh(),
+                  settings.getUnknownData(), settings.getLocale()))
+              .put("<year-low>", Utils.format(stock.getQuote().getYearLow(),
+                  settings.getUnknownData(), settings.getLocale()))
+              .build()));
         }
 
         for (int index = 0; index < historicalSlots.size(); index++) {
@@ -146,13 +146,17 @@ public class LookupInventory {
             HistoricalQuote quote = stock.getHistory().get(index);
             inventory.setItem(slot, Utils.updateItemStack(historicalStack.clone(), ImmutableMap
                 .<String, Object>builder()
-                .put("<date>", quote.getDate().getTime().toString())
+                .put("<date>", Utils.formatDate(quote.getDate().getTime(), settings.getLocale()))
                 .put("<market-currency>", stock.getCurrency())
-                .put("<day-open>", Utils.format(quote.getOpen(), settings.getUnknownData()))
-                .put("<day-close>", Utils.format(quote.getClose(), settings.getUnknownData()))
+                .put("<day-open>", Utils.format(quote.getOpen(), settings.getUnknownData(),
+                    settings.getLocale()))
+                .put("<day-close>", Utils.format(quote.getClose(), settings.getUnknownData(),
+                    settings.getLocale()))
                 .put("<volume>", Utils.formatSigFig(quote.getVolume(), settings.getUnknownData()))
-                .put("<day-high>", Utils.format(quote.getHigh(), settings.getUnknownData()))
-                .put("<day-low>", Utils.format(quote.getLow(), settings.getUnknownData()))
+                .put("<day-high>", Utils.format(quote.getHigh(), settings.getUnknownData(),
+                    settings.getLocale()))
+                .put("<day-low>", Utils.format(quote.getLow(), settings.getUnknownData(),
+                    settings.getLocale()))
                 .build()));
           } catch (IndexOutOfBoundsException | IOException e) {
             inventory.setItem(slot, noHistoricalStack);

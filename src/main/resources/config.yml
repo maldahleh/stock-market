@@ -492,7 +492,7 @@ inventories:
           - "&6Day Low:"
           - "&e<day-low> <market-currency>"
       no-data:
-        material: "ENCHANTED_BOOK"
+        material: "BARRIER"
         amount: 1
         durability: 0
         name: "&6&lNo Historical Data"
@@ -647,6 +647,7 @@ inventories:
         lore:
           - "&e<year-low> <market-currency>"
 settings:
+  locale: "en-US"
   unknown-data: "N/A"
   minimum-price: 5.0
   price-multiplier: 20
