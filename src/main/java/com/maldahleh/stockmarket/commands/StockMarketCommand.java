@@ -60,6 +60,22 @@ public class StockMarketCommand implements CommandExecutor {
       return true;
     }
 
+    if ((strings.length == 3 || strings.length == 4)
+        && strings[0].equalsIgnoreCase("compare")) {
+      if (!player.hasPermission("stockmarket.compare")) {
+        messages.sendNoPermission(player);
+        return true;
+      }
+
+      if (strings.length == 3) {
+        inventoryManager.openCompareInventory(player, strings[1], strings[2]);
+        return true;
+      }
+
+      inventoryManager.openCompareInventory(player, strings[1], strings[2], strings[3]);
+      return true;
+    }
+
     if (strings.length == 3 && strings[0].equalsIgnoreCase("buy")) {
       Integer quantity = Utils.getInteger(strings[2]);
       if (quantity == null || quantity <= 0) {

@@ -366,7 +366,7 @@ inventories:
         lore:
           - "&e<cap> <market-currency>"
       3:
-        material: "BOOK"
+        material: "DIAMOND"
         amount: 1
         durability: 0
         name: "&6&lServer Price"
@@ -394,7 +394,7 @@ inventories:
           - "&6Change from 200 day moving average:"
           - "&e<change-200-moving-avg>"
       5:
-        material: "BOOK"
+        material: "DIAMOND"
         amount: 1
         durability: 0
         name: "&6&lServer Price"
@@ -476,7 +476,7 @@ inventories:
           - "&e<year-low> <market-currency>"
     historical:
       data:
-        material: "BOOK"
+        material: "ENCHANTED_BOOK"
         amount: 1
         durability: 0
         name: "&6&l<date>"
@@ -492,7 +492,7 @@ inventories:
           - "&6Day Low:"
           - "&e<day-low> <market-currency>"
       no-data:
-        material: "BOOK"
+        material: "ENCHANTED_BOOK"
         amount: 1
         durability: 0
         name: "&6&lNo Historical Data"
@@ -511,6 +511,141 @@ inventories:
         - 30
         - 31
         - 32
+  compare:
+    inventory:
+      name: "&6Stocks &8- &eCompare"
+      per-stock: 18
+    items:
+      0:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lName"
+        lore:
+          - "&e<name>"
+      1:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lStock Exchange"
+        lore:
+          - "&e<exchange>"
+      2:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lMarket Cap"
+        lore:
+          - "&e<cap> <market-currency>"
+      3:
+        material: "DIAMOND"
+        amount: 1
+        durability: 0
+        name: "&6&lServer Price"
+        lore:
+          - "&e<server-price> <server-currency>"
+          - "&6+ Broker Flat Rate"
+          - "&e<broker-flat>"
+          - "&6+ Broker Percent Rate"
+          - "&e<broker-percent>%"
+      4:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lMarket Price"
+        lore:
+          - "&e<market-price> <market-currency>"
+          - "&6Change from close:"
+          - "&e<change-close>"
+          - "&6Change from year high:"
+          - "&e<change-year-high>"
+          - "&6Change from year low:"
+          - "&e<change-year-low>"
+          - "&6Change from 50 day moving average:"
+          - "&e<change-50-moving-avg>"
+          - "&6Change from 200 day moving average:"
+          - "&e<change-200-moving-avg>"
+      5:
+        material: "DIAMOND"
+        amount: 1
+        durability: 0
+        name: "&6&lServer Price"
+        lore:
+          - "&e<server-price> <server-currency>"
+          - "&6+ Broker Flat Rate"
+          - "&e<broker-flat>"
+          - "&6+ Broker Percent Rate"
+          - "&e<broker-percent>%"
+      6:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lAnnual Yield"
+        lore:
+          - "&e<yield>%"
+      7:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lCurrency"
+        lore:
+          - "&e<market-currency>"
+      8:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lSymbol"
+        lore:
+          - "&e<symbol>"
+      10:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lDay High"
+        lore:
+          - "&e<day-high> <market-currency>"
+      11:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lDay Low"
+        lore:
+          - "&e<day-low> <market-currency>"
+      12:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lOpen Price"
+        lore:
+          - "&e<open-price> <market-currency>"
+      13:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lVolume"
+        lore:
+          - "&e<volume>"
+      14:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lPrevious Close Price"
+        lore:
+          - "&e<close-price> <market-currency>"
+      15:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lYear High"
+        lore:
+          - "&e<year-high> <market-currency>"
+      16:
+        material: "BOOK"
+        amount: 1
+        durability: 0
+        name: "&6&lYear Low"
+        lore:
+          - "&e<year-low> <market-currency>"
 settings:
   unknown-data: "N/A"
   minimum-price: 5.0

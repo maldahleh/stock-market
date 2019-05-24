@@ -3,6 +3,7 @@ package com.maldahleh.stockmarket.inventories;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
+import com.maldahleh.stockmarket.inventories.compare.CompareInventory;
 import com.maldahleh.stockmarket.inventories.list.ListInventory;
 import com.maldahleh.stockmarket.inventories.lookup.LookupInventory;
 import com.maldahleh.stockmarket.inventories.tutorial.TutorialInventory;
@@ -12,6 +13,7 @@ import org.bukkit.entity.Player;
 
 public class InventoryManager {
   private final LookupInventory lookupInventory;
+  private final CompareInventory compareInventory;
   private final ListInventory listInventory;
   private final TutorialInventory tutorialInventory;
 
@@ -19,6 +21,8 @@ public class InventoryManager {
       FileConfiguration config, Messages messages, Settings settings) {
     this.lookupInventory = new LookupInventory(stockMarket, stockManager, messages, settings,
         config.getConfigurationSection("inventories.lookup"));
+    this.compareInventory = new CompareInventory(stockMarket, stockManager, messages, settings,
+        config.getConfigurationSection("inventories.compare"));
     this.tutorialInventory = new TutorialInventory(stockMarket, config
         .getConfigurationSection("inventories.tutorial"));
     this.listInventory = new ListInventory(stockMarket, lookupInventory, config
@@ -27,6 +31,10 @@ public class InventoryManager {
 
   public void openLookupInventory(Player player, String symbol) {
     lookupInventory.openInventory(player, symbol);
+  }
+
+  public void openCompareInventory(Player player, String... symbols) {
+    compareInventory.openInventory(player, symbols);
   }
 
   public void openListInventory(Player player) {

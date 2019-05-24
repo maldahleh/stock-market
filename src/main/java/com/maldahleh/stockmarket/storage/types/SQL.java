@@ -34,6 +34,7 @@ public class SQL implements Storage {
 
   public SQL(ConfigurationSection section) {
     HikariConfig config = new HikariConfig();
+
     config.setDriverClassName("com.mysql.jdbc.Driver");
     config.setJdbcUrl("jdbc:mysql://" + section.getString("ip") + ":" + section.getInt("port")
         + "/" + section.getString("database"));
