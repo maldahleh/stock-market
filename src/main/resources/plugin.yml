@@ -8,4 +8,4 @@ depend: [Vault]
 commands:
   stockmarket:
     description: Use the stock market
-    aliases: [sm]
+    aliases: [sm, stocks, stock]
