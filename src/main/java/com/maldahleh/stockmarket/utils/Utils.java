@@ -1,5 +1,7 @@
 package com.maldahleh.stockmarket.utils;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.ChatColor;
@@ -63,6 +65,30 @@ public class Utils {
     return stack;
   }
 
+  public static String format(BigDecimal input, String unknown) {
+    if (input == null) {
+      return unknown;
+    }
+
+    return formatCurrency(input.doubleValue());
+  }
+
+  public static String formatSigFig(Long input, String unknown) {
+    if (input == null) {
+      return unknown;
+    }
+
+    return sigFigNumber(input);
+  }
+
+  public static String formatSingle(BigDecimal input, String unknown) {
+    if (input == null) {
+      return unknown;
+    }
+
+    return singleDecimal(input.doubleValue());
+  }
+
   public static String sigFigNumber(double input) {
     String suffixes = "kmbt";
     if (input < 1000) {
@@ -71,5 +97,15 @@ public class Utils {
 
     int exponent = (int) (Math.log(input) / Math.log(1000));
     return String.format("%.1f%c", input / Math.pow(1000, exponent), suffixes.charAt(exponent - 1));
+  }
+
+  private static String formatCurrency(double input) {
+    DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
+    return decimalFormat.format(input);
+  }
+
+  private static String singleDecimal(double input) {
+    DecimalFormat decimalFormat = new DecimalFormat("0.#");
+    return decimalFormat.format(input);
   }
 }

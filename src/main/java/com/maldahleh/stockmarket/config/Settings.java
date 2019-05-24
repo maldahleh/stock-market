@@ -8,6 +8,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 @Getter
 public class Settings {
+  private final String unknownData;
   private final BigDecimal minimumPrice;
   private final BigDecimal priceMultiplier;
   private final BigDecimal brokerFlat;
@@ -18,6 +19,7 @@ public class Settings {
   private final Set<String> allowedExchanges;
 
   public Settings(ConfigurationSection section) {
+    this.unknownData = section.getString("unknown-data");
     this.minimumPrice = BigDecimal.valueOf(section.getDouble("minimum-price"));
     this.priceMultiplier = BigDecimal.valueOf(section.getInt("price-multiplier"));
     this.brokerFlat = BigDecimal.valueOf(section.getDouble("broker-flat"));

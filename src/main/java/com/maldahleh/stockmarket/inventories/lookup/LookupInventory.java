@@ -99,7 +99,7 @@ public class LookupInventory {
         return;
       }
 
-      BigDecimal price = stock.getQuote().getPrice();
+      BigDecimal price = stock.getQuote().getPrice().multiply(settings.getPriceMultiplier());
       if (!stock.getCurrency().equalsIgnoreCase("USD")) {
         BigDecimal conversionFactor = stockManager.getFxRate(stock.getCurrency());
         if (conversionFactor == null) {
@@ -107,8 +107,7 @@ public class LookupInventory {
           return;
         }
 
-        price = price.multiply(settings.getBrokerPercent()).multiply(conversionFactor)
-            .multiply(settings.getPriceMultiplier());
+        price = price.multiply(conversionFactor);
       }
 
       BigDecimal finalPrice = price;
@@ -123,38 +122,39 @@ public class LookupInventory {
                   .put("<name>", stock.getName())
                   .put("<exchange>", stock.getStockExchange())
                   .put("<cap>", Utils.sigFigNumber(stock.getStats().getMarketCap().doubleValue()))
-                  .put("<market-price>", stock.getQuote().getPrice().toPlainString())
+                  .put("<market-price>", Utils.format(stock.getQuote().getPrice(),
+                      settings.getUnknownData()))
                   .put("<market-currency>", stock.getCurrency())
-                  .put("<server-price>", finalPrice.toPlainString())
+                  .put("<server-price>", Utils.format(finalPrice, settings.getUnknownData()))
                   .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
                   .put("<broker-flat>", settings.getBrokerFlatString())
                   .put("<broker-percent>", settings.getBrokerPercentString())
-                  .put("<change-close>", stockMarket.getEcon().format(stock.getQuote().getChange()
-                      .doubleValue()))
-                  .put("<change-year-high>", stockMarket.getEcon().format(stock.getQuote()
-                      .getChangeFromYearHigh().doubleValue()))
-                  .put("<change-year-low>", stockMarket.getEcon().format(stock.getQuote()
-                      .getChangeFromYearLow().doubleValue()))
-                  .put("<change-50-moving-avg>", stockMarket.getEcon().format(stock.getQuote()
-                      .getChangeFromAvg50().doubleValue()))
-                  .put("<change-200-moving-avg>", stockMarket.getEcon().format(stock.getQuote()
-                      .getChangeFromAvg200().doubleValue()))
-                  .put("<yield>", stockMarket.getEcon().format(stock.getQuote()
-                      .getChangeFromAvg50().doubleValue()))
+                  .put("<change-close>", Utils.format(stock.getQuote().getChange(),
+                      settings.getUnknownData()))
+                  .put("<change-year-high>", Utils.format(stock.getQuote().getChangeFromYearHigh(),
+                      settings.getUnknownData()))
+                  .put("<change-year-low>", Utils.format(stock.getQuote().getChangeFromYearLow(),
+                      settings.getUnknownData()))
+                  .put("<change-50-moving-avg>", Utils.format(stock.getQuote().getChangeFromAvg50(),
+                      settings.getUnknownData()))
+                  .put("<change-200-moving-avg>", Utils.format(stock.getQuote()
+                      .getChangeFromAvg200(), settings.getUnknownData()))
+                  .put("<yield>", Utils.formatSingle(stock.getDividend().getAnnualYieldPercent(),
+                      settings.getUnknownData()))
                   .put("<symbol>", stock.getSymbol().toUpperCase())
-                  .put("<day-high>", stockMarket.getEcon().format(stock.getQuote()
-                      .getDayHigh().doubleValue()))
-                  .put("<day-low>", stockMarket.getEcon().format(stock.getQuote()
-                      .getDayLow().doubleValue()))
-                  .put("<open-price>", stockMarket.getEcon().format(stock.getQuote()
-                      .getOpen().doubleValue()))
+                  .put("<day-high>", Utils.format(stock.getQuote().getDayHigh(),
+                      settings.getUnknownData()))
+                  .put("<day-low>", Utils.format(stock.getQuote().getDayLow(),
+                      settings.getUnknownData()))
+                  .put("<open-price>", Utils.format(stock.getQuote().getOpen(),
+                      settings.getUnknownData()))
                   .put("<volume>", Utils.sigFigNumber(stock.getQuote().getVolume()))
-                  .put("<close-price>", stockMarket.getEcon().format(stock.getQuote()
-                      .getPreviousClose().doubleValue()))
-                  .put("<year-high>", stockMarket.getEcon().format(stock.getQuote()
-                      .getYearHigh().doubleValue()))
-                  .put("<year-low>", stockMarket.getEcon().format(stock.getQuote()
-                      .getYearLow().doubleValue()))
+                  .put("<close-price>", Utils.format(stock.getQuote().getPreviousClose(),
+                      settings.getUnknownData()))
+                  .put("<year-high>", Utils.format(stock.getQuote().getYearHigh(),
+                      settings.getUnknownData()))
+                  .put("<year-low>", Utils.format(stock.getQuote().getYearLow(),
+                      settings.getUnknownData()))
                   .build()));
         }
 
@@ -166,13 +166,13 @@ public class LookupInventory {
                 .<String, Object>builder()
                 .put("<date>", quote.getDate().getTime().toString())
                 .put("<market-currency>", stock.getCurrency())
-                .put("<day-open>", stockMarket.getEcon().format(quote.getOpen().doubleValue()))
-                .put("<day-close>", stockMarket.getEcon().format(quote.getClose().doubleValue()))
-                .put("<volume>", Utils.sigFigNumber(quote.getVolume()))
-                .put("<day-high>", stockMarket.getEcon().format(quote.getHigh().doubleValue()))
-                .put("<day-low>", stockMarket.getEcon().format(quote.getLow().doubleValue()))
+                .put("<day-open>", Utils.format(quote.getOpen(), settings.getUnknownData()))
+                .put("<day-close>", Utils.format(quote.getClose(), settings.getUnknownData()))
+                .put("<volume>", Utils.formatSigFig(quote.getVolume(), settings.getUnknownData()))
+                .put("<day-high>", Utils.format(quote.getHigh(), settings.getUnknownData()))
+                .put("<day-low>", Utils.format(quote.getLow(), settings.getUnknownData()))
                 .build()));
-          } catch (IndexOutOfBoundsException | IOException | NullPointerException e) {
+          } catch (IndexOutOfBoundsException | IOException e) {
             inventory.setItem(slot, noHistoricalStack);
           }
         }

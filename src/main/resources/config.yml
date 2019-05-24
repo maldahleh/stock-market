@@ -505,6 +505,7 @@ inventories:
         - 31
         - 32
 settings:
+  unknown-data: "N/A"
   minimum-price: 5.0
   price-multiplier: 20
   broker-flat: 10.50
