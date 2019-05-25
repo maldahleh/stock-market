@@ -653,12 +653,12 @@ inventories:
       material: "BOOK"
       durability: 0
       amount: 1
-      name: "&6&l{symbol} &e&l(&6&l{name}&e&l)"
+      name: "&6&l<symbol> &e&l(&6&l<name>&e&l)"
       lore:
-        - "&6Quantity: &e{quantity}"
-        - "&6Purchase Value: &e{purchase-value} {server-currency}"
-        - "&6Current Value: &e{current-value} {server-currency}"
-        - "&6Net: &e{net}"
+        - "&6Quantity: &e<quantity>"
+        - "&6Purchase Value: &e<purchase-value> <server-currency>"
+        - "&6Current Value: &e<current-value> <server-currency>"
+        - "&6Net: &e<net>"
     previous-page:
       slot: 36
       previous-page:
@@ -728,6 +728,19 @@ inventories:
       - 33
       - 34
       - 35
+    extra-items:
+      40:
+        material: "DIAMOND"
+        amount: 1
+        durability: 0
+        name: "&6&lStats"
+        lore:
+          - "&6Current Value:"
+          - "&e<current-value> <server-currency>"
+          - "&6Purchase Value:"
+          - "&e<purchase-value> <server-currency>"
+          - "&6Net:"
+          - "&e<net-value> <server-currency>"
     messages:
       no-content: "&6No data found!"
 settings:

@@ -16,7 +16,7 @@ public class StockPlayer {
   private BigDecimal portfolioValue = BigDecimal.ZERO;
 
   public void addTransaction(Transaction transaction) {
-    portfolioValue = portfolioValue.add(transaction.getGrandTotal());
+    portfolioValue = portfolioValue.add(transaction.getStockValue());
     transactionMap.put(transaction.getTransactionDate(), transaction);
 
     StockData data = stockMap.get(transaction.getSymbol().toUpperCase());

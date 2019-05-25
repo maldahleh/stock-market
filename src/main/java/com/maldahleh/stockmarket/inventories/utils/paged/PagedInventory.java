@@ -38,6 +38,8 @@ public class PagedInventory<K, V, T> {
   private final List<Integer> contentSlots;
   private final int contentPerPage;
 
+  private final Map<Integer, ItemStack> extraItems;
+
   private final String noContentMessage;
 
   public PagedInventory(Plugin plugin, IContentProvider<K, V, T> provider,
@@ -66,6 +68,12 @@ public class PagedInventory<K, V, T> {
     this.contentSlots = section.getIntegerList("content-slots");
     this.contentPerPage = contentSlots.size();
 
+    this.extraItems = new HashMap<>();
+    for (String key : section.getConfigurationSection("extra-items").getKeys(false)) {
+      extraItems.put(Integer.valueOf(key), Utils.createItemStack(section
+          .getConfigurationSection("extra-items." + key)));
+    }
+
     this.noContentMessage = Utils.color(section.getString("messages.no-content"));
 
     Bukkit.getPluginManager().registerEvents(new PagedInventoryListener(this), plugin);
@@ -80,6 +88,7 @@ public class PagedInventory<K, V, T> {
       }
 
       Map<T, V> transformedData = contentProvider.applyTransformations(data);
+      Map<String, Object> extraData = contentProvider.getExtraData(target);
       Bukkit.getScheduler().runTask(plugin, () -> {
         PaginatedPlayer paginatedPlayer = new PaginatedPlayer();
 
@@ -100,6 +109,11 @@ public class PagedInventory<K, V, T> {
               i.setItem(nextPageSlot, nextPageStack);
             } else {
               i.setItem(nextPageSlot, noNextPageStack);
+            }
+
+            for (Map.Entry<Integer, ItemStack> extraEntry : extraItems.entrySet()) {
+              i.setItem(extraEntry.getKey(), contentProvider.getExtraItem(extraEntry.getValue(),
+                  extraData));
             }
 
             paginatedPlayer.addInventory(currentPage, i);

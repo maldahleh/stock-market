@@ -11,6 +11,7 @@ import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.math.BigDecimal;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -48,6 +49,37 @@ public class PortfolioInventoryProvider implements IContentProvider<String, Stoc
   }
 
   @Override
+  public Map<String, Object> getExtraData(UUID uuid) {
+    Map<String, Object> dataMap = new HashMap<>();
+    StockPlayer stockPlayer = playerManager.forceGetStockPlayer(uuid);
+    if (stockPlayer == null) {
+      return dataMap;
+    }
+
+    BigDecimal currentValue = BigDecimal.ZERO;
+    for (Map.Entry<String, StockData> e : stockPlayer.getStockMap().entrySet()) {
+      Stock stock = stockManager.getStock(e.getKey());
+      if (stock == null) {
+        continue;
+      }
+
+      BigDecimal serverPrice = stockManager.getServerPrice(stock, settings.getPriceMultiplier());
+      if (serverPrice == null) {
+        continue;
+      }
+
+      currentValue = currentValue.add(serverPrice.multiply(BigDecimal.valueOf(e.getValue()
+          .getQuantity())));
+    }
+
+    BigDecimal net = currentValue.subtract(stockPlayer.getPortfolioValue());
+    dataMap.put("purchase_value", stockPlayer.getPortfolioValue());
+    dataMap.put("current_value", currentValue);
+    dataMap.put("net_value", net);
+    return dataMap;
+  }
+
+  @Override
   public ItemStack getContentStack(ItemStack baseStack, int position, Stock key, StockData value) {
     BigDecimal currentPrice = stockManager.getServerPrice(key, settings.getPriceMultiplier());
     if (currentPrice == null) {
@@ -57,16 +89,29 @@ public class PortfolioInventoryProvider implements IContentProvider<String, Stoc
     currentPrice = currentPrice.multiply(BigDecimal.valueOf(value.getQuantity()));
     BigDecimal net = value.getValue().subtract(currentPrice);
     return Utils.updateItemStack(baseStack.clone(), ImmutableMap.<String, Object>builder()
-        .put("{symbol}", key.getSymbol().toUpperCase())
-        .put("{name}", key.getName())
-        .put("{quantity}", value.getQuantity())
-        .put("{current-value}", Utils.formatCurrency(currentPrice.doubleValue(),
+        .put("<symbol>", key.getSymbol().toUpperCase())
+        .put("<name>", key.getName())
+        .put("<quantity>", value.getQuantity())
+        .put("<current-value>", Utils.formatCurrency(currentPrice.doubleValue(),
             settings.getLocale()))
-        .put("{purchase-value}", Utils.formatCurrency(value.getValue().doubleValue(), settings
+        .put("<purchase-value>", Utils.formatCurrency(value.getValue().doubleValue(), settings
             .getLocale()))
-        .put("{net}", Utils.formatCurrency(net.doubleValue(), settings.getLocale()))
-        .put("{server-currency}", stockMarket.getEcon().currencyNamePlural())
+        .put("<net>", Utils.formatCurrency(net.doubleValue(), settings.getLocale()))
+        .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
         .build());
+  }
+
+  @Override
+  public ItemStack getExtraItem(ItemStack baseStack, Map<String, Object> extraData) {
+    return Utils.updateItemStack(baseStack.clone(), ImmutableMap.of(
+        "<purchase-value>", Utils.formatCurrency(((BigDecimal) extraData.get("purchase_value"))
+            .doubleValue(), settings.getLocale()),
+        "<current-value>", Utils.formatCurrency(((BigDecimal) extraData.get("current_value"))
+            .doubleValue(), settings.getLocale()),
+        "<net-value>", Utils.formatCurrency(((BigDecimal) extraData.get("net_value"))
+            .doubleValue(), settings.getLocale()),
+        "<server-currency>", stockMarket.getEcon().currencyNamePlural()
+    ));
   }
 
   class StockComparator implements Comparator<Stock> {
