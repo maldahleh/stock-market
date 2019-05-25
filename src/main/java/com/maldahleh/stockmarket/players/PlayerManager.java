@@ -32,6 +32,11 @@ public class PlayerManager {
   }
 
   public StockPlayer forceGetStockPlayer(UUID uuid) {
+    StockPlayer cachedPlayer = stockPlayerMap.get(uuid);
+    if (cachedPlayer != null) {
+      return cachedPlayer;
+    }
+
     StockPlayer stockPlayer = new StockPlayer();
     storage.getPlayerTransactions(uuid).forEach(stockPlayer::addTransaction);
     return stockPlayer;
