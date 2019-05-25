@@ -25,8 +25,8 @@ public class StockMarket extends JavaPlugin {
 
     saveDefaultConfig();
     StockManager stockManager = new StockManager(getConfig().getConfigurationSection("stocks"));
-    Messages messages = new Messages(getConfig().getConfigurationSection("messages"));
     Settings settings = new Settings(getConfig().getConfigurationSection("settings"));
+    Messages messages = new Messages(getConfig().getConfigurationSection("messages"), settings);
     InventoryManager inventoryManager = new InventoryManager(this, stockManager,
         getConfig(), messages, settings);
     Storage storage = new SQL(getConfig().getConfigurationSection("storage.mysql"));

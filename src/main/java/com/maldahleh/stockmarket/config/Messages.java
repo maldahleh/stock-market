@@ -1,5 +1,6 @@
 package com.maldahleh.stockmarket.config;
 
+import com.maldahleh.stockmarket.transactions.Transaction;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.math.BigDecimal;
 import java.util.List;
@@ -8,6 +9,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 public class Messages {
+  private final Settings settings;
+
   private final String lowPriceStock;
   private final String disabledStock;
   private final String invalidStock;
@@ -16,7 +19,9 @@ public class Messages {
   private final String noPermission;
   private final List<String> boughtMessage;
 
-  public Messages(ConfigurationSection section) {
+  public Messages(ConfigurationSection section, Settings settings) {
+    this.settings = settings;
+
     this.lowPriceStock = Utils.color(section.getString("low-price-stock"));
     this.disabledStock = Utils.color(section.getString("disabled-stock"));
     this.invalidStock = Utils.color(section.getString("invalid-stock"));
@@ -51,15 +56,18 @@ public class Messages {
     player.sendMessage(noPermission);
   }
 
-  public void sendBoughtStockMessage(Player player, String company, String symbol, int quantity,
-      BigDecimal stockValue, BigDecimal brokerFees, BigDecimal total) {
+  public void sendBoughtStockMessage(Player player, String company, Transaction transaction,
+      BigDecimal total) {
     for (String line : boughtMessage) {
       player.sendMessage(line.replace("<date>", Utils.getCurrentTime())
-          .replace("<company>", company).replace("<symbol>", symbol)
-          .replace("<quantity>", String.valueOf(quantity))
-          .replace("<stock-value>", Utils.formatCurrency(stockValue.doubleValue()))
-          .replace("<broker-fees>", Utils.formatCurrency(brokerFees.doubleValue()))
-          .replace("<total>", Utils.formatCurrency(total.doubleValue())));
+          .replace("<company>", company).replace("<symbol>", transaction.getSymbol())
+          .replace("<quantity>", String.valueOf(transaction.getQuantity()))
+          .replace("<stock-value>", Utils.formatCurrency(transaction.getSinglePrice()
+              .doubleValue(), settings.getLocale()))
+          .replace("<broker-fees>", Utils.formatCurrency(transaction.getBrokerFee()
+              .doubleValue(), settings.getLocale()))
+          .replace("<total>", Utils.formatCurrency(total.doubleValue(),
+              settings.getLocale())));
     }
   }
 }

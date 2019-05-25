@@ -1,19 +1,31 @@
 package com.maldahleh.stockmarket.transactions;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class Transaction {
   private final UUID uuid;
   private final String transactionType;
   private final Date transactionDate;
   private final String symbol;
   private final int quantity;
-  private final double singlePrice;
-  private final double brokerFee;
-  private final Double earnings;
+  private final BigDecimal singlePrice;
+  private final BigDecimal brokerFee;
+  private final BigDecimal earnings;
+
+  private BigDecimal grandTotal;
+
+  public BigDecimal getGrandTotal() {
+    if (grandTotal != null) {
+      return grandTotal;
+    }
+
+    grandTotal = singlePrice.multiply(BigDecimal.valueOf(quantity)).add(brokerFee);
+    return grandTotal;
+  }
 }

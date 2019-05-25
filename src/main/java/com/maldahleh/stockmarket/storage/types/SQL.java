@@ -16,8 +16,8 @@ import org.bukkit.configuration.ConfigurationSection;
 public class SQL implements Storage {
   private static final String CREATE_QUERY = "CREATE TABLE IF NOT EXISTS "
       + "sm_transactions(uuid CHAR(36), tran_type ENUM('purchase', 'sale'), "
-      + "tran_date DATETIME, symbol VARCHAR(12), quantity INTEGER, single_price DOUBLE, "
-      + "broker_fee DOUBLE, earnings DOUBLE)";
+      + "tran_date DATETIME, symbol VARCHAR(12), quantity INTEGER, single_price DECIMAL, "
+      + "broker_fee DECIMAL, earnings DECIMAL)";
   private static final String PURCHASE_QUERY = "INSERT INTO sm_transactions (uuid, tran_type, "
       + "tran_date, symbol, quantity, single_price, broker_fee) VALUES (?, 'purchase', "
       + "UTC_TIMESTAMP(), ?, ?, ?, ?)";
@@ -60,11 +60,9 @@ public class SQL implements Storage {
     }
   }
 
-  public void processPurchase(UUID uuid, String symbol, int amount, double singlePrice,
-      double brokerFee) {
+  public void processPurchase(UUID uuid, Transaction transaction) {
     try (Connection connection = pool.getConnection();
-        PreparedStatement statement = getPurchaseStatement(connection, uuid, symbol, amount,
-            singlePrice, brokerFee)) {
+        PreparedStatement statement = getPurchaseStatement(connection, uuid, transaction)) {
       statement.executeUpdate();
     } catch (SQLException e) {
       e.printStackTrace();
@@ -91,8 +89,8 @@ public class SQL implements Storage {
       while (resultSet.next()) {
         transactions.add(new Transaction(uuid, resultSet.getString(1).toUpperCase(),
             resultSet.getTimestamp(2), resultSet.getString(3),
-            resultSet.getInt(4), resultSet.getDouble(5),
-            resultSet.getDouble(6), resultSet.getDouble(7)));
+            resultSet.getInt(4), resultSet.getBigDecimal(5),
+            resultSet.getBigDecimal(6), resultSet.getBigDecimal(7)));
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -111,8 +109,8 @@ public class SQL implements Storage {
         transactions.add(new Transaction(UUID.fromString(resultSet.getString(1)),
             resultSet.getString(2).toUpperCase(), resultSet.getTimestamp(3),
             resultSet.getString(4), resultSet.getInt(5),
-            resultSet.getDouble(6), resultSet.getDouble(7),
-            resultSet.getDouble(8)));
+            resultSet.getBigDecimal(6), resultSet.getBigDecimal(7),
+            resultSet.getBigDecimal(8)));
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -121,14 +119,14 @@ public class SQL implements Storage {
     return transactions;
   }
 
-  private PreparedStatement getPurchaseStatement(Connection connection, UUID uuid, String symbol,
-      int amount, double singlePrice, double brokerFee) throws SQLException {
+  private PreparedStatement getPurchaseStatement(Connection connection, UUID uuid,
+      Transaction transaction) throws SQLException {
     PreparedStatement statement = connection.prepareStatement(PURCHASE_QUERY);
     statement.setString(1, uuid.toString());
-    statement.setString(2, symbol);
-    statement.setInt(3, amount);
-    statement.setDouble(4, singlePrice);
-    statement.setDouble(5, brokerFee);
+    statement.setString(2, transaction.getSymbol().toUpperCase());
+    statement.setInt(3, transaction.getQuantity());
+    statement.setBigDecimal(4, transaction.getSinglePrice());
+    statement.setBigDecimal(5, transaction.getBrokerFee());
 
     return statement;
   }

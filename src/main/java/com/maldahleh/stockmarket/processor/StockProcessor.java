@@ -6,7 +6,9 @@ import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.events.StockPurchaseEvent;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.storage.Storage;
+import com.maldahleh.stockmarket.transactions.Transaction;
 import java.math.BigDecimal;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -33,9 +35,10 @@ public class StockProcessor {
         return;
       }
 
-      BigDecimal brokerFees = price.multiply(settings.getBrokerPercent())
+      BigDecimal quantityPrice = price.multiply(BigDecimal.valueOf(quantity));
+      BigDecimal brokerFees = quantityPrice.multiply(settings.getBrokerPercentRate())
           .add(settings.getBrokerFlat());
-      BigDecimal grandTotal = price.multiply(BigDecimal.valueOf(quantity)).add(brokerFees);
+      BigDecimal grandTotal = quantityPrice.add(brokerFees);
 
       if (!stockMarket.getEcon().withdrawPlayer(player, grandTotal.doubleValue())
           .transactionSuccess()) {
@@ -43,12 +46,12 @@ public class StockProcessor {
         return;
       }
 
-      messages.sendBoughtStockMessage(player, stock.getName(), stock.getSymbol(), quantity, price,
-          brokerFees, grandTotal);
+      Transaction transaction = new Transaction(player.getUniqueId(), "PURCHASE",
+          new Date(), stock.getSymbol(), quantity, price, brokerFees, null);
       Bukkit.getPluginManager().callEvent(new StockPurchaseEvent(player, symbol, quantity,
           price.doubleValue(), brokerFees.doubleValue(), grandTotal.doubleValue()));
-      storage.processPurchase(player.getUniqueId(), symbol, quantity, price.doubleValue(),
-          brokerFees.doubleValue());
+      messages.sendBoughtStockMessage(player, stock.getName(), transaction, grandTotal);
+      storage.processPurchase(player.getUniqueId(), transaction);
     });
   }
 }
