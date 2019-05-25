@@ -34,6 +34,11 @@
                         </relocation>
 
                         <relocation>
+                            <pattern>com.zaxxer.hikari</pattern>
+                            <shadedPattern>${project.groupId}.db</shadedPattern>
+                        </relocation>
+
+                        <relocation>
                             <pattern>org.bstats</pattern>
                             <shadedPattern>${project.groupId}.bstats</shadedPattern>
                         </relocation>

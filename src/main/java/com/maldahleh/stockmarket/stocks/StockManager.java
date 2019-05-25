@@ -6,6 +6,7 @@ import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -24,6 +25,19 @@ public class StockManager {
     this.fxCache = CacheBuilder.newBuilder()
         .expireAfterWrite(section.getInt("cache.expire-minutes"), TimeUnit.MINUTES)
         .maximumSize(500).build();
+  }
+
+  public void cacheStocks(String... symbols) {
+    try {
+      Map<String, Stock> results = YahooFinance.get(symbols);
+      for (Map.Entry<String, Stock> e : results.entrySet()) {
+        if (e.getKey() == null || e.getValue() == null) {
+          continue;
+        }
+
+        stockCache.put(e.getKey().toUpperCase(), e.getValue());
+      }
+    } catch (IOException ignored) {}
   }
 
   public Stock getStock(String symbol) {

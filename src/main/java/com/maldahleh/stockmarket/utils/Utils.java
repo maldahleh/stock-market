@@ -127,7 +127,7 @@ public class Utils {
   }
 
   public static String formatCurrency(double input, Locale locale) {
-    NumberFormat decimalFormat = new DecimalFormat("#,###.00", DecimalFormatSymbols
+    NumberFormat decimalFormat = new DecimalFormat("#,##0.00", DecimalFormatSymbols
         .getInstance(locale));
     return decimalFormat.format(input);
   }
