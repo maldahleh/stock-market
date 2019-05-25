@@ -47,7 +47,7 @@ public class StockProcessor {
       }
 
       Transaction transaction = new Transaction(player.getUniqueId(), "PURCHASE",
-          Instant.now(), stock.getSymbol(), quantity, price, brokerFees, null,
+          Instant.now(), stock.getSymbol(), quantity, price, brokerFees, null, null,
           grandTotal);
       Bukkit.getPluginManager().callEvent(new StockPurchaseEvent(player, symbol, quantity,
           price.doubleValue(), brokerFees.doubleValue(), grandTotal.doubleValue()));

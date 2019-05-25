@@ -16,8 +16,10 @@ public class Messages {
   private final String invalidStock;
   private final String invalidQuantity;
   private final String insufficientFunds;
+  private final String invalidSyntax;
   private final String noPermission;
   private final List<String> boughtMessage;
+  private final List<String> helpMessage;
 
   public Messages(ConfigurationSection section, Settings settings) {
     this.settings = settings;
@@ -28,8 +30,11 @@ public class Messages {
     this.invalidStock = Utils.color(section.getString("invalid-stock"));
     this.invalidQuantity = Utils.color(section.getString("invalid-quantity"));
     this.insufficientFunds = Utils.color(section.getString("insufficient-funds"));
+    this.invalidSyntax = Utils.color(section.getString("invalid-syntax"));
     this.noPermission = Utils.color(section.getString("no-permission"));
     this.boughtMessage = section.getStringList("bought-stock").stream().map(Utils::color)
+        .collect(Collectors.toList());
+    this.helpMessage = section.getStringList("help").stream().map(Utils::color)
         .collect(Collectors.toList());
   }
 
@@ -57,6 +62,10 @@ public class Messages {
     player.sendMessage(insufficientFunds);
   }
 
+  public void sendInvalidSyntax(Player player) {
+    player.sendMessage(invalidSyntax);
+  }
+
   public void sendNoPermission(Player player) {
     player.sendMessage(noPermission);
   }
@@ -72,6 +81,12 @@ public class Messages {
               .doubleValue(), settings.getLocale()))
           .replace("<total>", Utils.formatCurrency(transaction.getGrandTotal().doubleValue(),
               settings.getLocale())));
+    }
+  }
+
+  public void sendHelpMessage(Player player) {
+    for (String message : helpMessage) {
+      player.sendMessage(message);
     }
   }
 }

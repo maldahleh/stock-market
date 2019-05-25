@@ -30,6 +30,16 @@ public class StockMarketCommand implements CommandExecutor {
       return true;
     }
 
+    if (strings.length == 0) {
+      messages.sendHelpMessage(player);
+      return true;
+    }
+
+    if (strings.length == 1 && strings[0].equalsIgnoreCase("help")) {
+      messages.sendHelpMessage(player);
+      return true;
+    }
+
     if (strings.length == 1 && strings[0].equalsIgnoreCase("list")) {
       if (!player.hasPermission("stockmarket.list")) {
         messages.sendNoPermission(player);
@@ -77,6 +87,16 @@ public class StockMarketCommand implements CommandExecutor {
       return true;
     }
 
+    if (strings.length == 1 && strings[0].equalsIgnoreCase("portfolio")) {
+      if (!player.hasPermission("stockmarket.portfolio")) {
+        messages.sendNoPermission(player);
+        return true;
+      }
+
+      inventoryManager.openPortfolioInventory(player);
+      return true;
+    }
+
     if (strings.length == 3 && strings[0].equalsIgnoreCase("buy")) {
       Integer quantity = Utils.getInteger(strings[2]);
       if (quantity == null || quantity <= 0) {
@@ -88,7 +108,7 @@ public class StockMarketCommand implements CommandExecutor {
       return true;
     }
 
-    // TODO: Incorrect syntax
+    messages.sendInvalidSyntax(player);
     return true;
   }
 }

@@ -20,7 +20,17 @@ public class Transaction {
   private final BigDecimal brokerFee;
   private final BigDecimal earnings;
 
+  private BigDecimal stockValue;
   private BigDecimal grandTotal;
+
+  public BigDecimal getStockValue() {
+    if (stockValue != null) {
+      return stockValue;
+    }
+
+    stockValue = singlePrice.multiply(BigDecimal.valueOf(quantity));
+    return stockValue;
+  }
 
   public BigDecimal getGrandTotal() {
     if (grandTotal != null) {

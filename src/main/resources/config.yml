@@ -646,6 +646,99 @@ inventories:
         name: "&6&lYear Low"
         lore:
           - "&e<year-low> <market-currency>"
+  portfolio:
+    name: "&6Stocks &8- &ePortfolio"
+    size: 45
+    base-item:
+      material: "BOOK"
+      durability: 0
+      amount: 1
+      name: "&6&l{symbol} &e&l(&6&l{name}&e&l)"
+      lore:
+        - "&6Quantity: &e{quantity}"
+        - "&6Purchase Value: &e{purchase-value} {server-currency}"
+        - "&6Current Value: &e{current-value} {server-currency}"
+        - "&6Net: &e{net}"
+    previous-page:
+      slot: 36
+      previous-page:
+        material: "ARROW"
+        durability: 0
+        amount: 1
+        name: "&6Go To Previous Page"
+        lore:
+          - "&eGo to the previous page"
+      no-previous:
+        material: "BARRIER"
+        durability: 0
+        amount: 1
+        name: "&4No Previous Page"
+        lore:
+          - "&cThere's no previous page"
+    next-page:
+      slot: 44
+      next-page:
+        material: "ARROW"
+        durability: 0
+        amount: 1
+        name: "&6Go To Next Page"
+        lore:
+          - "&eGo to the next page"
+      no-next:
+        material: "BARRIER"
+        durability: 0
+        amount: 1
+        name: "&4No Next Page"
+        lore:
+          - "&cThere's no next page"
+    content-slots:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      - 8
+      - 9
+      - 10
+      - 11
+      - 12
+      - 13
+      - 14
+      - 15
+      - 16
+      - 17
+      - 18
+      - 19
+      - 20
+      - 21
+      - 22
+      - 23
+      - 24
+      - 25
+      - 26
+      - 27
+      - 28
+      - 29
+      - 30
+      - 31
+      - 32
+      - 33
+      - 34
+      - 35
+      - 36
+      - 37
+      - 38
+      - 39
+      - 40
+      - 41
+      - 42
+      - 43
+      - 44
+    messages:
+      no-content: "&6No data found!"
 settings:
   locale: "en-US"
   unknown-data: "N/A"
@@ -664,6 +757,7 @@ messages:
   invalid-stock: "&eYou specified an invalid stock symbol."
   invalid-quantity: "&eYou specified an invalid quantity."
   insufficient-funds: "&eYou do not have enough money to make that purchase."
+  invalid-syntax: "&eInvalid syntax! Use &6/stocks help &efor help."
   no-permission: "&eYou do not have permission to use that command."
   bought-stock:
     - "&6Purchase Summary (&e<date>&6):"
@@ -671,3 +765,7 @@ messages:
     - "&6Stock Value: &e<stock-value> &6(&ex<quantity>&6)"
     - "&6Broker Fees: &e<broker-fees>"
     - "&6Grand Total: &e<total>"
+  help:
+    - "&eWe run a virtual stock market, for a list of stocks you can buy, visit &6Yahoo Finance&e."
+    - "&eStocks are a great way to earn money by investing in virtual stocks in companies you think will be successful on the stock market."
+    - "&eYou can learn about stocks by using &6/stocks tutorial&e."

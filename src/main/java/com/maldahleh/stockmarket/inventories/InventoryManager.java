@@ -6,7 +6,9 @@ import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.inventories.compare.CompareInventory;
 import com.maldahleh.stockmarket.inventories.list.ListInventory;
 import com.maldahleh.stockmarket.inventories.lookup.LookupInventory;
+import com.maldahleh.stockmarket.inventories.portfolio.PortfolioInventory;
 import com.maldahleh.stockmarket.inventories.tutorial.TutorialInventory;
+import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -16,9 +18,10 @@ public class InventoryManager {
   private final CompareInventory compareInventory;
   private final ListInventory listInventory;
   private final TutorialInventory tutorialInventory;
+  private final PortfolioInventory portfolioInventory;
 
-  public InventoryManager(StockMarket stockMarket, StockManager stockManager,
-      FileConfiguration config, Messages messages, Settings settings) {
+  public InventoryManager(StockMarket stockMarket, PlayerManager playerManager,
+      StockManager stockManager, FileConfiguration config, Messages messages, Settings settings) {
     this.lookupInventory = new LookupInventory(stockMarket, stockManager, messages, settings,
         config.getConfigurationSection("inventories.lookup"));
     this.compareInventory = new CompareInventory(stockMarket, stockManager, messages, settings,
@@ -27,6 +30,8 @@ public class InventoryManager {
         .getConfigurationSection("inventories.tutorial"));
     this.listInventory = new ListInventory(stockMarket, lookupInventory, config
         .getConfigurationSection("inventories.list"));
+    this.portfolioInventory = new PortfolioInventory(stockMarket, playerManager, stockManager,
+        settings, config.getConfigurationSection("inventories.portfolio"));
   }
 
   public void openLookupInventory(Player player, String symbol) {
@@ -43,5 +48,9 @@ public class InventoryManager {
 
   public void openTutorialInventory(Player player) {
     tutorialInventory.openInventory(player);
+  }
+
+  public void openPortfolioInventory(Player player) {
+    portfolioInventory.openInventory(player);
   }
 }

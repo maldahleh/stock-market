@@ -27,8 +27,14 @@ public class PlayerManager {
     StockPlayer player = new StockPlayer();
     stockPlayerMap.put(uuid, player);
 
-    Bukkit.getScheduler().runTaskAsynchronously(stockMarket,
-        () -> storage.getPlayerTransactions(uuid).forEach(player::addTransaction));
+      Bukkit.getScheduler().runTaskAsynchronously(stockMarket,
+          () -> storage.getPlayerTransactions(uuid).forEach(player::addTransaction));
+  }
+
+  public StockPlayer forceGetStockPlayer(UUID uuid) {
+    StockPlayer stockPlayer = new StockPlayer();
+    storage.getPlayerTransactions(uuid).forEach(stockPlayer::addTransaction);
+    return stockPlayer;
   }
 
   public void addTransaction(UUID uuid, Transaction transaction) {
