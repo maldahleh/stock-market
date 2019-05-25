@@ -51,6 +51,6 @@ public class InventoryManager {
   }
 
   public void openPortfolioInventory(Player player) {
-    portfolioInventory.openInventory(player);
+    portfolioInventory.openInventory(player, player.getUniqueId());
   }
 }

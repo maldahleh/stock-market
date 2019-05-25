@@ -1,5 +1,6 @@
 package com.maldahleh.stockmarket.inventories.utils.paged;
 
+import com.maldahleh.stockmarket.inventories.utils.paged.data.PaginatedPlayer;
 import com.maldahleh.stockmarket.inventories.utils.paged.listeners.PagedInventoryListener;
 import com.maldahleh.stockmarket.inventories.utils.paged.provider.IContentProvider;
 import com.maldahleh.stockmarket.utils.Utils;
@@ -20,7 +21,7 @@ public class PagedInventory<K, V, T> {
   private final Plugin plugin;
 
   private final IContentProvider<K, V, T> contentProvider;
-  private final Map<UUID, Integer> currentPageMap;
+  private final Map<UUID, PaginatedPlayer> playerMap;
 
   private final String inventoryName;
   private final int inventorySize;
@@ -44,7 +45,7 @@ public class PagedInventory<K, V, T> {
     this.plugin = plugin;
 
     this.contentProvider = provider;
-    this.currentPageMap = new HashMap<>();
+    this.playerMap = new HashMap<>();
 
     this.inventoryName = Utils.color(section.getString("name"));
     this.inventorySize = section.getInt("size");
@@ -70,13 +71,9 @@ public class PagedInventory<K, V, T> {
     Bukkit.getPluginManager().registerEvents(new PagedInventoryListener(this), plugin);
   }
 
-  public void displayInventory(Player player) {
-    displayInventory(player, 1);
-  }
-
-  private void displayInventory(Player player, int page) {
+  public void displayInventory(Player player, UUID target) {
     Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-      Map<K, V> data = contentProvider.getContent(player.getUniqueId());
+      Map<K, V> data = contentProvider.getContent(target);
       if (data == null || data.isEmpty()) {
         player.sendMessage(noContentMessage);
         return;
@@ -84,28 +81,31 @@ public class PagedInventory<K, V, T> {
 
       Map<T, V> transformedData = contentProvider.applyTransformations(data);
       Bukkit.getScheduler().runTask(plugin, () -> {
-        Inventory i = Bukkit.createInventory(null, inventorySize, inventoryName);
+        PaginatedPlayer paginatedPlayer = new PaginatedPlayer();
 
-        int currentPage = page;
+        int currentPage = 1;
         int currentIndex = 0;
         int totalDisplayed = 0;
+        Inventory i = Bukkit.createInventory(null, inventorySize, inventoryName);
         for (Map.Entry<T, V> e : transformedData.entrySet()) {
           int position = ((currentPage - 1) * contentPerPage) + (currentIndex + 1);
           i.setItem(contentSlots.get(currentIndex), contentProvider.getContentStack(baseItem,
               position, e.getKey(), e.getValue()));
           totalDisplayed++;
 
-          if ((currentIndex + 1) == contentPerPage || totalDisplayed == transformedData.size()) {
+          if ((currentIndex + 1) == contentPerPage
+              || totalDisplayed == transformedData.size()) {
             i.setItem(previousPageSlot, currentPage == 1 ? noPreviousPageStack : previousPageStack);
-            if (transformedData.size() > contentPerPage && currentPage == page) {
+            if (transformedData.size() > contentPerPage && currentPage == 1) {
               i.setItem(nextPageSlot, nextPageStack);
             } else {
               i.setItem(nextPageSlot, noNextPageStack);
             }
 
-            if (currentPage == page) {
+            paginatedPlayer.addInventory(currentPage, i);
+            if (currentPage == 1) {
               player.openInventory(i);
-              currentPageMap.put(player.getUniqueId(), page);
+              playerMap.put(player.getUniqueId(), paginatedPlayer);
             }
 
             i = Bukkit.createInventory(null, inventorySize, inventoryName);
@@ -128,8 +128,8 @@ public class PagedInventory<K, V, T> {
     }
 
     Player clicker = (Player) e.getWhoClicked();
-    Integer page = currentPageMap.get(clicker.getUniqueId());
-    if (page == null) {
+    PaginatedPlayer player = playerMap.get(clicker.getUniqueId());
+    if (player == null) {
       return;
     }
 
@@ -145,17 +145,19 @@ public class PagedInventory<K, V, T> {
     }
 
     if (e.getSlot() == previousPageSlot) {
-      displayInventory(clicker, page - 1);
+      clicker.openInventory(player.getPreviousPage());
+      playerMap.put(clicker.getUniqueId(), player);
     } else if (e.getSlot() == nextPageSlot) {
-      displayInventory(clicker, page + 1);
+      clicker.openInventory(player.getNextPage());
+      playerMap.put(clicker.getUniqueId(), player);
     }
   }
 
   public boolean hasInventory(HumanEntity entity) {
-    return currentPageMap.containsKey(entity.getUniqueId());
+    return playerMap.containsKey(entity.getUniqueId());
   }
 
   public void remove(HumanEntity entity) {
-    currentPageMap.remove(entity.getUniqueId());
+    playerMap.remove(entity.getUniqueId());
   }
 }
