@@ -60,19 +60,20 @@ public class StockMarketCommand implements CommandExecutor {
       return true;
     }
 
-    if ((strings.length == 3 || strings.length == 4)
-        && strings[0].equalsIgnoreCase("compare")) {
+    if (strings.length == 2 && strings[0].equalsIgnoreCase("compare")
+        && strings[1].contains(",")) {
       if (!player.hasPermission("stockmarket.compare")) {
         messages.sendNoPermission(player);
         return true;
       }
 
-      if (strings.length == 3) {
-        inventoryManager.openCompareInventory(player, strings[1], strings[2]);
+      String[] symbols = strings[1].split(",");
+      if (symbols.length > 3) {
+        messages.sendCompareMax(player);
         return true;
       }
 
-      inventoryManager.openCompareInventory(player, strings[1], strings[2], strings[3]);
+      inventoryManager.openCompareInventory(player, symbols);
       return true;
     }
 
@@ -87,6 +88,7 @@ public class StockMarketCommand implements CommandExecutor {
       return true;
     }
 
-    return false;
+    // TODO: Incorrect syntax
+    return true;
   }
 }

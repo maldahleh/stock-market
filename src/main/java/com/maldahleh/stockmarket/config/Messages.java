@@ -12,6 +12,7 @@ public class Messages {
 
   private final String lowPriceStock;
   private final String disabledStock;
+  private final String compareMax;
   private final String invalidStock;
   private final String invalidQuantity;
   private final String insufficientFunds;
@@ -23,6 +24,7 @@ public class Messages {
 
     this.lowPriceStock = Utils.color(section.getString("low-price-stock"));
     this.disabledStock = Utils.color(section.getString("disabled-stock"));
+    this.compareMax = Utils.color(section.getString("compare-max"));
     this.invalidStock = Utils.color(section.getString("invalid-stock"));
     this.invalidQuantity = Utils.color(section.getString("invalid-quantity"));
     this.insufficientFunds = Utils.color(section.getString("insufficient-funds"));
@@ -37,6 +39,10 @@ public class Messages {
 
   public void sendDisabledStock(Player player) {
     player.sendMessage(disabledStock);
+  }
+
+  public void sendCompareMax(Player player) {
+    player.sendMessage(compareMax);
   }
 
   public void sendInvalidStock(Player player) {

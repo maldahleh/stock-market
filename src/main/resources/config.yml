@@ -660,6 +660,7 @@ settings:
 messages:
   low-price-stock: "&eThe specified stock has a price which is too low."
   disabled-stock: "&eYou can only lookup stocks in the US and Canadian stock markets."
+  compare-max: "&eYou can only compare up to 3 stocks at a time."
   invalid-stock: "&eYou specified an invalid stock symbol."
   invalid-quantity: "&eYou specified an invalid quantity."
   insufficient-funds: "&eYou do not have enough money to make that purchase."
