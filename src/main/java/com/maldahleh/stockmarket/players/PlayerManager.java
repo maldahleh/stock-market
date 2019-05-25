@@ -1,21 +1,27 @@
 package com.maldahleh.stockmarket.players;
 
 import com.maldahleh.stockmarket.StockMarket;
+import com.maldahleh.stockmarket.players.listeners.PlayerListener;
 import com.maldahleh.stockmarket.players.player.StockPlayer;
 import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 
-@RequiredArgsConstructor
 public class PlayerManager {
-  private final Map<UUID, StockPlayer> stockPlayerMap = new ConcurrentHashMap<>();
-
+  private final Map<UUID, StockPlayer> stockPlayerMap;
   private final StockMarket stockMarket;
   private final Storage storage;
+
+  public PlayerManager(StockMarket stockMarket, Storage storage) {
+    this.stockPlayerMap = new ConcurrentHashMap<>();
+    this.stockMarket = stockMarket;
+    this.storage = storage;
+
+    Bukkit.getPluginManager().registerEvents(new PlayerListener(this), stockMarket);
+  }
 
   public void cachePlayer(UUID uuid) {
     StockPlayer player = new StockPlayer();

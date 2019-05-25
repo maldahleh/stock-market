@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -20,10 +21,10 @@ public class SQL implements Storage {
       + "broker_fee DECIMAL, earnings DECIMAL)";
   private static final String PURCHASE_QUERY = "INSERT INTO sm_transactions (uuid, tran_type, "
       + "tran_date, symbol, quantity, single_price, broker_fee) VALUES (?, 'purchase', "
-      + "UTC_TIMESTAMP(), ?, ?, ?, ?)";
+      + "?, ?, ?, ?, ?)";
   private static final String SALE_QUERY = "INSERT INTO sm_transactions (uuid, tran_type, "
       + "tran_date, symbol, quantity, single_price, broker_fee, earnings) VALUES (?, 'sale', "
-      + "UTC_TIMESTAMP(), ?, ?, ?, ?, ?)";
+      + "?, ?, ?, ?, ?, ?)";
   private static final String GET_QUERY = "SELECT tran_type, tran_date, symbol, quantity, "
       + "single_price, broker_fee, earnings FROM sm_transactions WHERE uuid = ? ORDER BY tran_date";
   private static final String STOCK_QUERY = "SELECT uuid, tran_type, tran_date, symbol, quantity, "
@@ -60,20 +61,18 @@ public class SQL implements Storage {
     }
   }
 
-  public void processPurchase(UUID uuid, Transaction transaction) {
+  public void processPurchase(Transaction transaction) {
     try (Connection connection = pool.getConnection();
-        PreparedStatement statement = getPurchaseStatement(connection, uuid, transaction)) {
+        PreparedStatement statement = getActionStatement(connection, transaction, true)) {
       statement.executeUpdate();
     } catch (SQLException e) {
       e.printStackTrace();
     }
   }
 
-  public void processSale(UUID uuid, String symbol, int amount, double singlePrice,
-      double brokerFee, double net) {
+  public void processSale(Transaction transaction) {
     try (Connection connection = pool.getConnection();
-        PreparedStatement statement = getSellStatement(connection, uuid, symbol, amount,
-            singlePrice, brokerFee, net)) {
+        PreparedStatement statement = getActionStatement(connection, transaction, false)) {
       statement.executeUpdate();
     } catch (SQLException e) {
       e.printStackTrace();
@@ -88,7 +87,7 @@ public class SQL implements Storage {
         ResultSet resultSet = statement.executeQuery()) {
       while (resultSet.next()) {
         transactions.add(new Transaction(uuid, resultSet.getString(1).toUpperCase(),
-            resultSet.getTimestamp(2), resultSet.getString(3),
+            resultSet.getTimestamp(2).toInstant(), resultSet.getString(3),
             resultSet.getInt(4), resultSet.getBigDecimal(5),
             resultSet.getBigDecimal(6), resultSet.getBigDecimal(7)));
       }
@@ -107,10 +106,10 @@ public class SQL implements Storage {
         ResultSet resultSet = statement.executeQuery()) {
       while (resultSet.next()) {
         transactions.add(new Transaction(UUID.fromString(resultSet.getString(1)),
-            resultSet.getString(2).toUpperCase(), resultSet.getTimestamp(3),
-            resultSet.getString(4), resultSet.getInt(5),
-            resultSet.getBigDecimal(6), resultSet.getBigDecimal(7),
-            resultSet.getBigDecimal(8)));
+            resultSet.getString(2).toUpperCase(),
+            resultSet.getTimestamp(3).toInstant(), resultSet.getString(4),
+            resultSet.getInt(5), resultSet.getBigDecimal(6),
+            resultSet.getBigDecimal(7), resultSet.getBigDecimal(8)));
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -119,27 +118,19 @@ public class SQL implements Storage {
     return transactions;
   }
 
-  private PreparedStatement getPurchaseStatement(Connection connection, UUID uuid,
-      Transaction transaction) throws SQLException {
-    PreparedStatement statement = connection.prepareStatement(PURCHASE_QUERY);
-    statement.setString(1, uuid.toString());
-    statement.setString(2, transaction.getSymbol().toUpperCase());
-    statement.setInt(3, transaction.getQuantity());
-    statement.setBigDecimal(4, transaction.getSinglePrice());
-    statement.setBigDecimal(5, transaction.getBrokerFee());
-
-    return statement;
-  }
-
-  private PreparedStatement getSellStatement(Connection connection, UUID uuid, String symbol,
-      int amount, double singlePrice, double brokerFee, double earnings) throws SQLException {
-    PreparedStatement statement = connection.prepareStatement(SALE_QUERY);
-    statement.setString(1, uuid.toString());
-    statement.setString(2, symbol);
-    statement.setInt(3, amount);
-    statement.setDouble(4, singlePrice);
-    statement.setDouble(5, brokerFee);
-    statement.setDouble(6, earnings);
+  private PreparedStatement getActionStatement(Connection connection, Transaction transaction,
+      boolean isPurchase) throws SQLException {
+    PreparedStatement statement = connection.prepareStatement(isPurchase ? PURCHASE_QUERY
+        : SALE_QUERY);
+    statement.setString(1, transaction.getUuid().toString());
+    statement.setTimestamp(2, Timestamp.from(transaction.getTransactionDate()));
+    statement.setString(3, transaction.getSymbol().toUpperCase());
+    statement.setInt(4, transaction.getQuantity());
+    statement.setBigDecimal(5, transaction.getSinglePrice());
+    statement.setBigDecimal(6, transaction.getBrokerFee());
+    if (transaction.getEarnings() != null) {
+      statement.setBigDecimal(7, transaction.getEarnings());
+    }
 
     return statement;
   }

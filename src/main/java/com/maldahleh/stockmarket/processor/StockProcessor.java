@@ -8,7 +8,7 @@ import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -47,11 +47,12 @@ public class StockProcessor {
       }
 
       Transaction transaction = new Transaction(player.getUniqueId(), "PURCHASE",
-          new Date(), stock.getSymbol(), quantity, price, brokerFees, null);
+          Instant.now(), stock.getSymbol(), quantity, price, brokerFees, null,
+          grandTotal);
       Bukkit.getPluginManager().callEvent(new StockPurchaseEvent(player, symbol, quantity,
           price.doubleValue(), brokerFees.doubleValue(), grandTotal.doubleValue()));
-      messages.sendBoughtStockMessage(player, stock.getName(), transaction, grandTotal);
-      storage.processPurchase(player.getUniqueId(), transaction);
+      messages.sendBoughtStockMessage(player, stock.getName(), transaction);
+      storage.processPurchase(transaction);
     });
   }
 }

@@ -2,8 +2,8 @@ package com.maldahleh.stockmarket.players.player;
 
 import com.maldahleh.stockmarket.transactions.Transaction;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -11,7 +11,7 @@ import java.util.TreeMap;
 
 public class StockPlayer {
   private final NavigableMap<String, Integer> stockMap = new TreeMap<>();
-  private final NavigableMap<Date, Transaction> transactionMap = new TreeMap<>();
+  private final NavigableMap<Instant, Transaction> transactionMap = new TreeMap<>();
 
   private BigDecimal portfolioValue = BigDecimal.ZERO;
 

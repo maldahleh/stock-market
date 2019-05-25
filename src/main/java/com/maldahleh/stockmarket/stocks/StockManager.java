@@ -38,12 +38,11 @@ public class StockManager {
       stockCache.put(upperSymbol, stock);
       return stock;
     } catch (IOException e) {
-      e.printStackTrace();
       return null;
     }
   }
 
-  public BigDecimal getFxRate(String fxSymbol) {
+  private BigDecimal getFxRate(String fxSymbol) {
     String fxQuote = fxSymbol.toUpperCase() + "USD=X";
     FxQuote quote = fxCache.getIfPresent(fxQuote);
     if (quote != null) {
@@ -55,7 +54,6 @@ public class StockManager {
       fxCache.put(fxQuote, quote);
       return quote.getPrice();
     } catch (IOException e) {
-      e.printStackTrace();
       return null;
     }
   }

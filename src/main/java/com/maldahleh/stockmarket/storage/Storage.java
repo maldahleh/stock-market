@@ -5,10 +5,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface Storage {
-  void processPurchase(UUID uuid, Transaction transaction);
+  void processPurchase(Transaction transaction);
 
-  void processSale(UUID uuid, String symbol, int amount, double singlePrice, double brokerFee,
-      double net);
+  void processSale(Transaction transaction);
 
   List<Transaction> getPlayerTransactions(UUID uuid);
 

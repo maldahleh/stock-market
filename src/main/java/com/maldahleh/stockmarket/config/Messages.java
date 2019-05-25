@@ -2,7 +2,6 @@ package com.maldahleh.stockmarket.config;
 
 import com.maldahleh.stockmarket.transactions.Transaction;
 import com.maldahleh.stockmarket.utils.Utils;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.bukkit.configuration.ConfigurationSection;
@@ -56,8 +55,7 @@ public class Messages {
     player.sendMessage(noPermission);
   }
 
-  public void sendBoughtStockMessage(Player player, String company, Transaction transaction,
-      BigDecimal total) {
+  public void sendBoughtStockMessage(Player player, String company, Transaction transaction) {
     for (String line : boughtMessage) {
       player.sendMessage(line.replace("<date>", Utils.getCurrentTime())
           .replace("<company>", company).replace("<symbol>", transaction.getSymbol())
@@ -66,7 +64,7 @@ public class Messages {
               .doubleValue(), settings.getLocale()))
           .replace("<broker-fees>", Utils.formatCurrency(transaction.getBrokerFee()
               .doubleValue(), settings.getLocale()))
-          .replace("<total>", Utils.formatCurrency(total.doubleValue(),
+          .replace("<total>", Utils.formatCurrency(transaction.getGrandTotal().doubleValue(),
               settings.getLocale())));
     }
   }
