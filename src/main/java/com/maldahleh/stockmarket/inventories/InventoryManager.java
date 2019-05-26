@@ -7,6 +7,7 @@ import com.maldahleh.stockmarket.inventories.compare.CompareInventory;
 import com.maldahleh.stockmarket.inventories.list.ListInventory;
 import com.maldahleh.stockmarket.inventories.lookup.LookupInventory;
 import com.maldahleh.stockmarket.inventories.portfolio.PortfolioInventory;
+import com.maldahleh.stockmarket.inventories.transaction.TransactionInventory;
 import com.maldahleh.stockmarket.inventories.tutorial.TutorialInventory;
 import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.stocks.StockManager;
@@ -20,6 +21,7 @@ public class InventoryManager {
   private final ListInventory listInventory;
   private final TutorialInventory tutorialInventory;
   private final PortfolioInventory portfolioInventory;
+  private final TransactionInventory transactionInventory;
 
   public InventoryManager(StockMarket stockMarket, PlayerManager playerManager,
       StockManager stockManager, FileConfiguration config, Messages messages, Settings settings) {
@@ -33,6 +35,8 @@ public class InventoryManager {
         .getConfigurationSection("inventories.list"));
     this.portfolioInventory = new PortfolioInventory(stockMarket, playerManager, stockManager,
         settings, config.getConfigurationSection("inventories.portfolio"));
+    this.transactionInventory = new TransactionInventory(stockMarket, playerManager, settings,
+        config.getConfigurationSection("inventories.transactions"));
   }
 
   public void openLookupInventory(Player player, String symbol) {
@@ -57,5 +61,13 @@ public class InventoryManager {
 
   public void openPortfolioInventory(Player player, UUID target) {
     portfolioInventory.openInventory(player, target);
+  }
+
+  public void openTransactionInventory(Player player) {
+    transactionInventory.openInventory(player, player.getUniqueId());
+  }
+
+  public void openTransactionInventory(Player player, UUID target) {
+    transactionInventory.openInventory(player, target);
   }
 }

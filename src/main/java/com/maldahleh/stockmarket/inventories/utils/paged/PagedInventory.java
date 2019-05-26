@@ -69,9 +69,13 @@ public class PagedInventory<K, V, T> {
     this.contentPerPage = contentSlots.size();
 
     this.extraItems = new HashMap<>();
-    for (String key : section.getConfigurationSection("extra-items").getKeys(false)) {
-      extraItems.put(Integer.valueOf(key), Utils.createItemStack(section
-          .getConfigurationSection("extra-items." + key)));
+
+    ConfigurationSection extraSection = section.getConfigurationSection("extra-items");
+    if (extraSection != null) {
+      for (String key : section.getConfigurationSection("extra-items").getKeys(false)) {
+        extraItems.put(Integer.valueOf(key), Utils.createItemStack(section
+            .getConfigurationSection("extra-items." + key)));
+      }
     }
 
     this.noContentMessage = Utils.color(section.getString("messages.no-content"));

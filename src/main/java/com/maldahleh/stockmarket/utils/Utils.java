@@ -6,6 +6,10 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -79,7 +83,7 @@ public class Utils {
     return dateFormat.format(new Date());
   }
 
-  public static Integer getInteger (String string) {
+  public static Integer getInteger(String string) {
     try {
       return Integer.parseInt(string);
     } catch (NumberFormatException e) {
@@ -124,6 +128,12 @@ public class Utils {
   public static String formatDate(Date date, Locale locale) {
     DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy", locale);
     return dateFormat.format(date);
+  }
+
+  public static String formatInstant(Instant instant, Locale locale) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+        .withLocale(locale).withZone(ZoneId.systemDefault());
+    return formatter.format(instant);
   }
 
   public static String formatCurrency(double input, Locale locale) {

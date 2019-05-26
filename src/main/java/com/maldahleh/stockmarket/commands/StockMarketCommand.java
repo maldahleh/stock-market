@@ -125,6 +125,40 @@ public class StockMarketCommand implements CommandExecutor {
       return true;
     }
 
+    if (strings.length == 1 && strings[0].equalsIgnoreCase("transactions")) {
+      if (!player.hasPermission("stockmarket.transactions")) {
+        messages.sendNoPermission(player);
+        return true;
+      }
+
+      inventoryManager.openTransactionInventory(player);
+      return true;
+    }
+
+    if (strings.length == 2 && strings[0].equalsIgnoreCase("transactions")) {
+      if (!player.hasPermission("stockmarket.transactions.other")) {
+        messages.sendNoPermission(player);
+        return true;
+      }
+
+      Player target = Bukkit.getPlayer(strings[1]);
+      if (target != null) {
+        inventoryManager.openTransactionInventory(player, target.getUniqueId());
+        return true;
+      }
+
+      Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(strings[1]);
+        if (offlinePlayer == null) {
+          messages.sendInvalidPlayer(player);
+          return;
+        }
+
+        inventoryManager.openTransactionInventory(player, offlinePlayer.getUniqueId());
+      });
+      return true;
+    }
+
     if (strings.length == 3 && strings[0].equalsIgnoreCase("buy")) {
       Integer quantity = Utils.getInteger(strings[2]);
       if (quantity == null || quantity <= 0) {
