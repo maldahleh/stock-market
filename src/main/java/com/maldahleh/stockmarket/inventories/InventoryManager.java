@@ -10,6 +10,7 @@ import com.maldahleh.stockmarket.inventories.portfolio.PortfolioInventory;
 import com.maldahleh.stockmarket.inventories.tutorial.TutorialInventory;
 import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.stocks.StockManager;
+import java.util.UUID;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -52,5 +53,9 @@ public class InventoryManager {
 
   public void openPortfolioInventory(Player player) {
     portfolioInventory.openInventory(player, player.getUniqueId());
+  }
+
+  public void openPortfolioInventory(Player player, UUID target) {
+    portfolioInventory.openInventory(player, target);
   }
 }

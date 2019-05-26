@@ -1,6 +1,7 @@
 package com.maldahleh.stockmarket.transactions;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ public class Transaction {
 
   private BigDecimal stockValue;
   private BigDecimal grandTotal;
+  private boolean sold;
 
   public BigDecimal getStockValue() {
     if (stockValue != null) {
@@ -39,5 +41,18 @@ public class Transaction {
 
     grandTotal = singlePrice.multiply(BigDecimal.valueOf(quantity)).add(brokerFee);
     return grandTotal;
+  }
+
+  public boolean hasElapsed(int minutes) {
+    if (minutes == 0) {
+      return true;
+    }
+
+    return Duration.between(transactionDate, Instant.now())
+        .compareTo(Duration.ofMinutes(minutes)) >= 0;
+  }
+
+  public void markSold() {
+    this.sold = true;
   }
 }

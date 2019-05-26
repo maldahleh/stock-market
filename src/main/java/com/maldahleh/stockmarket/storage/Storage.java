@@ -9,6 +9,8 @@ public interface Storage {
 
   void processSale(Transaction transaction);
 
+  void markSold(UUID uuid, Transaction transaction);
+
   List<Transaction> getPlayerTransactions(UUID uuid);
 
   List<Transaction> getStockTransactions(String symbol);

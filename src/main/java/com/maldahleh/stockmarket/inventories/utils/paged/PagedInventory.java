@@ -88,6 +88,11 @@ public class PagedInventory<K, V, T> {
       }
 
       Map<T, V> transformedData = contentProvider.applyTransformations(data);
+      if (transformedData.isEmpty()) {
+        player.sendMessage(noContentMessage);
+        return;
+      }
+
       Map<String, Object> extraData = contentProvider.getExtraData(target);
       Bukkit.getScheduler().runTask(plugin, () -> {
         PaginatedPlayer paginatedPlayer = new PaginatedPlayer();

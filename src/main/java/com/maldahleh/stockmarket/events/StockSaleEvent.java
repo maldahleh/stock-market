@@ -11,14 +11,14 @@ import org.bukkit.event.HandlerList;
 public class StockSaleEvent extends Event {
   private static HandlerList HANDLER_LIST = new HandlerList();
 
-  private Player player;
-  private String stockSymbol;
-  private int quantity;
-  private String stockValue;
-  private String brokerFees;
-  private String grandTotal;
-  private String initialPurchase;
-  private String netOnTransaction;
+  private final Player player;
+  private final String stockSymbol;
+  private final int quantity;
+  private final double stockValue;
+  private final double brokerFees;
+  private final double grandTotal;
+  private final double initialPurchase;
+  private final double netOnTransaction;
 
   @Override
   public HandlerList getHandlers() {

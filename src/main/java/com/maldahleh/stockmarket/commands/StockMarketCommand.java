@@ -5,13 +5,17 @@ import com.maldahleh.stockmarket.inventories.InventoryManager;
 import com.maldahleh.stockmarket.processor.StockProcessor;
 import com.maldahleh.stockmarket.utils.Utils;
 import lombok.AllArgsConstructor;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 @AllArgsConstructor
 public class StockMarketCommand implements CommandExecutor {
+  private final Plugin plugin;
   private final StockProcessor stockProcessor;
   private final InventoryManager inventoryManager;
   private final Messages messages;
@@ -97,6 +101,30 @@ public class StockMarketCommand implements CommandExecutor {
       return true;
     }
 
+    if (strings.length == 2 && strings[0].equalsIgnoreCase("portfolio")) {
+      if (!player.hasPermission("stockmarket.portfolio.other")) {
+        messages.sendNoPermission(player);
+        return true;
+      }
+
+      Player target = Bukkit.getPlayer(strings[1]);
+      if (target != null) {
+        inventoryManager.openPortfolioInventory(player, target.getUniqueId());
+        return true;
+      }
+
+      Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(strings[1]);
+        if (offlinePlayer == null) {
+          messages.sendInvalidPlayer(player);
+          return;
+        }
+
+        inventoryManager.openPortfolioInventory(player, offlinePlayer.getUniqueId());
+      });
+      return true;
+    }
+
     if (strings.length == 3 && strings[0].equalsIgnoreCase("buy")) {
       Integer quantity = Utils.getInteger(strings[2]);
       if (quantity == null || quantity <= 0) {
@@ -105,6 +133,17 @@ public class StockMarketCommand implements CommandExecutor {
       }
 
       stockProcessor.buyStock(player, strings[1], quantity);
+      return true;
+    }
+
+    if (strings.length == 3 && strings[0].equalsIgnoreCase("sell")) {
+      Integer quantity = Utils.getInteger(strings[2]);
+      if (quantity == null || quantity <= 0) {
+        messages.sendInvalidQuantity(player);
+        return true;
+      }
+
+      stockProcessor.sellStock(player, strings[1], quantity);
       return true;
     }
 

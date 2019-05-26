@@ -33,10 +33,10 @@ public class StockMarket extends JavaPlugin {
     Messages messages = new Messages(getConfig().getConfigurationSection("messages"), settings);
     InventoryManager inventoryManager = new InventoryManager(this, playerManager,
         stockManager, getConfig(), messages, settings);
-    StockProcessor stockProcessor = new StockProcessor(this, stockManager, storage,
-        settings, messages);
+    StockProcessor stockProcessor = new StockProcessor(this, stockManager,
+        playerManager, storage, settings, messages);
 
-    getCommand("stockmarket").setExecutor(new StockMarketCommand(stockProcessor,
+    getCommand("stockmarket").setExecutor(new StockMarketCommand(this, stockProcessor,
         inventoryManager, messages));
 
     new MetricsLite(this);

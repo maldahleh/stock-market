@@ -18,17 +18,21 @@ public class SQL implements Storage {
   private static final String CREATE_QUERY = "CREATE TABLE IF NOT EXISTS "
       + "sm_transactions(uuid CHAR(36), tran_type ENUM('purchase', 'sale'), "
       + "tran_date DATETIME, symbol VARCHAR(12), quantity INTEGER, single_price DECIMAL(19, 2), "
-      + "broker_fee DECIMAL(19, 2), earnings DECIMAL(19, 2))";
+      + "broker_fee DECIMAL(19, 2), earnings DECIMAL(19, 2), sold BOOLEAN)";
   private static final String PURCHASE_QUERY = "INSERT INTO sm_transactions (uuid, tran_type, "
       + "tran_date, symbol, quantity, single_price, broker_fee) VALUES (?, 'purchase', "
       + "?, ?, ?, ?, ?)";
   private static final String SALE_QUERY = "INSERT INTO sm_transactions (uuid, tran_type, "
       + "tran_date, symbol, quantity, single_price, broker_fee, earnings) VALUES (?, 'sale', "
       + "?, ?, ?, ?, ?, ?)";
+  private static final String MARK_SOLD = "UPDATE sm_transactions SET sold = true WHERE uuid = ? "
+      + "AND tran_type = 'purchase' AND symbol = ? AND quantity = ? AND single_price = ? AND "
+      + "broker_fee = ?";
   private static final String GET_QUERY = "SELECT tran_type, tran_date, symbol, quantity, "
-      + "single_price, broker_fee, earnings FROM sm_transactions WHERE uuid = ? ORDER BY tran_date";
+      + "single_price, broker_fee, earnings, sold FROM sm_transactions WHERE uuid = ? "
+      + "ORDER BY tran_date";
   private static final String STOCK_QUERY = "SELECT uuid, tran_type, tran_date, symbol, quantity, "
-      + "single_price, broker_fee, earnings FROM sm_transactions WHERE symbol = ? ORDER BY "
+      + "single_price, broker_fee, earnings, sold FROM sm_transactions WHERE symbol = ? ORDER BY "
       + "tran_date";
 
   private final HikariDataSource pool;
@@ -61,6 +65,7 @@ public class SQL implements Storage {
     }
   }
 
+  @Override
   public void processPurchase(Transaction transaction) {
     try (Connection connection = pool.getConnection();
         PreparedStatement statement = getActionStatement(connection, transaction, true)) {
@@ -70,6 +75,7 @@ public class SQL implements Storage {
     }
   }
 
+  @Override
   public void processSale(Transaction transaction) {
     try (Connection connection = pool.getConnection();
         PreparedStatement statement = getActionStatement(connection, transaction, false)) {
@@ -79,6 +85,17 @@ public class SQL implements Storage {
     }
   }
 
+  @Override
+  public void markSold(UUID uuid, Transaction transaction) {
+    try (Connection connection = pool.getConnection();
+        PreparedStatement statement = getMarkSoldStatement(connection, uuid, transaction)) {
+      statement.executeUpdate();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Override
   public List<Transaction> getPlayerTransactions(UUID uuid) {
     List<Transaction> transactions = new ArrayList<>();
 
@@ -89,7 +106,8 @@ public class SQL implements Storage {
         transactions.add(new Transaction(uuid, resultSet.getString(1).toUpperCase(),
             resultSet.getTimestamp(2).toInstant(), resultSet.getString(3),
             resultSet.getInt(4), resultSet.getBigDecimal(5),
-            resultSet.getBigDecimal(6), resultSet.getBigDecimal(7)));
+            resultSet.getBigDecimal(6), resultSet.getBigDecimal(7),
+            null, null, resultSet.getBoolean(8)));
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -98,6 +116,7 @@ public class SQL implements Storage {
     return transactions;
   }
 
+  @Override
   public List<Transaction> getStockTransactions(String symbol) {
     List<Transaction> transactions = new ArrayList<>();
 
@@ -109,7 +128,8 @@ public class SQL implements Storage {
             resultSet.getString(2).toUpperCase(),
             resultSet.getTimestamp(3).toInstant(), resultSet.getString(4),
             resultSet.getInt(5), resultSet.getBigDecimal(6),
-            resultSet.getBigDecimal(7), resultSet.getBigDecimal(8)));
+            resultSet.getBigDecimal(7), resultSet.getBigDecimal(8),
+            null, null, resultSet.getBoolean(9)));
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -131,6 +151,18 @@ public class SQL implements Storage {
     if (transaction.getEarnings() != null) {
       statement.setBigDecimal(7, transaction.getEarnings());
     }
+
+    return statement;
+  }
+
+  private PreparedStatement getMarkSoldStatement(Connection connection, UUID uuid,
+      Transaction transaction) throws SQLException {
+    PreparedStatement statement = connection.prepareStatement(MARK_SOLD);
+    statement.setString(1, uuid.toString());
+    statement.setString(2, transaction.getSymbol());
+    statement.setInt(3, transaction.getQuantity());
+    statement.setBigDecimal(4, transaction.getSinglePrice());
+    statement.setBigDecimal(5, transaction.getBrokerFee());
 
     return statement;
   }

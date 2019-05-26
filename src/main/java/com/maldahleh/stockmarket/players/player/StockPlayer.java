@@ -4,6 +4,7 @@ import com.maldahleh.stockmarket.players.player.data.StockData;
 import com.maldahleh.stockmarket.transactions.Transaction;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 import lombok.Getter;
@@ -15,7 +16,7 @@ public class StockPlayer {
 
   private BigDecimal portfolioValue = BigDecimal.ZERO;
 
-  public void addTransaction(Transaction transaction) {
+  public void addPurchaseTransaction(Transaction transaction) {
     portfolioValue = portfolioValue.add(transaction.getStockValue());
     transactionMap.put(transaction.getTransactionDate(), transaction);
 
@@ -26,5 +27,22 @@ public class StockPlayer {
 
     data.increase(transaction);
     stockMap.put(transaction.getSymbol().toUpperCase(), data);
+  }
+
+  public void addSaleTransaction(Transaction transaction) {
+    portfolioValue = portfolioValue.subtract(transaction.getStockValue());
+    transactionMap.put(transaction.getTransactionDate(), transaction);
+
+    StockData data = stockMap.get(transaction.getSymbol().toUpperCase());
+    if (data == null) {
+      data = new StockData();
+    }
+
+    data.decrease(transaction);
+    stockMap.put(transaction.getSymbol().toUpperCase(), data);
+  }
+
+  public Collection<Transaction> getTransactions() {
+    return transactionMap.values();
   }
 }

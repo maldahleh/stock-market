@@ -27,8 +27,18 @@ public class PlayerManager {
     StockPlayer player = new StockPlayer();
     stockPlayerMap.put(uuid, player);
 
-      Bukkit.getScheduler().runTaskAsynchronously(stockMarket,
-          () -> storage.getPlayerTransactions(uuid).forEach(player::addTransaction));
+      Bukkit.getScheduler().runTaskAsynchronously(stockMarket, () -> storage
+          .getPlayerTransactions(uuid).forEach(transaction -> {
+            if (transaction.getTransactionType().equalsIgnoreCase("purchase")) {
+              addPurchaseTransaction(uuid, transaction);
+            } else {
+              addSaleTransaction(uuid, transaction);
+            }
+          }));
+  }
+
+  public StockPlayer getStockPlayer(UUID uuid) {
+    return stockPlayerMap.get(uuid);
   }
 
   public StockPlayer forceGetStockPlayer(UUID uuid) {
@@ -38,18 +48,34 @@ public class PlayerManager {
     }
 
     StockPlayer stockPlayer = new StockPlayer();
-    storage.getPlayerTransactions(uuid).forEach(stockPlayer::addTransaction);
+    storage.getPlayerTransactions(uuid).forEach(transaction -> {
+      if (transaction.getTransactionType().equalsIgnoreCase("purchase")) {
+        addPurchaseTransaction(uuid, transaction);
+      } else {
+        addSaleTransaction(uuid, transaction);
+      }
+    });
     return stockPlayer;
   }
 
-  public void addTransaction(UUID uuid, Transaction transaction) {
+  public void addPurchaseTransaction(UUID uuid, Transaction transaction) {
     StockPlayer player = stockPlayerMap.get(uuid);
     if (player == null) {
       player = new StockPlayer();
       stockPlayerMap.put(uuid, player);
     }
 
-    player.addTransaction(transaction);
+    player.addPurchaseTransaction(transaction);
+  }
+
+  public void addSaleTransaction(UUID uuid, Transaction transaction) {
+    StockPlayer player = stockPlayerMap.get(uuid);
+    if (player == null) {
+      player = new StockPlayer();
+      stockPlayerMap.put(uuid, player);
+    }
+
+    player.addSaleTransaction(transaction);
   }
 
   public void uncachePlayer(UUID uuid) {

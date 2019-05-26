@@ -42,6 +42,10 @@ public class PortfolioInventoryProvider implements IContentProvider<String, Stoc
 
     Map<Stock, StockData> stockDataMap = new TreeMap<>(new StockComparator());
     for (Map.Entry<String, StockData> e : data.entrySet()) {
+      if (e.getValue().getQuantity() == 0) {
+        continue;
+      }
+
       stockDataMap.put(stockManager.getStock(e.getKey()), e.getValue());
     }
 

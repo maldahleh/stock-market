@@ -11,6 +11,8 @@ import org.bukkit.configuration.ConfigurationSection;
 public class Settings {
   private final Locale locale;
   private final String unknownData;
+  private final boolean brokerOnSale;
+  private final int minutesBetweenSale;
   private final BigDecimal minimumPrice;
   private final BigDecimal priceMultiplier;
   private final BigDecimal brokerFlat;
@@ -24,6 +26,8 @@ public class Settings {
   public Settings(ConfigurationSection section) {
     this.locale = Locale.forLanguageTag(section.getString("locale"));
     this.unknownData = section.getString("unknown-data");
+    this.brokerOnSale = section.getBoolean("broker-on-sale");
+    this.minutesBetweenSale = section.getInt("minutes-between-sale");
     this.minimumPrice = BigDecimal.valueOf(section.getDouble("minimum-price"));
     this.priceMultiplier = BigDecimal.valueOf(section.getInt("price-multiplier"));
     this.brokerFlat = BigDecimal.valueOf(section.getDouble("broker-flat"));
