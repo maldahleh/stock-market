@@ -4,6 +4,7 @@ description: Buy and sell stocks in the stock market!
 author: maldahleh
 main: ${project.groupId}.${project.artifactId}.${project.name}
 depend: [Vault]
+softdepend: [PlaceholderAPI]
 
 commands:
   stockmarket:

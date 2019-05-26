@@ -4,6 +4,7 @@ import com.maldahleh.stockmarket.commands.StockMarketCommand;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
+import com.maldahleh.stockmarket.placeholder.StocksPlaceholder;
 import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.processor.StockProcessor;
 import com.maldahleh.stockmarket.stocks.StockManager;
@@ -12,11 +13,13 @@ import com.maldahleh.stockmarket.storage.types.SQL;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.MetricsLite;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class StockMarket extends JavaPlugin {
   @Getter private Economy econ;
+  @Getter private PlayerManager playerManager;
 
   @Override
   public void onEnable() {
@@ -27,7 +30,7 @@ public class StockMarket extends JavaPlugin {
 
     saveDefaultConfig();
     Storage storage = new SQL(getConfig().getConfigurationSection("storage.mysql"));
-    PlayerManager playerManager = new PlayerManager(this, storage);
+    this.playerManager = new PlayerManager(this, storage);
     StockManager stockManager = new StockManager(getConfig().getConfigurationSection("stocks"));
     Settings settings = new Settings(getConfig().getConfigurationSection("settings"));
     Messages messages = new Messages(getConfig().getConfigurationSection("messages"), settings);
@@ -40,6 +43,10 @@ public class StockMarket extends JavaPlugin {
         inventoryManager, messages));
 
     new MetricsLite(this);
+
+    if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+      new StocksPlaceholder().register();
+    }
   }
 
   private boolean setupEconomy() {
