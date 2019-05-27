@@ -26,8 +26,8 @@ public class SQL implements Storage {
       + "tran_date, symbol, quantity, single_price, broker_fee, earnings) VALUES (?, 'sale', "
       + "?, ?, ?, ?, ?, ?)";
   private static final String MARK_SOLD = "UPDATE sm_transactions SET sold = true WHERE uuid = ? "
-      + "AND tran_type = 'purchase' AND symbol = ? AND quantity = ? AND single_price = ? AND "
-      + "broker_fee = ?";
+      + "AND tran_type = 'purchase' AND tran_date = ? AND symbol = ? AND quantity = ? "
+      + "AND single_price = ? AND broker_fee = ?";
   private static final String GET_QUERY = "SELECT tran_type, tran_date, symbol, quantity, "
       + "single_price, broker_fee, earnings, sold FROM sm_transactions WHERE uuid = ? "
       + "ORDER BY tran_date";
@@ -159,10 +159,11 @@ public class SQL implements Storage {
       Transaction transaction) throws SQLException {
     PreparedStatement statement = connection.prepareStatement(MARK_SOLD);
     statement.setString(1, uuid.toString());
-    statement.setString(2, transaction.getSymbol());
-    statement.setInt(3, transaction.getQuantity());
-    statement.setBigDecimal(4, transaction.getSinglePrice());
-    statement.setBigDecimal(5, transaction.getBrokerFee());
+    statement.setTimestamp(2, Timestamp.from(transaction.getTransactionDate()));
+    statement.setString(3, transaction.getSymbol());
+    statement.setInt(4, transaction.getQuantity());
+    statement.setBigDecimal(5, transaction.getSinglePrice());
+    statement.setBigDecimal(6, transaction.getBrokerFee());
 
     return statement;
   }
