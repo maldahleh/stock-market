@@ -114,11 +114,8 @@ public class PagedInventory<L, K, V, T, TV> {
           if ((currentIndex + 1) == contentPerPage
               || totalDisplayed == transformedData.size()) {
             i.setItem(previousPageSlot, currentPage == 1 ? noPreviousPageStack : previousPageStack);
-            if (transformedData.size() > contentPerPage && currentPage == 1) {
-              i.setItem(nextPageSlot, nextPageStack);
-            } else {
-              i.setItem(nextPageSlot, noNextPageStack);
-            }
+            i.setItem(nextPageSlot, totalDisplayed < transformedData.size() ? nextPageStack
+                : noNextPageStack);
 
             for (Map.Entry<Integer, ItemStack> extraEntry : extraItems.entrySet()) {
               i.setItem(extraEntry.getKey(), contentProvider.getExtraItem(extraEntry.getValue(),
