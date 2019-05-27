@@ -2,6 +2,7 @@ package com.maldahleh.stockmarket.inventories.list.listeners;
 
 import com.maldahleh.stockmarket.inventories.list.ListInventory;
 import com.maldahleh.stockmarket.inventories.lookup.LookupInventory;
+import com.maldahleh.stockmarket.processor.StockProcessor;
 import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,6 +16,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class ListListener implements Listener {
   private final ListInventory inventory;
   private final LookupInventory lookupInventory;
+  private final StockProcessor stockProcessor;
 
   @EventHandler
   public void onClick(InventoryClickEvent e) {
@@ -24,12 +26,28 @@ public class ListListener implements Listener {
     }
 
     e.setCancelled(true);
+    Player player = (Player) e.getWhoClicked();
     String symbol = inventory.getSymbol(e.getRawSlot());
     if (symbol == null) {
       return;
     }
 
-    lookupInventory.openInventory((Player) e.getWhoClicked(), symbol.toUpperCase());
+    switch (e.getClick()) {
+      case SHIFT_LEFT:
+        stockProcessor.buyStock(player, symbol, 5);
+        return;
+      case LEFT:
+        stockProcessor.buyStock(player, symbol, 1);
+        return;
+      case MIDDLE:
+        lookupInventory.openInventory(player, symbol.toUpperCase());
+        return;
+      case RIGHT:
+        stockProcessor.sellStock(player, symbol, 1);
+        return;
+      case SHIFT_RIGHT:
+        stockProcessor.sellStock(player, symbol, 5);
+    }
   }
 
   @EventHandler

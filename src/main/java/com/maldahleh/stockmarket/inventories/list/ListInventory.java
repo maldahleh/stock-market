@@ -1,8 +1,8 @@
 package com.maldahleh.stockmarket.inventories.list;
 
-import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.inventories.list.listeners.ListListener;
 import com.maldahleh.stockmarket.inventories.lookup.LookupInventory;
+import com.maldahleh.stockmarket.processor.StockProcessor;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,14 +14,15 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.plugin.Plugin;
 
 public class ListInventory {
   private final Inventory listInventory;
   private final Set<UUID> activeViewers;
   private final Map<Integer, String> symbolMap;
 
-  public ListInventory(StockMarket plugin, LookupInventory lookupInventory,
-      ConfigurationSection section) {
+  public ListInventory(Plugin plugin, StockProcessor processor,
+      LookupInventory lookupInventory, ConfigurationSection section) {
     this.activeViewers = new HashSet<>();
     this.symbolMap = new HashMap<>();
     this.listInventory = Bukkit.createInventory(null, section.getInt("inventory.size"),
@@ -39,7 +40,7 @@ public class ListInventory {
     }
 
     Bukkit.getServer().getPluginManager().registerEvents(new ListListener(this,
-        lookupInventory), plugin);
+        lookupInventory, processor), plugin);
   }
 
   public void openInventory(Player player) {

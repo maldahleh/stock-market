@@ -38,10 +38,10 @@ public class StockMarket extends JavaPlugin {
     Messages messages = new Messages(getConfig().getConfigurationSection("messages"), settings);
     this.playerManager = new PlayerManager(this, stockManager, storage, settings);
     this.api = new StockMarketAPI(playerManager);
-    InventoryManager inventoryManager = new InventoryManager(this, playerManager,
-        stockManager, getConfig(), messages, storage, settings);
     StockProcessor stockProcessor = new StockProcessor(this, stockManager,
         playerManager, storage, settings, messages);
+    InventoryManager inventoryManager = new InventoryManager(this, playerManager,
+        stockManager, stockProcessor, getConfig(), messages, storage, settings);
 
     getCommand("stockmarket").setExecutor(new StockMarketCommand(this, stockProcessor,
         inventoryManager, messages));

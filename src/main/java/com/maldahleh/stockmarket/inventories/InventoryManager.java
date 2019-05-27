@@ -11,6 +11,7 @@ import com.maldahleh.stockmarket.inventories.portfolio.PortfolioInventory;
 import com.maldahleh.stockmarket.inventories.transaction.TransactionInventory;
 import com.maldahleh.stockmarket.inventories.tutorial.TutorialInventory;
 import com.maldahleh.stockmarket.players.PlayerManager;
+import com.maldahleh.stockmarket.processor.StockProcessor;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.storage.Storage;
 import java.util.UUID;
@@ -27,15 +28,15 @@ public class InventoryManager {
   private final StockHistoryInventory stockHistoryInventory;
 
   public InventoryManager(StockMarket stockMarket, PlayerManager playerManager,
-      StockManager stockManager, FileConfiguration config, Messages messages, Storage storage,
-      Settings settings) {
+      StockManager stockManager, StockProcessor processor, FileConfiguration config,
+      Messages messages, Storage storage, Settings settings) {
     this.lookupInventory = new LookupInventory(stockMarket, stockManager, messages, settings,
         config.getConfigurationSection("inventories.lookup"));
     this.compareInventory = new CompareInventory(stockMarket, stockManager, messages, settings,
         config.getConfigurationSection("inventories.compare"));
     this.tutorialInventory = new TutorialInventory(stockMarket, config
         .getConfigurationSection("inventories.tutorial"));
-    this.listInventory = new ListInventory(stockMarket, lookupInventory, config
+    this.listInventory = new ListInventory(stockMarket, processor, lookupInventory, config
         .getConfigurationSection("inventories.list"));
     this.portfolioInventory = new PortfolioInventory(stockMarket, playerManager, stockManager,
         settings, config.getConfigurationSection("inventories.portfolio"));
