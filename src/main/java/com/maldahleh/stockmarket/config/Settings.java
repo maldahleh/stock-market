@@ -12,6 +12,7 @@ public class Settings {
   private final Locale locale;
   private final String unknownData;
   private final boolean brokerOnSale;
+  private final int transactionCooldownSeconds;
   private final int minutesBetweenSale;
   private final BigDecimal minimumPrice;
   private final BigDecimal priceMultiplier;
@@ -27,6 +28,7 @@ public class Settings {
     this.locale = Locale.forLanguageTag(section.getString("locale"));
     this.unknownData = section.getString("unknown-data");
     this.brokerOnSale = section.getBoolean("broker-on-sale");
+    this.transactionCooldownSeconds = section.getInt("transaction-cooldown-seconds");
     this.minutesBetweenSale = section.getInt("minutes-between-sale");
     this.minimumPrice = BigDecimal.valueOf(section.getDouble("minimum-price"));
     this.priceMultiplier = BigDecimal.valueOf(section.getInt("price-multiplier"));

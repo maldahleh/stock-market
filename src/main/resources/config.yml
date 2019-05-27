@@ -922,6 +922,7 @@ settings:
   locale: "en-US"
   unknown-data: "N/A"
   broker-on-sale: false
+  transaction-cooldown-seconds: 2
   minutes-between-sale: 5
   minimum-price: 5.0
   price-multiplier: 20
@@ -935,6 +936,7 @@ messages:
   low-price-stock: "&eThe specified stock has a price which is too low."
   disabled-stock: "&eYou can only lookup stocks in the US and Canadian stock markets."
   compare-max: "&eYou can only compare up to 3 stocks at a time."
+  cooldown-message: "&eYou have to wait 2 seconds between transactions."
   invalid-stock: "&eYou specified an invalid stock symbol."
   invalid-quantity: "&eYou specified an invalid quantity."
   invalid-player: "&eYou specified an invalid player."

@@ -16,6 +16,7 @@ import org.bukkit.Bukkit;
 import yahoofinance.Stock;
 
 public class PlayerManager {
+  private final Map<UUID, Long> lastActionMap;
   private final Map<UUID, StockPlayer> stockPlayerMap;
   private final StockMarket stockMarket;
   private final StockManager stockManager;
@@ -24,6 +25,7 @@ public class PlayerManager {
 
   public PlayerManager(StockMarket stockMarket, StockManager stockManager, Storage storage,
       Settings settings) {
+    this.lastActionMap = new ConcurrentHashMap<>();
     this.stockPlayerMap = new ConcurrentHashMap<>();
     this.stockMarket = stockMarket;
     this.stockManager = stockManager;
@@ -45,6 +47,16 @@ public class PlayerManager {
               addSaleTransaction(uuid, transaction);
             }
           }));
+  }
+
+  public boolean canNotPerformTransaction(UUID uuid) {
+    Long lastAction = lastActionMap.get(uuid);
+    if (lastAction == null) {
+      return false;
+    }
+
+    return ((System.currentTimeMillis() - lastAction) / 1000) <
+        settings.getTransactionCooldownSeconds();
   }
 
   public StockPlayer getStockPlayer(UUID uuid) {
@@ -99,6 +111,7 @@ public class PlayerManager {
       stockPlayerMap.put(uuid, player);
     }
 
+    lastActionMap.put(uuid, System.currentTimeMillis());
     player.addPurchaseTransaction(transaction);
   }
 
@@ -109,10 +122,12 @@ public class PlayerManager {
       stockPlayerMap.put(uuid, player);
     }
 
+    lastActionMap.put(uuid, System.currentTimeMillis());
     player.addSaleTransaction(transaction);
   }
 
   public void uncachePlayer(UUID uuid) {
     stockPlayerMap.remove(uuid);
+    lastActionMap.remove(uuid);
   }
 }

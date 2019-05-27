@@ -34,6 +34,11 @@ public class StockProcessor {
         return;
       }
 
+      if (playerManager.canNotPerformTransaction(player.getUniqueId())) {
+        messages.sendCooldownMessage(player);
+        return;
+      }
+
       BigDecimal price = stockManager.getServerPrice(stock, settings.getPriceMultiplier());
       if (price == null) {
         messages.sendInvalidStock(player);
@@ -66,6 +71,11 @@ public class StockProcessor {
     Bukkit.getScheduler().runTaskAsynchronously(stockMarket, () -> {
       StockPlayer stockPlayer = playerManager.getStockPlayer(player.getUniqueId());
       if (stockPlayer == null) {
+        return;
+      }
+
+      if (playerManager.canNotPerformTransaction(player.getUniqueId())) {
+        messages.sendCooldownMessage(player);
         return;
       }
 
