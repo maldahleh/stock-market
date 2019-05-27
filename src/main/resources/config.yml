@@ -753,6 +753,7 @@ inventories:
       name: "&6&l<symbol> &e&l(&6&l<date>&e&l)"
       lore:
         - "&6Transaction Type: &e<transaction-type>"
+        - "&6Quantity: &e<quantity>"
         - "&6Stock Value: &e<stock-value> <server-currency>"
         - "&6Broker Fees: &e<broker-fees> <server-currency>"
         - "&6Grand Total: &e<grand-total> <server-currency>"
@@ -840,6 +841,7 @@ inventories:
       lore:
         - "&6Purchaser: &e<name>"
         - "&6Transaction Type: &e<transaction-type>"
+        - "&6Quantity: &e<quantity>"
         - "&6Stock Value: &e<stock-value> <server-currency>"
         - "&6Broker Fees: &e<broker-fees> <server-currency>"
         - "&6Grand Total: &e<grand-total> <server-currency>"
