@@ -76,7 +76,7 @@ public class PortfolioInventoryProvider implements IContentProvider<UUID, String
     }
 
     currentPrice = currentPrice.multiply(BigDecimal.valueOf(value.getQuantity()));
-    BigDecimal net = value.getValue().subtract(currentPrice);
+    BigDecimal net = currentPrice.subtract(value.getValue());
     return Utils.updateItemStack(baseStack.clone(), ImmutableMap.<String, Object>builder()
         .put("<symbol>", key.getSymbol().toUpperCase())
         .put("<name>", key.getName())

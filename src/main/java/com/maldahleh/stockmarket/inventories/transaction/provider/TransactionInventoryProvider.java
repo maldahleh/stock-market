@@ -9,8 +9,10 @@ import com.maldahleh.stockmarket.players.player.StockPlayer;
 import com.maldahleh.stockmarket.transactions.Transaction;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.bukkit.inventory.ItemStack;
@@ -34,7 +36,12 @@ public class TransactionInventoryProvider implements IContentProvider<UUID, Inst
 
   @Override
   public Map<Instant, Transaction> applyTransformations(Map<Instant, Transaction> data) {
-    return data;
+    Map<Instant, Transaction> stockDataMap = new TreeMap<>(Collections.reverseOrder());
+    for (Map.Entry<Instant, Transaction> e : data.entrySet()) {
+      stockDataMap.put(e.getKey(), e.getValue());
+    }
+
+    return stockDataMap;
   }
 
   @Override
