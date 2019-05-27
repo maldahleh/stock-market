@@ -20,7 +20,8 @@ import org.bukkit.inventory.ItemStack;
 import yahoofinance.Stock;
 
 @AllArgsConstructor
-public class PortfolioInventoryProvider implements IContentProvider<String, StockData, Stock> {
+public class PortfolioInventoryProvider implements IContentProvider<UUID, String, StockData,
+    Stock, StockData> {
   private final StockMarket stockMarket;
   private final PlayerManager playerManager;
   private final StockManager stockManager;
@@ -60,26 +61,10 @@ public class PortfolioInventoryProvider implements IContentProvider<String, Stoc
       return dataMap;
     }
 
-    BigDecimal currentValue = BigDecimal.ZERO;
-    for (Map.Entry<String, StockData> e : stockPlayer.getStockMap().entrySet()) {
-      Stock stock = stockManager.getStock(e.getKey());
-      if (stock == null) {
-        continue;
-      }
-
-      BigDecimal serverPrice = stockManager.getServerPrice(stock, settings.getPriceMultiplier());
-      if (serverPrice == null) {
-        continue;
-      }
-
-      currentValue = currentValue.add(serverPrice.multiply(BigDecimal.valueOf(e.getValue()
-          .getQuantity())));
-    }
-
-    BigDecimal net = currentValue.subtract(stockPlayer.getPortfolioValue());
+    BigDecimal currentValue = playerManager.getCurrentValue(stockPlayer);
     dataMap.put("purchase_value", stockPlayer.getPortfolioValue());
     dataMap.put("current_value", currentValue);
-    dataMap.put("net_value", net);
+    dataMap.put("net_value", playerManager.getProfitMargin(stockPlayer, currentValue));
     return dataMap;
   }
 

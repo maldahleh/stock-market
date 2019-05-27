@@ -1,17 +1,16 @@
 package com.maldahleh.stockmarket.inventories.utils.paged.provider;
 
 import java.util.Map;
-import java.util.UUID;
 import org.bukkit.inventory.ItemStack;
 
-public interface IContentProvider<K, V, T> {
-  Map<K, V> getContent(UUID uuid);
+public interface IContentProvider<L, K, V, T, TV> {
+  Map<K, V> getContent(L lookup);
 
-  Map<T, V> applyTransformations(Map<K, V> data);
+  Map<T, TV> applyTransformations(Map<K, V> data);
 
-  Map<String, Object> getExtraData(UUID uuid);
+  Map<String, Object> getExtraData(L lookup);
 
-  ItemStack getContentStack(ItemStack baseStack, int position, T key, V value);
+  ItemStack getContentStack(ItemStack baseStack, int position, T key, TV value);
 
   ItemStack getExtraItem(ItemStack baseStack, Map<String, Object> extraData);
 }

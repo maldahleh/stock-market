@@ -4,6 +4,7 @@ import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.inventories.compare.CompareInventory;
+import com.maldahleh.stockmarket.inventories.history.StockHistoryInventory;
 import com.maldahleh.stockmarket.inventories.list.ListInventory;
 import com.maldahleh.stockmarket.inventories.lookup.LookupInventory;
 import com.maldahleh.stockmarket.inventories.portfolio.PortfolioInventory;
@@ -11,6 +12,7 @@ import com.maldahleh.stockmarket.inventories.transaction.TransactionInventory;
 import com.maldahleh.stockmarket.inventories.tutorial.TutorialInventory;
 import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.stocks.StockManager;
+import com.maldahleh.stockmarket.storage.Storage;
 import java.util.UUID;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -22,9 +24,11 @@ public class InventoryManager {
   private final TutorialInventory tutorialInventory;
   private final PortfolioInventory portfolioInventory;
   private final TransactionInventory transactionInventory;
+  private final StockHistoryInventory stockHistoryInventory;
 
   public InventoryManager(StockMarket stockMarket, PlayerManager playerManager,
-      StockManager stockManager, FileConfiguration config, Messages messages, Settings settings) {
+      StockManager stockManager, FileConfiguration config, Messages messages, Storage storage,
+      Settings settings) {
     this.lookupInventory = new LookupInventory(stockMarket, stockManager, messages, settings,
         config.getConfigurationSection("inventories.lookup"));
     this.compareInventory = new CompareInventory(stockMarket, stockManager, messages, settings,
@@ -37,6 +41,8 @@ public class InventoryManager {
         settings, config.getConfigurationSection("inventories.portfolio"));
     this.transactionInventory = new TransactionInventory(stockMarket, playerManager, settings,
         config.getConfigurationSection("inventories.transactions"));
+    this.stockHistoryInventory = new StockHistoryInventory(stockMarket, storage, settings,
+        config.getConfigurationSection("inventories.history"));
   }
 
   public void openLookupInventory(Player player, String symbol) {
@@ -69,5 +75,9 @@ public class InventoryManager {
 
   public void openTransactionInventory(Player player, UUID target) {
     transactionInventory.openInventory(player, target);
+  }
+
+  public void openStockHistoryInventory(Player player, String symbol) {
+    stockHistoryInventory.openInventory(player, symbol);
   }
 }

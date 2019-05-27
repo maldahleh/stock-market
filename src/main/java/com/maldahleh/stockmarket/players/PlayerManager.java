@@ -1,24 +1,34 @@
 package com.maldahleh.stockmarket.players;
 
 import com.maldahleh.stockmarket.StockMarket;
+import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.players.listeners.PlayerListener;
 import com.maldahleh.stockmarket.players.player.StockPlayer;
+import com.maldahleh.stockmarket.players.player.data.StockData;
+import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
+import yahoofinance.Stock;
 
 public class PlayerManager {
   private final Map<UUID, StockPlayer> stockPlayerMap;
   private final StockMarket stockMarket;
+  private final StockManager stockManager;
   private final Storage storage;
+  private final Settings settings;
 
-  public PlayerManager(StockMarket stockMarket, Storage storage) {
+  public PlayerManager(StockMarket stockMarket, StockManager stockManager, Storage storage,
+      Settings settings) {
     this.stockPlayerMap = new ConcurrentHashMap<>();
     this.stockMarket = stockMarket;
+    this.stockManager = stockManager;
     this.storage = storage;
+    this.settings = settings;
 
     Bukkit.getPluginManager().registerEvents(new PlayerListener(this), stockMarket);
   }
@@ -56,6 +66,30 @@ public class PlayerManager {
       }
     });
     return stockPlayer;
+  }
+
+  public BigDecimal getCurrentValue(StockPlayer stockPlayer) {
+    BigDecimal currentValue = BigDecimal.ZERO;
+    for (Map.Entry<String, StockData> e : stockPlayer.getStockMap().entrySet()) {
+      Stock stock = stockManager.getStock(e.getKey());
+      if (stock == null) {
+        continue;
+      }
+
+      BigDecimal serverPrice = stockManager.getServerPrice(stock, settings.getPriceMultiplier());
+      if (serverPrice == null) {
+        continue;
+      }
+
+      currentValue = currentValue.add(serverPrice.multiply(BigDecimal.valueOf(e.getValue()
+          .getQuantity())));
+    }
+
+    return currentValue;
+  }
+
+  public BigDecimal getProfitMargin(StockPlayer stockPlayer, BigDecimal currentValue) {
+    return currentValue.subtract(stockPlayer.getPortfolioValue());
   }
 
   public void addPurchaseTransaction(UUID uuid, Transaction transaction) {

@@ -1,5 +1,6 @@
 package com.maldahleh.stockmarket;
 
+import com.maldahleh.stockmarket.api.StockMarketAPI;
 import com.maldahleh.stockmarket.commands.StockMarketCommand;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
@@ -17,9 +18,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+@Getter
 public class StockMarket extends JavaPlugin {
-  @Getter private Economy econ;
-  @Getter private PlayerManager playerManager;
+  private StockMarketAPI api;
+  private Economy econ;
+  private PlayerManager playerManager;
 
   @Override
   public void onEnable() {
@@ -30,12 +33,13 @@ public class StockMarket extends JavaPlugin {
 
     saveDefaultConfig();
     Storage storage = new SQL(getConfig().getConfigurationSection("storage.mysql"));
-    this.playerManager = new PlayerManager(this, storage);
     StockManager stockManager = new StockManager(getConfig().getConfigurationSection("stocks"));
     Settings settings = new Settings(getConfig().getConfigurationSection("settings"));
     Messages messages = new Messages(getConfig().getConfigurationSection("messages"), settings);
+    this.playerManager = new PlayerManager(this, stockManager, storage, settings);
+    this.api = new StockMarketAPI(playerManager);
     InventoryManager inventoryManager = new InventoryManager(this, playerManager,
-        stockManager, getConfig(), messages, settings);
+        stockManager, getConfig(), messages, storage, settings);
     StockProcessor stockProcessor = new StockProcessor(this, stockManager,
         playerManager, storage, settings, messages);
 

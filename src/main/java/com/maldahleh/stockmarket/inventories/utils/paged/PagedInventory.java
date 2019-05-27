@@ -17,10 +17,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-public class PagedInventory<K, V, T> {
+public class PagedInventory<L, K, V, T, TV> {
   private final Plugin plugin;
 
-  private final IContentProvider<K, V, T> contentProvider;
+  private final IContentProvider<L, K, V, T, TV> contentProvider;
   private final Map<UUID, PaginatedPlayer> playerMap;
 
   private final String inventoryName;
@@ -42,7 +42,7 @@ public class PagedInventory<K, V, T> {
 
   private final String noContentMessage;
 
-  public PagedInventory(Plugin plugin, IContentProvider<K, V, T> provider,
+  public PagedInventory(Plugin plugin, IContentProvider<L, K, V, T, TV> provider,
       ConfigurationSection section) {
     this.plugin = plugin;
 
@@ -83,7 +83,7 @@ public class PagedInventory<K, V, T> {
     Bukkit.getPluginManager().registerEvents(new PagedInventoryListener(this), plugin);
   }
 
-  public void displayInventory(Player player, UUID target) {
+  public void displayInventory(Player player, L target) {
     Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
       Map<K, V> data = contentProvider.getContent(target);
       if (data == null || data.isEmpty()) {
@@ -91,7 +91,7 @@ public class PagedInventory<K, V, T> {
         return;
       }
 
-      Map<T, V> transformedData = contentProvider.applyTransformations(data);
+      Map<T, TV> transformedData = contentProvider.applyTransformations(data);
       if (transformedData.isEmpty()) {
         player.sendMessage(noContentMessage);
         return;
@@ -105,7 +105,7 @@ public class PagedInventory<K, V, T> {
         int currentIndex = 0;
         int totalDisplayed = 0;
         Inventory i = Bukkit.createInventory(null, inventorySize, inventoryName);
-        for (Map.Entry<T, V> e : transformedData.entrySet()) {
+        for (Map.Entry<T, TV> e : transformedData.entrySet()) {
           int position = ((currentPage - 1) * contentPerPage) + (currentIndex + 1);
           i.setItem(contentSlots.get(currentIndex), contentProvider.getContentStack(baseItem,
               position, e.getKey(), e.getValue()));

@@ -16,8 +16,8 @@ import lombok.AllArgsConstructor;
 import org.bukkit.inventory.ItemStack;
 
 @AllArgsConstructor
-public class TransactionInventoryProvider implements IContentProvider<Instant, Transaction,
-    Instant> {
+public class TransactionInventoryProvider implements IContentProvider<UUID, Instant, Transaction,
+    Instant, Transaction> {
   private final StockMarket stockMarket;
   private final PlayerManager playerManager;
   private final Settings settings;
