@@ -50,12 +50,12 @@ public class StockProcessor {
           .add(settings.getBrokerFlat());
       BigDecimal grandTotal = quantityPrice.add(brokerFees);
 
-      if (!stockMarket.getEcon().withdrawPlayer(player, grandTotal.doubleValue())
-          .transactionSuccess()) {
+      if (!stockMarket.getEcon().has(player, grandTotal.doubleValue())) {
         messages.sendInsufficientFunds(player);
         return;
       }
 
+      stockMarket.getEcon().withdrawPlayer(player, grandTotal.doubleValue());
       Transaction transaction = new Transaction(player.getUniqueId(), "PURCHASE",
           Instant.now(), stock.getSymbol(), quantity, price, brokerFees, null, null,
           grandTotal, false);
