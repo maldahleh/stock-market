@@ -10,7 +10,8 @@ import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.processor.StockProcessor;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.storage.Storage;
-import com.maldahleh.stockmarket.storage.types.SQL;
+import com.maldahleh.stockmarket.storage.types.MySQL;
+import com.maldahleh.stockmarket.storage.types.SQLite;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.MetricsLite;
@@ -32,7 +33,14 @@ public class StockMarket extends JavaPlugin {
     }
 
     saveDefaultConfig();
-    Storage storage = new SQL(getConfig().getConfigurationSection("storage.mysql"));
+
+    Storage storage;
+    if (getConfig().getBoolean("storage.mysql.enabled", false)) {
+      storage = new MySQL(getConfig().getConfigurationSection("storage.mysql"));
+    } else {
+      storage = new SQLite();
+    }
+
     StockManager stockManager = new StockManager(getConfig().getConfigurationSection("stocks"));
     Settings settings = new Settings(getConfig().getConfigurationSection("settings"));
     Messages messages = new Messages(getConfig().getConfigurationSection("messages"), settings);

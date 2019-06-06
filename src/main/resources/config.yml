@@ -1,5 +1,6 @@
 storage:
   mysql:
+    enabled: false
     ip: "localhost"
     port: 3306
     database: "database"
