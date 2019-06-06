@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 import org.bukkit.configuration.ConfigurationSection;
 
-public class SQL implements Storage {
+public class MySQL implements Storage {
   private static final String CREATE_QUERY = "CREATE TABLE IF NOT EXISTS "
       + "sm_transactions(uuid CHAR(36), tran_type ENUM('purchase', 'sale'), "
       + "tran_date DATETIME, symbol VARCHAR(12), quantity INTEGER, single_price DECIMAL(19, 2), "
@@ -37,7 +37,7 @@ public class SQL implements Storage {
 
   private final HikariDataSource pool;
 
-  public SQL(ConfigurationSection section) {
+  public MySQL(ConfigurationSection section) {
     HikariConfig config = new HikariConfig();
 
     config.setDriverClassName("com.mysql.jdbc.Driver");
