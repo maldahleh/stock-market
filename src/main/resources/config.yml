@@ -6,6 +6,9 @@ storage:
     database: "database"
     username: "username"
     password: "password"
+brokers:
+  names:
+    simple: "&8&lStock Broker"
 stocks:
   cache:
     expire-minutes: 5

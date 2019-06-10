@@ -1,6 +1,7 @@
 package com.maldahleh.stockmarket;
 
 import com.maldahleh.stockmarket.api.StockMarketAPI;
+import com.maldahleh.stockmarket.brokers.BrokerManager;
 import com.maldahleh.stockmarket.commands.StockMarketCommand;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
@@ -55,6 +56,10 @@ public class StockMarket extends JavaPlugin {
         inventoryManager, messages));
 
     new MetricsLite(this);
+
+    if (Bukkit.getPluginManager().isPluginEnabled("Citizens")) {
+      new BrokerManager();
+    }
 
     if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
       new StocksPlaceholder().register();
