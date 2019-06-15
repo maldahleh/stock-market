@@ -6,6 +6,11 @@ storage:
     database: "database"
     username: "username"
     password: "password"
+brokers:
+  names:
+    simple: "&8&lStock Broker"
+  settings:
+    disable-commands: false
 stocks:
   cache:
     expire-minutes: 5
@@ -1204,6 +1209,7 @@ settings:
     - "CAD"
   allowed-exchanges: []
 messages:
+  commands-disabled: "&cCommands are disabled, please use the stock brokers."
   low-price-stock: "&eThe specified stock has a price which is too low."
   disabled-stock: "&eYou can only lookup stocks in the US and Canadian stock markets."
   compare-max: "&eYou can only compare up to 3 stocks at a time."

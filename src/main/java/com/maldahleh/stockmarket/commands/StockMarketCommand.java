@@ -1,11 +1,13 @@
 package com.maldahleh.stockmarket.commands;
 
+import com.maldahleh.stockmarket.brokers.BrokerManager;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
 import com.maldahleh.stockmarket.processor.StockProcessor;
 import com.maldahleh.stockmarket.utils.Utils;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,6 +18,7 @@ import org.bukkit.plugin.Plugin;
 @AllArgsConstructor
 public class StockMarketCommand implements CommandExecutor {
   private final Plugin plugin;
+  private final BrokerManager brokerManager;
   private final StockProcessor stockProcessor;
   private final InventoryManager inventoryManager;
   private final Messages messages;
@@ -29,8 +32,28 @@ public class StockMarketCommand implements CommandExecutor {
     }
 
     Player player = (Player) commandSender;
+    if (strings.length == 1 && strings[0].equalsIgnoreCase("spawnsimplebroker")) {
+      if (!player.hasPermission("stockmarket.spawnbroker")) {
+        messages.sendNoPermission(player);
+        return true;
+      }
+
+      if (!brokerManager.isEnabled()) {
+        player.sendMessage(ChatColor.RED + "Citizens is not enabled, and is required for brokers");
+        return true;
+      }
+
+      brokerManager.spawnSimpleBroker(player.getLocation());
+      return true;
+    }
+
     if (!player.hasPermission("stockmarket.use")) {
       messages.sendNoPermission(player);
+      return true;
+    }
+
+    if (brokerManager.areCommandsDisabled(player)) {
+      messages.sendCommandsDisabled(player);
       return true;
     }
 
