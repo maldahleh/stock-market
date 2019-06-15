@@ -33,9 +33,13 @@ public class SQLite implements Storage {
   private static final String STOCK_QUERY = "SELECT id, uuid, tran_type, tran_date, symbol, "
       + "quantity, single_price, broker_fee, earnings, sold FROM sm_transactions WHERE symbol = ? "
       + "ORDER BY tran_date";
+  private static final String GET_LAST_QUERY = "SELECT MAX(id) FROM sm_transactions";
+
+  private int currentId;
 
   public SQLite() {
     createTables();
+    currentId = getLastId();
   }
 
   private void createTables() {
@@ -47,10 +51,24 @@ public class SQLite implements Storage {
     }
   }
 
+  private int getLastId() {
+    try (Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(GET_LAST_QUERY);
+        ResultSet resultSet = statement.executeQuery()) {
+      if (resultSet.next()) {
+        return resultSet.getInt(1);
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
+    return -1;
+  }
+
   @Override
   public int getNextId() {
-    // TODO: Logic
-    return 0;
+    currentId++;
+    return currentId;
   }
 
   @Override
