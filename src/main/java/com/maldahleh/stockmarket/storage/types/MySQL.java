@@ -16,24 +16,22 @@ import org.bukkit.configuration.ConfigurationSection;
 
 public class MySQL implements Storage {
   private static final String CREATE_QUERY = "CREATE TABLE IF NOT EXISTS "
-      + "sm_transactions(uuid CHAR(36), tran_type ENUM('purchase', 'sale'), "
+      + "sm_transactions(id INTEGER PRIMARY KEY, uuid CHAR(36), tran_type ENUM('purchase', 'sale'), "
       + "tran_date DATETIME, symbol VARCHAR(12), quantity INTEGER, single_price DECIMAL(19, 2), "
       + "broker_fee DECIMAL(19, 2), earnings DECIMAL(19, 2), sold BOOLEAN)";
-  private static final String PURCHASE_QUERY = "INSERT INTO sm_transactions (uuid, tran_type, "
-      + "tran_date, symbol, quantity, single_price, broker_fee) VALUES (?, 'purchase', "
+  private static final String PURCHASE_QUERY = "INSERT INTO sm_transactions (id, uuid, tran_type, "
+      + "tran_date, symbol, quantity, single_price, broker_fee) VALUES (?, ?, 'purchase', "
       + "?, ?, ?, ?, ?)";
-  private static final String SALE_QUERY = "INSERT INTO sm_transactions (uuid, tran_type, "
-      + "tran_date, symbol, quantity, single_price, broker_fee, earnings) VALUES (?, 'sale', "
+  private static final String SALE_QUERY = "INSERT INTO sm_transactions (id, uuid, tran_type, "
+      + "tran_date, symbol, quantity, single_price, broker_fee, earnings) VALUES (?, ?, 'sale', "
       + "?, ?, ?, ?, ?, ?)";
-  private static final String MARK_SOLD = "UPDATE sm_transactions SET sold = true WHERE uuid = ? "
-      + "AND tran_type = 'purchase' AND tran_date = ? AND symbol = ? AND quantity = ? "
-      + "AND single_price = ? AND broker_fee = ?";
-  private static final String GET_QUERY = "SELECT tran_type, tran_date, symbol, quantity, "
+  private static final String MARK_SOLD = "UPDATE sm_transactions SET sold = true WHERE id = ?";
+  private static final String GET_QUERY = "SELECT id, tran_type, tran_date, symbol, quantity, "
       + "single_price, broker_fee, earnings, sold FROM sm_transactions WHERE uuid = ? "
       + "ORDER BY tran_date";
-  private static final String STOCK_QUERY = "SELECT uuid, tran_type, tran_date, symbol, quantity, "
-      + "single_price, broker_fee, earnings, sold FROM sm_transactions WHERE symbol = ? ORDER BY "
-      + "tran_date";
+  private static final String STOCK_QUERY = "SELECT id, uuid, tran_type, tran_date, symbol, "
+      + "quantity, single_price, broker_fee, earnings, sold FROM sm_transactions WHERE symbol = ? "
+      + "ORDER BY tran_date";
 
   private final HikariDataSource pool;
 
@@ -66,6 +64,12 @@ public class MySQL implements Storage {
   }
 
   @Override
+  public int getNextId() {
+    // TODO: Logic
+    return 0;
+  }
+
+  @Override
   public void processPurchase(Transaction transaction) {
     try (Connection connection = pool.getConnection();
         PreparedStatement statement = getActionStatement(connection, transaction, true)) {
@@ -86,9 +90,9 @@ public class MySQL implements Storage {
   }
 
   @Override
-  public void markSold(UUID uuid, Transaction transaction) {
+  public void markSold(Transaction transaction) {
     try (Connection connection = pool.getConnection();
-        PreparedStatement statement = getMarkSoldStatement(connection, uuid, transaction)) {
+        PreparedStatement statement = getMarkSoldStatement(connection, transaction)) {
       statement.executeUpdate();
     } catch (SQLException e) {
       e.printStackTrace();
@@ -103,11 +107,12 @@ public class MySQL implements Storage {
         PreparedStatement statement = getPlayerGetStatement(connection, uuid);
         ResultSet resultSet = statement.executeQuery()) {
       while (resultSet.next()) {
-        transactions.add(new Transaction(uuid, resultSet.getString(1).toUpperCase(),
-            resultSet.getTimestamp(2).toInstant(), resultSet.getString(3),
-            resultSet.getInt(4), resultSet.getBigDecimal(5),
-            resultSet.getBigDecimal(6), resultSet.getBigDecimal(7),
-            null, null, resultSet.getBoolean(8)));
+        transactions.add(new Transaction(resultSet.getInt(1), uuid,
+            resultSet.getString(2).toUpperCase(),
+            resultSet.getTimestamp(3).toInstant(), resultSet.getString(4),
+            resultSet.getInt(5), resultSet.getBigDecimal(6),
+            resultSet.getBigDecimal(7), resultSet.getBigDecimal(8),
+            null, null, resultSet.getBoolean(9)));
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -124,12 +129,12 @@ public class MySQL implements Storage {
         PreparedStatement statement = getStockGetStatement(connection, symbol);
         ResultSet resultSet = statement.executeQuery()) {
       while (resultSet.next()) {
-        transactions.add(new Transaction(UUID.fromString(resultSet.getString(1)),
-            resultSet.getString(2).toUpperCase(),
-            resultSet.getTimestamp(3).toInstant(), resultSet.getString(4),
-            resultSet.getInt(5), resultSet.getBigDecimal(6),
-            resultSet.getBigDecimal(7), resultSet.getBigDecimal(8),
-            null, null, resultSet.getBoolean(9)));
+        transactions.add(new Transaction(resultSet.getInt(1), UUID.fromString(resultSet
+            .getString(2)), resultSet.getString(3).toUpperCase(),
+            resultSet.getTimestamp(4).toInstant(), resultSet.getString(5),
+            resultSet.getInt(6), resultSet.getBigDecimal(7),
+            resultSet.getBigDecimal(8), resultSet.getBigDecimal(9),
+            null, null, resultSet.getBoolean(10)));
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -142,28 +147,24 @@ public class MySQL implements Storage {
       boolean isPurchase) throws SQLException {
     PreparedStatement statement = connection.prepareStatement(isPurchase ? PURCHASE_QUERY
         : SALE_QUERY);
-    statement.setString(1, transaction.getUuid().toString());
-    statement.setTimestamp(2, Timestamp.from(transaction.getTransactionDate()));
-    statement.setString(3, transaction.getSymbol().toUpperCase());
-    statement.setInt(4, transaction.getQuantity());
-    statement.setBigDecimal(5, transaction.getSinglePrice());
-    statement.setBigDecimal(6, transaction.getBrokerFee());
+    statement.setInt(1, transaction.getId());
+    statement.setString(2, transaction.getUuid().toString());
+    statement.setTimestamp(3, Timestamp.from(transaction.getTransactionDate()));
+    statement.setString(4, transaction.getSymbol().toUpperCase());
+    statement.setInt(5, transaction.getQuantity());
+    statement.setBigDecimal(6, transaction.getSinglePrice());
+    statement.setBigDecimal(7, transaction.getBrokerFee());
     if (transaction.getEarnings() != null) {
-      statement.setBigDecimal(7, transaction.getEarnings());
+      statement.setBigDecimal(8, transaction.getEarnings());
     }
 
     return statement;
   }
 
-  private PreparedStatement getMarkSoldStatement(Connection connection, UUID uuid,
-      Transaction transaction) throws SQLException {
+  private PreparedStatement getMarkSoldStatement(Connection connection, Transaction transaction)
+      throws SQLException {
     PreparedStatement statement = connection.prepareStatement(MARK_SOLD);
-    statement.setString(1, uuid.toString());
-    statement.setTimestamp(2, Timestamp.from(transaction.getTransactionDate()));
-    statement.setString(3, transaction.getSymbol());
-    statement.setInt(4, transaction.getQuantity());
-    statement.setBigDecimal(5, transaction.getSinglePrice());
-    statement.setBigDecimal(6, transaction.getBrokerFee());
+    statement.setInt(1, transaction.getId());
 
     return statement;
   }
