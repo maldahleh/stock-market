@@ -50,6 +50,10 @@ public class PlayerManager {
   }
 
   public boolean canNotPerformTransaction(UUID uuid) {
+    if (settings.getTransactionCooldownSeconds() == 0) {
+      return false;
+    }
+
     Long lastAction = lastActionMap.get(uuid);
     if (lastAction == null) {
       return false;
