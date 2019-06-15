@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 public class Messages {
   private final Settings settings;
 
+  private final String commandsDisabled;
   private final String lowPriceStock;
   private final String disabledStock;
   private final String compareMax;
@@ -28,6 +29,7 @@ public class Messages {
   public Messages(ConfigurationSection section, Settings settings) {
     this.settings = settings;
 
+    this.commandsDisabled = Utils.color(section.getString("commands-disabled"));
     this.lowPriceStock = Utils.color(section.getString("low-price-stock"));
     this.disabledStock = Utils.color(section.getString("disabled-stock"));
     this.compareMax = Utils.color(section.getString("compare-max"));
@@ -45,6 +47,10 @@ public class Messages {
         .collect(Collectors.toList());
     this.helpMessage = section.getStringList("help").stream().map(Utils::color)
         .collect(Collectors.toList());
+  }
+
+  public void sendCommandsDisabled(Player player) {
+    player.sendMessage(commandsDisabled);
   }
 
   public void sendLowPriceStock(Player player) {

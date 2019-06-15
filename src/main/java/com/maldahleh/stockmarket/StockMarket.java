@@ -51,15 +51,13 @@ public class StockMarket extends JavaPlugin {
         playerManager, storage, settings, messages);
     InventoryManager inventoryManager = new InventoryManager(this, playerManager,
         stockManager, stockProcessor, getConfig(), messages, storage, settings);
+    BrokerManager brokerManager = new BrokerManager(this, getConfig()
+        .getConfigurationSection("brokers"), inventoryManager);
 
-    getCommand("stockmarket").setExecutor(new StockMarketCommand(this, stockProcessor,
-        inventoryManager, messages));
+    getCommand("stockmarket").setExecutor(new StockMarketCommand(this, brokerManager,
+        stockProcessor, inventoryManager, messages));
 
     new MetricsLite(this);
-
-    if (Bukkit.getPluginManager().isPluginEnabled("Citizens")) {
-      new BrokerManager();
-    }
 
     if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
       new StocksPlaceholder().register();
