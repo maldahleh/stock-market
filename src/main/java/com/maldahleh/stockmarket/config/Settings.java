@@ -11,6 +11,7 @@ import org.bukkit.configuration.ConfigurationSection;
 public class Settings {
   private final Locale locale;
   private final String unknownData;
+  private final boolean blockTransactionsWhenClosed;
   private final boolean brokerOnSale;
   private final int transactionCooldownSeconds;
   private final int minutesBetweenSale;
@@ -27,6 +28,7 @@ public class Settings {
   public Settings(ConfigurationSection section) {
     this.locale = Locale.forLanguageTag(section.getString("locale"));
     this.unknownData = section.getString("unknown-data");
+    this.blockTransactionsWhenClosed = section.getBoolean("block-transactions-when-market-closed");
     this.brokerOnSale = section.getBoolean("broker-on-sale");
     this.transactionCooldownSeconds = section.getInt("transaction-cooldown-seconds");
     this.minutesBetweenSale = section.getInt("minutes-between-sale");

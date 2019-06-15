@@ -11,6 +11,7 @@ public class Messages {
   private final Settings settings;
 
   private final String commandsDisabled;
+  private final String marketClosed;
   private final String lowPriceStock;
   private final String disabledStock;
   private final String compareMax;
@@ -30,6 +31,7 @@ public class Messages {
     this.settings = settings;
 
     this.commandsDisabled = Utils.color(section.getString("commands-disabled"));
+    this.marketClosed = Utils.color(section.getString("market-closed"));
     this.lowPriceStock = Utils.color(section.getString("low-price-stock"));
     this.disabledStock = Utils.color(section.getString("disabled-stock"));
     this.compareMax = Utils.color(section.getString("compare-max"));
@@ -51,6 +53,10 @@ public class Messages {
 
   public void sendCommandsDisabled(Player player) {
     player.sendMessage(commandsDisabled);
+  }
+
+  public void sendMarketClosed(Player player) {
+    player.sendMessage(marketClosed);
   }
 
   public void sendLowPriceStock(Player player) {

@@ -1197,6 +1197,7 @@ inventories:
 settings:
   locale: "en-US"
   unknown-data: "N/A"
+  block-transactions-when-market-closed: true
   broker-on-sale: false
   transaction-cooldown-seconds: 2
   minutes-between-sale: 5
@@ -1210,6 +1211,7 @@ settings:
   allowed-exchanges: []
 messages:
   commands-disabled: "&cCommands are disabled, please use the stock brokers."
+  market-closed: "&eYou cannot sell that stock as the market is closed."
   low-price-stock: "&eThe specified stock has a price which is too low."
   disabled-stock: "&eYou can only lookup stocks in the US and Canadian stock markets."
   compare-max: "&eYou can only compare up to 3 stocks at a time."
