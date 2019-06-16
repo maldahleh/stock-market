@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Transaction {
+  private final int id;
   private final UUID uuid;
   private final String transactionType;
   private final Instant transactionDate;
@@ -48,8 +49,8 @@ public class Transaction {
       return true;
     }
 
-    return Duration.between(transactionDate, Instant.now())
-        .compareTo(Duration.ofMinutes(minutes)) >= 0;
+    return Duration.between(transactionDate, Instant.now()).compareTo(Duration
+        .ofMinutes(minutes)) >= 0;
   }
 
   public void markSold() {

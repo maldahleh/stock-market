@@ -56,9 +56,9 @@ public class StockProcessor {
       }
 
       stockMarket.getEcon().withdrawPlayer(player, grandTotal.doubleValue());
-      Transaction transaction = new Transaction(player.getUniqueId(), "PURCHASE",
-          Instant.now(), stock.getSymbol(), quantity, price, brokerFees, null, null,
-          grandTotal, false);
+      Transaction transaction = new Transaction(storage.getNextId(), player.getUniqueId(),
+          "PURCHASE", Instant.now(), stock.getSymbol(), quantity, price, brokerFees,
+          null, null, grandTotal, false);
       Bukkit.getPluginManager().callEvent(new StockPurchaseEvent(player, symbol, quantity,
           price.doubleValue(), brokerFees.doubleValue(), grandTotal.doubleValue()));
       playerManager.addPurchaseTransaction(player.getUniqueId(), transaction);
@@ -111,7 +111,7 @@ public class StockProcessor {
         soldQuantity += transaction.getQuantity();
         soldValue = soldValue.add(transaction.getStockValue());
         transaction.markSold();
-        storage.markSold(player.getUniqueId(), transaction);
+        storage.markSold(transaction);
         if (soldQuantity == quantity) {
           break;
         }
@@ -134,7 +134,7 @@ public class StockProcessor {
       }
 
       stockMarket.getEcon().depositPlayer(player, grandTotal.doubleValue());
-      Transaction transaction = new Transaction(player.getUniqueId(), "SALE",
+      Transaction transaction = new Transaction(storage.getNextId(), player.getUniqueId(), "SALE",
           Instant.now(), stock.getSymbol(), quantity, price, brokerFees, net, null,
           grandTotal, false);
       Bukkit.getPluginManager().callEvent(new StockSaleEvent(player, symbol, quantity,
