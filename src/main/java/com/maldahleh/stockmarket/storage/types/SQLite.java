@@ -164,14 +164,15 @@ public class SQLite implements Storage {
       boolean isPurchase) throws SQLException {
     PreparedStatement statement = connection.prepareStatement(isPurchase ? PURCHASE_QUERY
         : SALE_QUERY);
-    statement.setString(1, transaction.getUuid().toString());
-    statement.setTimestamp(2, Timestamp.from(transaction.getTransactionDate()));
-    statement.setString(3, transaction.getSymbol().toUpperCase());
-    statement.setInt(4, transaction.getQuantity());
-    statement.setString(5, transaction.getSinglePrice().toPlainString());
-    statement.setString(6, transaction.getBrokerFee().toPlainString());
+    statement.setInt(1, transaction.getId());
+    statement.setString(2, transaction.getUuid().toString());
+    statement.setTimestamp(3, Timestamp.from(transaction.getTransactionDate()));
+    statement.setString(4, transaction.getSymbol().toUpperCase());
+    statement.setInt(5, transaction.getQuantity());
+    statement.setString(6, transaction.getSinglePrice().toPlainString());
+    statement.setString(7, transaction.getBrokerFee().toPlainString());
     if (transaction.getEarnings() != null) {
-      statement.setString(7, transaction.getEarnings().toPlainString());
+      statement.setString(8, transaction.getEarnings().toPlainString());
     }
 
     return statement;
