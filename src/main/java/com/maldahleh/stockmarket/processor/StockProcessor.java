@@ -55,14 +55,17 @@ public class StockProcessor {
         return;
       }
 
-      stockMarket.getEcon().withdrawPlayer(player, grandTotal.doubleValue());
       Transaction transaction = new Transaction(storage.getNextId(), player.getUniqueId(),
           "PURCHASE", Instant.now(), stock.getSymbol(), quantity, price, brokerFees,
           null, null, grandTotal, false);
-      Bukkit.getPluginManager().callEvent(new StockPurchaseEvent(player, symbol, quantity,
-          price.doubleValue(), brokerFees.doubleValue(), grandTotal.doubleValue()));
-      playerManager.addPurchaseTransaction(player.getUniqueId(), transaction);
-      messages.sendBoughtStockMessage(player, stock.getName(), transaction);
+      Bukkit.getScheduler().runTask(stockMarket, () -> {
+        stockMarket.getEcon().withdrawPlayer(player, grandTotal.doubleValue());
+        Bukkit.getPluginManager().callEvent(new StockPurchaseEvent(player, symbol, quantity,
+            price.doubleValue(), brokerFees.doubleValue(), grandTotal.doubleValue()));
+        playerManager.addPurchaseTransaction(player.getUniqueId(), transaction);
+        messages.sendBoughtStockMessage(player, stock.getName(), transaction);
+      });
+
       storage.processPurchase(transaction);
     });
   }
@@ -133,15 +136,20 @@ public class StockProcessor {
         grandTotal = grandTotal.subtract(brokerFees);
       }
 
-      stockMarket.getEcon().depositPlayer(player, grandTotal.doubleValue());
       Transaction transaction = new Transaction(storage.getNextId(), player.getUniqueId(), "SALE",
           Instant.now(), stock.getSymbol(), quantity, price, brokerFees, net, null,
           grandTotal, false);
-      Bukkit.getPluginManager().callEvent(new StockSaleEvent(player, symbol, quantity,
-          price.doubleValue(), brokerFees.doubleValue(), grandTotal.doubleValue(),
-          soldValue.doubleValue(), net.doubleValue()));
-      playerManager.addSaleTransaction(player.getUniqueId(), transaction);
-      messages.sendSoldStockMessage(player, stock.getName(), transaction);
+      BigDecimal finalSoldValue = soldValue;
+      Bukkit.getScheduler().runTask(stockMarket, () -> {
+        Bukkit.getPluginManager().callEvent(new StockSaleEvent(player, symbol, quantity,
+            price.doubleValue(), transaction.getBrokerFee().doubleValue(),
+            transaction.getGrandTotal().doubleValue(), finalSoldValue.doubleValue(),
+            net.doubleValue()));
+        stockMarket.getEcon().depositPlayer(player, transaction.getGrandTotal().doubleValue());
+        playerManager.addSaleTransaction(player.getUniqueId(), transaction);
+        messages.sendSoldStockMessage(player, stock.getName(), transaction);
+      });
+
       storage.processSale(transaction);
     });
   }
