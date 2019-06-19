@@ -182,6 +182,16 @@ public class StockMarketCommand implements CommandExecutor {
       return true;
     }
 
+    if (strings.length == 1 && strings[0].equalsIgnoreCase("history")) {
+      if (!player.hasPermission("stockmarket.history")) {
+        messages.sendNoPermission(player);
+        return true;
+      }
+
+      inventoryManager.openStockHistoryInventory(player);
+      return true;
+    }
+
     if (strings.length == 2 && strings[0].equalsIgnoreCase("history")) {
       if (!player.hasPermission("stockmarket.history")) {
         messages.sendNoPermission(player);

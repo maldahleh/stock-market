@@ -78,6 +78,10 @@ public class InventoryManager {
     transactionInventory.openInventory(player, target);
   }
 
+  public void openStockHistoryInventory(Player player) {
+    stockHistoryInventory.openInventory(player, null);
+  }
+
   public void openStockHistoryInventory(Player player, String symbol) {
     stockHistoryInventory.openInventory(player, symbol);
   }
