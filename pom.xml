@@ -6,7 +6,7 @@
 
     <groupId>com.maldahleh</groupId>
     <artifactId>stockmarket</artifactId>
-    <version>1.2.2</version>
+    <version>1.2.3</version>
     <name>StockMarket</name>
 
     <build>
