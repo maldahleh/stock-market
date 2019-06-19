@@ -16,4 +16,6 @@ public interface Storage {
   List<Transaction> getPlayerTransactions(UUID uuid);
 
   List<Transaction> getStockTransactions(String symbol);
+
+  List<Transaction> getTransactionHistory();
 }

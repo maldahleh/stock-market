@@ -30,6 +30,9 @@ public class SQLite implements Storage {
   private static final String GET_QUERY = "SELECT id, tran_type, tran_date, symbol, quantity, "
       + "single_price, broker_fee, earnings, sold FROM sm_transactions WHERE uuid = ? "
       + "ORDER BY tran_date";
+  private static final String GET_HISTORY_QUERY = "SELECT id, uuid, tran_type, tran_date, symbol, "
+      + "quantity, single_price, broker_fee, earnings, sold FROM sm_transactions ORDER BY "
+      + "tran_date LIMIT 100";
   private static final String STOCK_QUERY = "SELECT id, uuid, tran_type, tran_date, symbol, "
       + "quantity, single_price, broker_fee, earnings, sold FROM sm_transactions WHERE symbol = ? "
       + "ORDER BY tran_date";
@@ -136,6 +139,36 @@ public class SQLite implements Storage {
 
     try (Connection connection = getConnection();
         PreparedStatement statement = getStockGetStatement(connection, symbol);
+        ResultSet resultSet = statement.executeQuery()) {
+      while (resultSet.next()) {
+        BigDecimal earnings = null;
+
+        String earningsString = resultSet.getString(9);
+        if (earningsString != null) {
+          earnings = new BigDecimal(earningsString);
+        }
+
+        transactions.add(new Transaction(resultSet.getInt(1),
+            UUID.fromString(resultSet.getString(2)),
+            resultSet.getString(3).toUpperCase(),
+            resultSet.getTimestamp(4).toInstant(), resultSet.getString(5),
+            resultSet.getInt(6), new BigDecimal(resultSet.getString(7)),
+            new BigDecimal(resultSet.getString(8)), earnings, null, null,
+            resultSet.getBoolean(10)));
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
+    return transactions;
+  }
+
+  @Override
+  public List<Transaction> getTransactionHistory() {
+    List<Transaction> transactions = new ArrayList<>();
+
+    try (Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(GET_HISTORY_QUERY);
         ResultSet resultSet = statement.executeQuery()) {
       while (resultSet.next()) {
         BigDecimal earnings = null;

@@ -3,6 +3,7 @@ package com.maldahleh.stockmarket;
 import com.maldahleh.stockmarket.api.StockMarketAPI;
 import com.maldahleh.stockmarket.brokers.BrokerManager;
 import com.maldahleh.stockmarket.commands.StockMarketCommand;
+import com.maldahleh.stockmarket.commands.StockMarketTabCompleter;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
@@ -56,6 +57,7 @@ public class StockMarket extends JavaPlugin {
 
     getCommand("stockmarket").setExecutor(new StockMarketCommand(this, brokerManager,
         stockProcessor, inventoryManager, messages));
+    getCommand("stockmarket").setTabCompleter(new StockMarketTabCompleter());
 
     new MetricsLite(this);
 

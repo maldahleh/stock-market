@@ -27,6 +27,11 @@ public class StockHistoryProvider implements IContentProvider<String, Transactio
 
   @Override
   public Map<Transaction, UUID> getContent(String lookup) {
+    if (lookup == null) {
+      return storage.getTransactionHistory().stream().collect(Collectors.toMap(t -> t,
+          Transaction::getUuid));
+    }
+
     return storage.getStockTransactions(lookup.toUpperCase()).stream()
         .collect(Collectors.toMap(t -> t, Transaction::getUuid));
   }
