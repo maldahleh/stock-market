@@ -192,22 +192,32 @@ public class StockMarketCommand implements CommandExecutor {
       return true;
     }
 
-    if (strings.length == 3 && strings[0].equalsIgnoreCase("buy")) {
-      Integer quantity = Utils.getInteger(strings[2]);
-      if (quantity == null || quantity <= 0) {
-        messages.sendInvalidQuantity(player);
-        return true;
+    if ((strings.length == 2 || strings.length == 3)
+        && strings[0].equalsIgnoreCase("buy")) {
+      Integer quantity = 1;
+
+      if (strings.length == 3) {
+        quantity = Utils.getInteger(strings[2]);
+        if (quantity == null || quantity <= 0) {
+          messages.sendInvalidQuantity(player);
+          return true;
+        }
       }
 
       stockProcessor.buyStock(player, strings[1], quantity);
       return true;
     }
 
-    if (strings.length == 3 && strings[0].equalsIgnoreCase("sell")) {
-      Integer quantity = Utils.getInteger(strings[2]);
-      if (quantity == null || quantity <= 0) {
-        messages.sendInvalidQuantity(player);
-        return true;
+    if ((strings.length == 2 || strings.length == 3)
+        && strings[0].equalsIgnoreCase("sell")) {
+      Integer quantity = 1;
+
+      if (strings.length == 3) {
+        quantity = Utils.getInteger(strings[2]);
+        if (quantity == null || quantity <= 0) {
+          messages.sendInvalidQuantity(player);
+          return true;
+        }
       }
 
       stockProcessor.sellStock(player, strings[1], quantity);
