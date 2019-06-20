@@ -18,6 +18,10 @@ public class StockMarketTabCompleter implements TabCompleter {
       return new ArrayList<>();
     }
 
+    if (strings.length != 1) {
+      return new ArrayList<>();
+    }
+
     Player player = (Player) commandSender;
     if (!player.hasPermission("stockmarket.use")) {
       return new ArrayList<>();
@@ -62,10 +66,8 @@ public class StockMarketTabCompleter implements TabCompleter {
     }
 
     List<String> completions = new ArrayList<>();
-    if (strings.length == 1) {
-      StringUtil.copyPartialMatches(strings[0], possibleMatches, completions);
-      Collections.sort(completions);
-    }
+    StringUtil.copyPartialMatches(strings[0], possibleMatches, completions);
+    Collections.sort(completions);
 
     return completions;
   }
