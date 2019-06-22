@@ -18,12 +18,26 @@ public class StockMarketTabCompleter implements TabCompleter {
       return new ArrayList<>();
     }
 
-    if (strings.length != 1) {
+    if (strings.length != 1 && strings.length != 2) {
       return new ArrayList<>();
     }
 
     Player player = (Player) commandSender;
     if (!player.hasPermission("stockmarket.use")) {
+      return new ArrayList<>();
+    }
+
+    if (strings.length == 2) {
+      if (strings[0].equalsIgnoreCase("portfolio")
+          && player.hasPermission("stockmarket.portfolio.other")) {
+        return null;
+      }
+
+      if (strings[0].equalsIgnoreCase("transactions")
+          && player.hasPermission("stockmarket.transactions.other")) {
+        return null;
+      }
+
       return new ArrayList<>();
     }
 
@@ -58,7 +72,7 @@ public class StockMarketTabCompleter implements TabCompleter {
 
     if (player.hasPermission("stockmarket.transactions")
         || player.hasPermission("stockmarket.transactions.other")) {
-      possibleMatches.add("portfolio");
+      possibleMatches.add("transactions");
     }
 
     if (player.hasPermission("stockmarket.history")) {
