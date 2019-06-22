@@ -1248,6 +1248,7 @@ messages:
     list: "&e/stockmarket list &6- &eDisplay a list of popular stocks"
     tutorial: "&e/stockmarket tutorial &6- &eLearn about the Stock Market"
     lookup: "&e/stockmarket lookup {symbol} &6- &eView information on a stock"
+    compare: "&e/stockmarket compare {comma separated list of symbols}  &6- &eCompare multiple stocks"
     portfolio: "&e/stockmarket portfolio &6- &eView your stock portfolio"
     portfolio-other: "&e/stockmarket portfolio {player} &6- &eView another player's portfolio"
     transactions: "&e/stockmarket transactions &6- &eView your transaction history"

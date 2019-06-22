@@ -27,6 +27,21 @@ public class Messages {
   private final List<String> soldMessage;
   private final List<String> helpMessage;
 
+  private final String helpCommandInfo;
+  private final String listCommandInfo;
+  private final String tutorialCommandInfo;
+  private final String lookupCommandInfo;
+  private final String compareCommandInfo;
+  private final String portfolioCommandInfo;
+  private final String portfolioOtherCommandInfo;
+  private final String transactionsCommandInfo;
+  private final String transactionsOtherCommandInfo;
+  private final String historyCommandInfo;
+  private final String historySymbolCommandInfo;
+  private final String buyCommandInfo;
+  private final String sellCommandInfo;
+  private final String simpleBrokerCommandInfo;
+
   public Messages(ConfigurationSection section, Settings settings) {
     this.settings = settings;
 
@@ -49,6 +64,21 @@ public class Messages {
         .collect(Collectors.toList());
     this.helpMessage = section.getStringList("help").stream().map(Utils::color)
         .collect(Collectors.toList());
+
+    this.helpCommandInfo = Utils.color(section.getString("commands.help"));
+    this.listCommandInfo = Utils.color(section.getString("commands.list"));
+    this.tutorialCommandInfo = Utils.color(section.getString("commands.tutorial"));
+    this.lookupCommandInfo = Utils.color(section.getString("commands.lookup"));
+    this.compareCommandInfo = Utils.color(section.getString("commands.compare"));
+    this.portfolioCommandInfo = Utils.color(section.getString("commands.portfolio"));
+    this.portfolioOtherCommandInfo = Utils.color(section.getString("commands.portfolio-other"));
+    this.transactionsCommandInfo = Utils.color(section.getString("commands.transactions"));
+    this.transactionsOtherCommandInfo = Utils.color(section.getString("commands.transactions-other"));
+    this.historyCommandInfo = Utils.color(section.getString("commands.history"));
+    this.historySymbolCommandInfo = Utils.color(section.getString("commands.history-symbol"));
+    this.buyCommandInfo = Utils.color(section.getString("commands.buy"));
+    this.sellCommandInfo = Utils.color(section.getString("commands.sell"));
+    this.simpleBrokerCommandInfo = Utils.color(section.getString("commands.simplebroker"));
   }
 
   public void sendCommandsDisabled(Player player) {
@@ -135,7 +165,63 @@ public class Messages {
 
   public void sendHelpMessage(Player player) {
     for (String message : helpMessage) {
+      if (message.contains("<commands>")) {
+        sendCommandInfo(player);
+        continue;
+      }
+
       player.sendMessage(message);
+    }
+  }
+
+  private void sendCommandInfo(Player player) {
+    if (!player.hasPermission("stockmarket.use")) {
+      return;
+    }
+
+    player.sendMessage(helpCommandInfo);
+    if (player.hasPermission("stockmarket.tutorial")) {
+      player.sendMessage(tutorialCommandInfo);
+    }
+
+    if (player.hasPermission("stockmarket.list")) {
+      player.sendMessage(listCommandInfo);
+    }
+
+    if (player.hasPermission("stockmarket.lookup")) {
+      player.sendMessage(lookupCommandInfo);
+    }
+
+    if (player.hasPermission("stockmarket.compare")) {
+      player.sendMessage(compareCommandInfo);
+    }
+
+    if (player.hasPermission("stockmarket.portfolio")) {
+      player.sendMessage(portfolioCommandInfo);
+    }
+
+    if (player.hasPermission("stockmarket.portfolio.other")) {
+      player.sendMessage(portfolioOtherCommandInfo);
+    }
+
+    if (player.hasPermission("stockmarket.transactions")) {
+      player.sendMessage(transactionsCommandInfo);
+    }
+
+    if (player.hasPermission("stockmarket.transactions.other")) {
+      player.sendMessage(transactionsOtherCommandInfo);
+    }
+
+    if (player.hasPermission("stockmarket.history")) {
+      player.sendMessage(historyCommandInfo);
+      player.sendMessage(historySymbolCommandInfo);
+    }
+
+    player.sendMessage(buyCommandInfo);
+    player.sendMessage(sellCommandInfo);
+
+    if (player.hasPermission("stockmarket.spawnbroker")) {
+      player.sendMessage(simpleBrokerCommandInfo);
     }
   }
 }

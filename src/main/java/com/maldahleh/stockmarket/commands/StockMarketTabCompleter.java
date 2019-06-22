@@ -42,6 +42,7 @@ public class StockMarketTabCompleter implements TabCompleter {
     }
 
     List<String> possibleMatches = new ArrayList<>();
+    possibleMatches.add("help");
     possibleMatches.add("buy");
     possibleMatches.add("sell");
 
