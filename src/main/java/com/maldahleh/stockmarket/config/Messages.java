@@ -42,6 +42,17 @@ public class Messages {
   private final String sellCommandInfo;
   private final String simpleBrokerCommandInfo;
 
+  private final String pendingLookup;
+  private final String pendingCompare;
+  private final String pendingPortfolio;
+  private final String pendingPortfolioOther;
+  private final String pendingTransactions;
+  private final String pendingTransactionsOther;
+  private final String pendingHistory;
+  private final String pendingHistorySymbol;
+  private final String pendingBuy;
+  private final String pendingSale;
+
   public Messages(ConfigurationSection section, Settings settings) {
     this.settings = settings;
 
@@ -79,6 +90,17 @@ public class Messages {
     this.buyCommandInfo = Utils.color(section.getString("commands.buy"));
     this.sellCommandInfo = Utils.color(section.getString("commands.sell"));
     this.simpleBrokerCommandInfo = Utils.color(section.getString("commands.simplebroker"));
+
+    this.pendingLookup = Utils.color(section.getString("pending.lookup"));
+    this.pendingCompare = Utils.color(section.getString("pending.compare"));
+    this.pendingPortfolio = Utils.color(section.getString("pending.portfolio"));
+    this.pendingPortfolioOther = Utils.color(section.getString("pending.portfolio-other"));
+    this.pendingTransactions = Utils.color(section.getString("pending.transactions"));
+    this.pendingTransactionsOther = Utils.color(section.getString("pending.transactions-other"));
+    this.pendingHistory = Utils.color(section.getString("pending.history"));
+    this.pendingHistorySymbol = Utils.color(section.getString("pending.history-symbol"));
+    this.pendingBuy = Utils.color(section.getString("pending.buy"));
+    this.pendingSale = Utils.color(section.getString("pending.sale"));
   }
 
   public void sendCommandsDisabled(Player player) {
@@ -223,5 +245,45 @@ public class Messages {
     if (player.hasPermission("stockmarket.spawnbroker")) {
       player.sendMessage(simpleBrokerCommandInfo);
     }
+  }
+
+  public void sendPendingLookup(Player player) {
+    player.sendMessage(pendingLookup);
+  }
+
+  public void sendPendingCompare(Player player) {
+    player.sendMessage(pendingCompare);
+  }
+
+  public void sendPendingPortfolio(Player player) {
+    player.sendMessage(pendingPortfolio);
+  }
+
+  public void sendPendingPortfolioOther(Player player) {
+    player.sendMessage(pendingPortfolioOther);
+  }
+
+  public void sendPendingTransactions(Player player) {
+    player.sendMessage(pendingTransactions);
+  }
+
+  public void sendPendingTransactionsOther(Player player) {
+    player.sendMessage(pendingTransactionsOther);
+  }
+
+  public void sendPendingHistory(Player player) {
+    player.sendMessage(pendingHistory);
+  }
+
+  public void sendPendingHistorySymbol(Player player) {
+    player.sendMessage(pendingHistorySymbol);
+  }
+
+  public void sendPendingBuy(Player player) {
+    player.sendMessage(pendingBuy);
+  }
+
+  public void sendPendingSale(Player player) {
+    player.sendMessage(pendingSale);
   }
 }

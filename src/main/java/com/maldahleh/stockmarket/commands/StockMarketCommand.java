@@ -93,6 +93,7 @@ public class StockMarketCommand implements CommandExecutor {
         return true;
       }
 
+      messages.sendPendingLookup(player);
       inventoryManager.openLookupInventory(player, strings[1]);
       return true;
     }
@@ -110,6 +111,7 @@ public class StockMarketCommand implements CommandExecutor {
         return true;
       }
 
+      messages.sendPendingCompare(player);
       inventoryManager.openCompareInventory(player, symbols);
       return true;
     }
@@ -120,6 +122,7 @@ public class StockMarketCommand implements CommandExecutor {
         return true;
       }
 
+      messages.sendPendingPortfolio(player);
       inventoryManager.openPortfolioInventory(player);
       return true;
     }
@@ -132,6 +135,7 @@ public class StockMarketCommand implements CommandExecutor {
 
       Player target = Bukkit.getPlayer(strings[1]);
       if (target != null) {
+        messages.sendPendingPortfolioOther(player);
         inventoryManager.openPortfolioInventory(player, target.getUniqueId());
         return true;
       }
@@ -143,6 +147,7 @@ public class StockMarketCommand implements CommandExecutor {
           return;
         }
 
+        messages.sendPendingPortfolioOther(player);
         inventoryManager.openPortfolioInventory(player, offlinePlayer.getUniqueId());
       });
       return true;
@@ -154,6 +159,7 @@ public class StockMarketCommand implements CommandExecutor {
         return true;
       }
 
+      messages.sendPendingTransactions(player);
       inventoryManager.openTransactionInventory(player);
       return true;
     }
@@ -166,6 +172,7 @@ public class StockMarketCommand implements CommandExecutor {
 
       Player target = Bukkit.getPlayer(strings[1]);
       if (target != null) {
+        messages.sendPendingTransactionsOther(player);
         inventoryManager.openTransactionInventory(player, target.getUniqueId());
         return true;
       }
@@ -177,6 +184,7 @@ public class StockMarketCommand implements CommandExecutor {
           return;
         }
 
+        messages.sendPendingTransactionsOther(player);
         inventoryManager.openTransactionInventory(player, offlinePlayer.getUniqueId());
       });
       return true;
@@ -188,6 +196,7 @@ public class StockMarketCommand implements CommandExecutor {
         return true;
       }
 
+      messages.sendPendingHistory(player);
       inventoryManager.openStockHistoryInventory(player);
       return true;
     }
@@ -198,6 +207,7 @@ public class StockMarketCommand implements CommandExecutor {
         return true;
       }
 
+      messages.sendPendingHistorySymbol(player);
       inventoryManager.openStockHistoryInventory(player, strings[1]);
       return true;
     }
@@ -214,6 +224,7 @@ public class StockMarketCommand implements CommandExecutor {
         }
       }
 
+      messages.sendPendingBuy(player);
       stockProcessor.buyStock(player, strings[1], quantity);
       return true;
     }
@@ -230,6 +241,7 @@ public class StockMarketCommand implements CommandExecutor {
         }
       }
 
+      messages.sendPendingSale(player);
       stockProcessor.sellStock(player, strings[1], quantity);
       return true;
     }
