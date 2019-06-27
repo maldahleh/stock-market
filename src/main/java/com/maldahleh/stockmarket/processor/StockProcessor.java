@@ -12,7 +12,9 @@ import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -99,22 +101,19 @@ public class StockProcessor {
         return;
       }
 
-      BigDecimal soldValue = BigDecimal.ZERO;
+      List<Transaction> transactionList = new ArrayList<>();
       int soldQuantity = 0;
       for (Transaction transaction : transactions) {
         if (!transaction.getSymbol().equalsIgnoreCase(symbol)
-            || transaction.isSold()) {
-          continue;
-        }
-
-        if (!transaction.hasElapsed(settings.getMinutesBetweenSale())) {
+            || transaction.isSold()
+            || transaction.getTransactionType().equalsIgnoreCase("sale")
+            || !transaction.hasElapsed(settings.getMinutesBetweenSale())
+            || (soldQuantity + transaction.getQuantity()) > quantity) {
           continue;
         }
 
         soldQuantity += transaction.getQuantity();
-        soldValue = soldValue.add(transaction.getStockValue());
-        transaction.markSold();
-        storage.markSold(transaction);
+        transactionList.add(transaction);
         if (soldQuantity == quantity) {
           break;
         }
@@ -123,6 +122,13 @@ public class StockProcessor {
       if (soldQuantity != quantity) {
         messages.sendInvalidSale(player);
         return;
+      }
+
+      BigDecimal soldValue = BigDecimal.ZERO;
+      for (Transaction sold : transactionList) {
+        soldValue = soldValue.add(sold.getStockValue());
+        sold.markSold();
+        storage.markSold(sold);
       }
 
       BigDecimal quantityPrice = price.multiply(BigDecimal.valueOf(quantity));
