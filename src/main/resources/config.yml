@@ -6,6 +6,7 @@ storage:
     database: "database"
     username: "username"
     password: "password"
+    max-pool-size: 100
 brokers:
   names:
     simple: "&8&lStock Broker"
