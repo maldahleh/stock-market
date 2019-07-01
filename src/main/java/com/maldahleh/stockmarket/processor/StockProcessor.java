@@ -39,7 +39,7 @@ public class StockProcessor {
         return;
       }
 
-      BigDecimal price = stockManager.getServerPrice(stock, settings.getPriceMultiplier());
+      BigDecimal price = stockManager.getServerPrice(stock);
       if (price == null) {
         messages.sendInvalidStock(player);
         return;
@@ -93,7 +93,7 @@ public class StockProcessor {
         return;
       }
 
-      BigDecimal price = stockManager.getServerPrice(stock, settings.getPriceMultiplier());
+      BigDecimal price = stockManager.getServerPrice(stock);
       if (price == null) {
         messages.sendInvalidStock(player);
         return;

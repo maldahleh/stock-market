@@ -3,6 +3,8 @@ package com.maldahleh.stockmarket.placeholder;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.players.player.StockPlayer;
+import com.maldahleh.stockmarket.stocks.StockManager;
+import com.maldahleh.stockmarket.stocks.wrapper.PlaceholderStock;
 import com.maldahleh.stockmarket.utils.Utils;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -12,10 +14,11 @@ import org.bukkit.plugin.Plugin;
 
 public class StocksPlaceholder extends PlaceholderExpansion {
   private PlayerManager playerManager;
+  private StockManager stockManager;
 
   @Override
   public String getIdentifier() {
-    return "stockmarket";
+    return "sm";
   }
 
   @Override
@@ -50,24 +53,56 @@ public class StocksPlaceholder extends PlaceholderExpansion {
     }
 
     playerManager = ((StockMarket) plugin).getPlayerManager();
+    stockManager = ((StockMarket) plugin).getStockManager();
     return PlaceholderAPI.registerPlaceholderHook(getIdentifier(), this);
   }
 
   @Override
   public String onRequest(OfflinePlayer p, String params) {
-    if (!params.equalsIgnoreCase("portfolio-value")) {
+    if (params.startsWith("sd")) {
+      String[] splitInfo = params.split("-");
+      if (splitInfo.length != 2) {
+        return null;
+      }
+
+      PlaceholderStock placeholderStock = stockManager.getPlaceholderStock(splitInfo[0]);
+      if (placeholderStock == null) {
+        return "N/A";
+      }
+
+      if (splitInfo[1].equalsIgnoreCase("name")) {
+        return placeholderStock.getStock().getName();
+      }
+
+      if (splitInfo[1].equalsIgnoreCase("cap")) {
+        return Utils.sigFigNumber(placeholderStock.getStock().getStats().getMarketCap()
+            .doubleValue());
+      }
+
+      if (splitInfo[1].equalsIgnoreCase("sprice")) {
+        return placeholderStock.getServerPrice();
+      }
+
+      if (splitInfo[1].equalsIgnoreCase("vol")) {
+        return Utils.sigFigNumber(placeholderStock.getStock().getQuote().getVolume());
+      }
+
       return null;
     }
 
-    if (p == null || !p.isOnline()) {
-      return "Player Offline";
+    if (params.equalsIgnoreCase("portfolio-value")) {
+      if (p == null || !p.isOnline()) {
+        return "Player Offline";
+      }
+
+      StockPlayer player = playerManager.getStockPlayer(p.getUniqueId());
+      if (player == null) {
+        return "0";
+      }
+
+      return Utils.sigFigNumber(player.getPortfolioValue().doubleValue());
     }
 
-    StockPlayer player = playerManager.getStockPlayer(p.getUniqueId());
-    if (player == null) {
-      return "0";
-    }
-
-    return Utils.sigFigNumber(player.getPortfolioValue().doubleValue());
+    return null;
   }
 }

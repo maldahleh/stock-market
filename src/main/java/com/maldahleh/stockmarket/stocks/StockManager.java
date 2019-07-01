@@ -4,6 +4,8 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
+import com.maldahleh.stockmarket.stocks.wrapper.PlaceholderStock;
+import com.maldahleh.stockmarket.utils.Utils;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -11,9 +13,14 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 import yahoofinance.quotes.fx.FxQuote;
@@ -23,13 +30,34 @@ public class StockManager {
   private final Cache<String, Boolean> marketOpenCache;
   private final Cache<String, FxQuote> fxCache;
 
-  public StockManager(ConfigurationSection section) {
+  private final Map<String, PlaceholderStock> placeholderMap;
+  private final Set<String> pendingOperations;
+
+  private final Plugin plugin;
+  private final Settings settings;
+
+  public StockManager(Plugin plugin, ConfigurationSection section, Settings settings) {
     this.stockCache = CacheBuilder.newBuilder().expireAfterWrite(section
         .getInt("cache.expire-minutes"), TimeUnit.MINUTES).maximumSize(500).build();
     this.marketOpenCache = CacheBuilder.newBuilder().expireAfterWrite(section
         .getInt("cache.expire-minutes"), TimeUnit.MINUTES).maximumSize(500).build();
     this.fxCache = CacheBuilder.newBuilder().expireAfterWrite(section
         .getInt("cache.expire-minutes"), TimeUnit.MINUTES).maximumSize(500).build();
+
+    this.placeholderMap = new ConcurrentHashMap<>();
+    this.pendingOperations = ConcurrentHashMap.newKeySet();
+
+    this.plugin = plugin;
+    this.settings = settings;
+
+    Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+      for (Entry<String, PlaceholderStock> entry : placeholderMap.entrySet()) {
+        Stock stock = getStock(entry.getKey());
+        entry.getValue().setStock(stock);
+        entry.getValue().setServerPrice(Utils.format(getServerPrice(stock),
+            settings.getUnknownData(), settings.getLocale()));
+      }
+    }, 20L, section.getInt("cache.expire-minutes") * 60L * 20L);
   }
 
   public void cacheStocks(String... symbols) {
@@ -59,6 +87,28 @@ public class StockManager {
     } catch (IOException e) {
       return null;
     }
+  }
+
+  public PlaceholderStock getPlaceholderStock(String symbol) {
+    String uppercaseSymbol = symbol.toUpperCase();
+    PlaceholderStock placeholderStock = placeholderMap.get(uppercaseSymbol);
+    if (placeholderStock != null) {
+      return placeholderStock;
+    }
+
+    if (pendingOperations.contains(uppercaseSymbol)) {
+      return null;
+    }
+
+    pendingOperations.add(uppercaseSymbol);
+    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+      Stock stock = getStock(uppercaseSymbol);
+      placeholderMap.put(uppercaseSymbol, new PlaceholderStock(stock, Utils.format(
+          getServerPrice(stock), settings.getUnknownData(), settings.getLocale())));
+      pendingOperations.remove(uppercaseSymbol);
+    });
+
+    return null;
   }
 
   private BigDecimal getFxRate(String fxSymbol) {
@@ -127,8 +177,8 @@ public class StockManager {
     return result;
   }
 
-  public BigDecimal getServerPrice(Stock stock, BigDecimal multiplier) {
-    BigDecimal price = stock.getQuote().getPrice().multiply(multiplier);
+  public BigDecimal getServerPrice(Stock stock) {
+    BigDecimal price = stock.getQuote().getPrice().multiply(settings.getPriceMultiplier());
     if (!stock.getCurrency().equalsIgnoreCase("USD")) {
       BigDecimal conversionFactor = getFxRate(stock.getCurrency());
       if (conversionFactor == null) {
