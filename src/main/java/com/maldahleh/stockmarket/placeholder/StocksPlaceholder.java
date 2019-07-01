@@ -61,29 +61,29 @@ public class StocksPlaceholder extends PlaceholderExpansion {
   public String onRequest(OfflinePlayer p, String params) {
     if (params.startsWith("sd")) {
       String[] splitInfo = params.split("-");
-      if (splitInfo.length != 2) {
+      if (splitInfo.length != 3) {
         return null;
       }
 
-      PlaceholderStock placeholderStock = stockManager.getPlaceholderStock(splitInfo[0]);
+      PlaceholderStock placeholderStock = stockManager.getPlaceholderStock(splitInfo[1]);
       if (placeholderStock == null) {
         return "N/A";
       }
 
-      if (splitInfo[1].equalsIgnoreCase("name")) {
+      if (splitInfo[2].equalsIgnoreCase("name")) {
         return placeholderStock.getStock().getName();
       }
 
-      if (splitInfo[1].equalsIgnoreCase("cap")) {
+      if (splitInfo[2].equalsIgnoreCase("cap")) {
         return Utils.sigFigNumber(placeholderStock.getStock().getStats().getMarketCap()
             .doubleValue());
       }
 
-      if (splitInfo[1].equalsIgnoreCase("sprice")) {
+      if (splitInfo[2].equalsIgnoreCase("sp")) {
         return placeholderStock.getServerPrice();
       }
 
-      if (splitInfo[1].equalsIgnoreCase("vol")) {
+      if (splitInfo[2].equalsIgnoreCase("vol")) {
         return Utils.sigFigNumber(placeholderStock.getStock().getQuote().getVolume());
       }
 
