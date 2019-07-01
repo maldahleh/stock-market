@@ -49,7 +49,7 @@ public class MySQL implements Storage {
     config.setUsername(section.getString("username"));
     config.setPassword(section.getString("password"));
 
-    config.setMaximumPoolSize(200);
+    config.setMaximumPoolSize(section.getInt("max-pool-size", 100));
     config.addDataSourceProperty("cachePrepStmts", "true");
     config.addDataSourceProperty("prepStmtCacheSize", "400");
     config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
