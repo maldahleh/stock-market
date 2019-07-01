@@ -60,7 +60,7 @@ public class CompareInventory {
           return;
         }
 
-        BigDecimal price = stockManager.getServerPrice(stock, settings.getPriceMultiplier());
+        BigDecimal price = stockManager.getServerPrice(stock);
         if (price == null) {
           messages.sendInvalidStock(player);
           return;

@@ -92,7 +92,7 @@ public class PlayerManager {
         continue;
       }
 
-      BigDecimal serverPrice = stockManager.getServerPrice(stock, settings.getPriceMultiplier());
+      BigDecimal serverPrice = stockManager.getServerPrice(stock);
       if (serverPrice == null) {
         continue;
       }

@@ -70,7 +70,7 @@ public class PortfolioInventoryProvider implements IContentProvider<UUID, String
 
   @Override
   public ItemStack getContentStack(ItemStack baseStack, int position, Stock key, StockData value) {
-    BigDecimal currentPrice = stockManager.getServerPrice(key, settings.getPriceMultiplier());
+    BigDecimal currentPrice = stockManager.getServerPrice(key);
     if (currentPrice == null) {
       return baseStack;
     }
