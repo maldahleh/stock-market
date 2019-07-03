@@ -4,7 +4,7 @@
 
 Project Page: https://www.spigotmc.org/resources/stockmarket-beta.67766/
 
-Special Thanks To:
+Special Thanks:
 
 <img src="https://www.ej-technologies.com/images/product_banners/jprofiler_large.png">
 
