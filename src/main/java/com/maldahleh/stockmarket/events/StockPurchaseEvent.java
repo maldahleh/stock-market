@@ -24,6 +24,7 @@ public class StockPurchaseEvent extends Event {
     return HANDLER_LIST;
   }
 
+  @SuppressWarnings({"unused", "java:S4144"})
   public static HandlerList getHandlerList() {
     return HANDLER_LIST;
   }

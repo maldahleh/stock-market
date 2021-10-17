@@ -13,6 +13,8 @@ import lombok.AllArgsConstructor;
 @SuppressWarnings("unused")
 public record StockMarketAPI(PlayerManager playerManager) {
 
+  private static final BigDecimal NOT_FOUND = BigDecimal.valueOf(-1);
+
   /**
    * Returns a player's portfolio value.
    *
@@ -22,7 +24,7 @@ public record StockMarketAPI(PlayerManager playerManager) {
   public BigDecimal getPortfolioValue(UUID uuid) {
     StockPlayer stockPlayer = playerManager.forceGetStockPlayer(uuid);
     if (stockPlayer == null) {
-      return BigDecimal.valueOf(-1);
+      return NOT_FOUND;
     }
 
     return stockPlayer.getPortfolioValue();
@@ -37,7 +39,7 @@ public record StockMarketAPI(PlayerManager playerManager) {
   public BigDecimal getProfitMargin(UUID uuid) {
     StockPlayer stockPlayer = playerManager.forceGetStockPlayer(uuid);
     if (stockPlayer == null) {
-      return BigDecimal.valueOf(-1);
+      return NOT_FOUND;
     }
 
     return playerManager.getProfitMargin(stockPlayer, playerManager.getCurrentValue(stockPlayer));

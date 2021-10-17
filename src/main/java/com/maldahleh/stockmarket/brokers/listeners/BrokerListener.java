@@ -26,12 +26,10 @@ public record BrokerListener(BrokerManager brokerManager,
   }
 
   private void processEvent(Player clicker, NPC target) {
-    if (clicker == null || target == null || !target.isSpawned()) {
+    if (clicker == null || !brokerManager.isBroker(target)) {
       return;
     }
 
-    if (target.getName().equalsIgnoreCase(brokerManager.getSimpleBrokerName())) {
-      inventoryManager.openListInventory(clicker);
-    }
+    inventoryManager.openListInventory(clicker);
   }
 }

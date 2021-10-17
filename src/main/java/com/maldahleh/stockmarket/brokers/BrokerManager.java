@@ -44,6 +44,14 @@ public class BrokerManager {
     npc.spawn(location, SpawnReason.CREATE);
   }
 
+  public boolean isBroker(NPC npc) {
+    if (npc == null || !npc.isSpawned()) {
+      return false;
+    }
+
+    return npc.getName().equalsIgnoreCase(simpleBrokerName);
+  }
+
   public boolean areCommandsDisabled(Player player) {
     if (!enabled || player.hasPermission("stockmarket.commandbypass")) {
       return false;
