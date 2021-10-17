@@ -10,8 +10,8 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 @AllArgsConstructor
-public class LookupListener implements Listener {
-  private final LookupInventory inventory;
+public record LookupListener(
+    LookupInventory inventory) implements Listener {
 
   @EventHandler
   public void onClick(InventoryClickEvent e) {

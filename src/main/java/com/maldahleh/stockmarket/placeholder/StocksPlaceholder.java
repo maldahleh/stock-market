@@ -13,6 +13,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;
 
 public class StocksPlaceholder extends PlaceholderExpansion {
+
   private PlayerManager playerManager;
   private StockManager stockManager;
 

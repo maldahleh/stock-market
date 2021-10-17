@@ -16,6 +16,7 @@ import org.bukkit.Bukkit;
 import yahoofinance.Stock;
 
 public class PlayerManager {
+
   private final Map<UUID, Long> lastActionMap;
   private final Map<UUID, StockPlayer> stockPlayerMap;
   private final StockMarket stockMarket;
@@ -39,14 +40,14 @@ public class PlayerManager {
     StockPlayer player = new StockPlayer();
     stockPlayerMap.put(uuid, player);
 
-      Bukkit.getScheduler().runTaskAsynchronously(stockMarket, () -> storage
-          .getPlayerTransactions(uuid).forEach(transaction -> {
-            if (transaction.getTransactionType().equalsIgnoreCase("purchase")) {
-              addPurchaseTransaction(uuid, transaction);
-            } else {
-              addSaleTransaction(uuid, transaction);
-            }
-          }));
+    Bukkit.getScheduler().runTaskAsynchronously(stockMarket, () -> storage
+        .getPlayerTransactions(uuid).forEach(transaction -> {
+          if (transaction.getTransactionType().equalsIgnoreCase("purchase")) {
+            addPurchaseTransaction(uuid, transaction);
+          } else {
+            addSaleTransaction(uuid, transaction);
+          }
+        }));
   }
 
   public boolean canNotPerformTransaction(UUID uuid) {

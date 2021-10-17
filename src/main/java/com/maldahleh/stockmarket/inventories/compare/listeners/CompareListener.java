@@ -10,12 +10,12 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 @AllArgsConstructor
-public class CompareListener implements Listener {
-  private final CompareInventory inventory;
+public record CompareListener(
+    CompareInventory inventory) implements Listener {
 
   @EventHandler
   public void onClick(InventoryClickEvent e) {
-    if (!inventory.hasActiveInventory(e.getWhoClicked())) {
+    if (inventory.isNotViewing(e.getWhoClicked())) {
       return;
     }
 
@@ -24,7 +24,7 @@ public class CompareListener implements Listener {
 
   @EventHandler
   public void onDrag(InventoryDragEvent e) {
-    if (!inventory.hasActiveInventory(e.getWhoClicked())) {
+    if (inventory.isNotViewing(e.getWhoClicked())) {
       return;
     }
 

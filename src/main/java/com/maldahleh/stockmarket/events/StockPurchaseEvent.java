@@ -9,6 +9,7 @@ import org.bukkit.event.HandlerList;
 @Getter
 @RequiredArgsConstructor
 public class StockPurchaseEvent extends Event {
+
   private static final HandlerList HANDLER_LIST = new HandlerList();
 
   private final Player player;
@@ -23,6 +24,7 @@ public class StockPurchaseEvent extends Event {
     return HANDLER_LIST;
   }
 
+  @SuppressWarnings({"unused", "java:S4144"})
   public static HandlerList getHandlerList() {
     return HANDLER_LIST;
   }

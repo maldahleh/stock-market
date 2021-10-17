@@ -16,22 +16,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 @AllArgsConstructor
-public class StockMarketCommand implements CommandExecutor {
-  private final Plugin plugin;
-  private final BrokerManager brokerManager;
-  private final StockProcessor stockProcessor;
-  private final InventoryManager inventoryManager;
-  private final Messages messages;
+public record StockMarketCommand(Plugin plugin,
+                                 BrokerManager brokerManager,
+                                 StockProcessor stockProcessor,
+                                 InventoryManager inventoryManager,
+                                 Messages messages) implements
+    CommandExecutor {
 
   @Override
   public boolean onCommand(CommandSender commandSender, Command command, String s,
       String[] strings) {
-    if (!(commandSender instanceof Player)) {
+    if (!(commandSender instanceof Player player)) {
       commandSender.sendMessage("Stocks - You must be a player to use this command.");
       return true;
     }
 
-    Player player = (Player) commandSender;
     if (strings.length == 1 && strings[0].equalsIgnoreCase("spawnsimplebroker")) {
       if (!player.hasPermission("stockmarket.spawnbroker")) {
         messages.sendNoPermission(player);

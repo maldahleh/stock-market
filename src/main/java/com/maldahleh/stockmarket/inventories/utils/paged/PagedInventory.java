@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 public class PagedInventory<L, K, V, T, TV> {
+
   private final Plugin plugin;
 
   private final IContentProvider<L, K, V, T, TV> contentProvider;
@@ -142,12 +143,11 @@ public class PagedInventory<L, K, V, T, TV> {
   }
 
   public void handleClick(InventoryClickEvent e) {
-    if (!(e.getWhoClicked() instanceof Player)
+    if (!(e.getWhoClicked() instanceof Player clicker)
         || e.getClickedInventory() == null) {
       return;
     }
 
-    Player clicker = (Player) e.getWhoClicked();
     PaginatedPlayer player = playerMap.get(clicker.getUniqueId());
     if (player == null) {
       return;

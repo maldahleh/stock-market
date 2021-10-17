@@ -8,8 +8,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 @AllArgsConstructor
-public class PlayerListener implements Listener {
-  private final PlayerManager playerManager;
+public record PlayerListener(
+    PlayerManager playerManager) implements Listener {
 
   @EventHandler
   public void onJoin(PlayerJoinEvent e) {

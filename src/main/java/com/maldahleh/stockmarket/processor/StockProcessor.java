@@ -22,6 +22,7 @@ import yahoofinance.Stock;
 
 @AllArgsConstructor
 public class StockProcessor {
+
   private final StockMarket stockMarket;
   private final StockManager stockManager;
   private final PlayerManager playerManager;

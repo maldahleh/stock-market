@@ -15,9 +15,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class BrokerManager {
-  @Getter private final boolean enabled;
 
-  @Getter private String simpleBrokerName;
+  @Getter
+  private final boolean enabled;
+
+  @Getter
+  private String simpleBrokerName;
   private boolean disableCommands;
 
   public BrokerManager(Plugin plugin, ConfigurationSection section,
@@ -39,6 +42,14 @@ public class BrokerManager {
     npc.setProtected(true);
     npc.getDefaultGoalController().clear();
     npc.spawn(location, SpawnReason.CREATE);
+  }
+
+  public boolean isBroker(NPC npc) {
+    if (npc == null || !npc.isSpawned()) {
+      return false;
+    }
+
+    return npc.getName().equalsIgnoreCase(simpleBrokerName);
   }
 
   public boolean areCommandsDisabled(Player player) {

@@ -8,6 +8,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 public class Messages {
+
   private final Settings settings;
 
   private final String commandsDisabled;
@@ -84,7 +85,8 @@ public class Messages {
     this.portfolioCommandInfo = Utils.color(section.getString("commands.portfolio"));
     this.portfolioOtherCommandInfo = Utils.color(section.getString("commands.portfolio-other"));
     this.transactionsCommandInfo = Utils.color(section.getString("commands.transactions"));
-    this.transactionsOtherCommandInfo = Utils.color(section.getString("commands.transactions-other"));
+    this.transactionsOtherCommandInfo = Utils.color(
+        section.getString("commands.transactions-other"));
     this.historyCommandInfo = Utils.color(section.getString("commands.history"));
     this.historySymbolCommandInfo = Utils.color(section.getString("commands.history-symbol"));
     this.buyCommandInfo = Utils.color(section.getString("commands.buy"));

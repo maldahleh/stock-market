@@ -11,9 +11,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 @AllArgsConstructor
-public class BrokerListener implements Listener {
-  private final BrokerManager brokerManager;
-  private final InventoryManager inventoryManager;
+public record BrokerListener(BrokerManager brokerManager,
+                             InventoryManager inventoryManager) implements
+    Listener {
 
   @EventHandler
   public void onLeftClick(NPCLeftClickEvent e) {
@@ -26,12 +26,10 @@ public class BrokerListener implements Listener {
   }
 
   private void processEvent(Player clicker, NPC target) {
-    if (clicker == null || target == null || !target.isSpawned()) {
+    if (clicker == null || !brokerManager.isBroker(target)) {
       return;
     }
 
-    if (target.getName().equalsIgnoreCase(brokerManager.getSimpleBrokerName())) {
-      inventoryManager.openListInventory(clicker);
-    }
+    inventoryManager.openListInventory(clicker);
   }
 }

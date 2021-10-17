@@ -16,13 +16,13 @@ import com.maldahleh.stockmarket.storage.types.MySQL;
 import com.maldahleh.stockmarket.storage.types.SQLite;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
-import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
 public class StockMarket extends JavaPlugin {
+
   private StockMarketAPI api;
   private Economy econ;
 
@@ -61,8 +61,6 @@ public class StockMarket extends JavaPlugin {
     getCommand("stockmarket").setExecutor(new StockMarketCommand(this, brokerManager,
         stockProcessor, inventoryManager, messages));
     getCommand("stockmarket").setTabCompleter(new StockMarketTabCompleter());
-
-    new MetricsLite(this);
 
     if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
       new StocksPlaceholder().register();

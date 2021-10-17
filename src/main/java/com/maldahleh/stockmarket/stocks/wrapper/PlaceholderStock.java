@@ -9,6 +9,7 @@ import yahoofinance.Stock;
 @Setter
 @AllArgsConstructor
 public class PlaceholderStock {
+
   private Stock stock;
   private String serverPrice;
 }
