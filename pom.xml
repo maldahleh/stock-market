@@ -60,28 +60,24 @@
 
   <repositories>
     <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+    <repository>
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
-
     <repository>
       <id>vault-repo</id>
       <url>https://nexus.hc.to/content/repositories/pub_releases</url>
     </repository>
-
     <repository>
       <id>everything</id>
       <url>https://repo.citizensnpcs.co/</url>
     </repository>
-
     <repository>
       <id>placeholderapi</id>
       <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-    </repository>
-
-    <repository>
-      <id>CodeMC</id>
-      <url>https://repo.codemc.org/repository/maven-public</url>
     </repository>
   </repositories>
 
@@ -92,34 +88,34 @@
       <version>1.17.1-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
-
+    <dependency>
+      <groupId>com.github.polygon-io</groupId>
+      <artifactId>client-jvm</artifactId>
+      <version>v2.0.0</version>
+    </dependency>
     <dependency>
       <groupId>com.zaxxer</groupId>
       <artifactId>HikariCP</artifactId>
       <version>5.0.0</version>
     </dependency>
-
     <dependency>
       <groupId>net.milkbowl.vault</groupId>
       <artifactId>VaultAPI</artifactId>
       <version>1.7</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>net.citizensnpcs</groupId>
       <artifactId>citizensapi</artifactId>
       <version>2.0.28-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>me.clip</groupId>
       <artifactId>placeholderapi</artifactId>
       <version>2.9.2</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
