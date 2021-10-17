@@ -13,46 +13,36 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 @AllArgsConstructor
-public class ListListener implements Listener {
-  private final ListInventory inventory;
-  private final LookupInventory lookupInventory;
-  private final StockProcessor stockProcessor;
+public record ListListener(ListInventory inventory,
+                           LookupInventory lookupInventory,
+                           StockProcessor stockProcessor) implements
+    Listener {
 
   @EventHandler
   public void onClick(InventoryClickEvent e) {
-    if (!(e.getWhoClicked() instanceof Player)
-        || !inventory.isActive(e.getWhoClicked())) {
+    if (!(e.getWhoClicked() instanceof Player player)
+        || inventory.isNotViewing(e.getWhoClicked())) {
       return;
     }
 
     e.setCancelled(true);
-    Player player = (Player) e.getWhoClicked();
     String symbol = inventory.getSymbol(e.getRawSlot());
     if (symbol == null) {
       return;
     }
 
     switch (e.getClick()) {
-      case SHIFT_LEFT:
-        stockProcessor.buyStock(player, symbol, 5);
-        return;
-      case LEFT:
-        stockProcessor.buyStock(player, symbol, 1);
-        return;
-      case MIDDLE:
-        lookupInventory.openInventory(player, symbol.toUpperCase());
-        return;
-      case RIGHT:
-        stockProcessor.sellStock(player, symbol, 1);
-        return;
-      case SHIFT_RIGHT:
-        stockProcessor.sellStock(player, symbol, 5);
+      case SHIFT_LEFT -> stockProcessor.buyStock(player, symbol, 5);
+      case LEFT -> stockProcessor.buyStock(player, symbol, 1);
+      case MIDDLE -> lookupInventory.openInventory(player, symbol.toUpperCase());
+      case RIGHT -> stockProcessor.sellStock(player, symbol, 1);
+      case SHIFT_RIGHT -> stockProcessor.sellStock(player, symbol, 5);
     }
   }
 
   @EventHandler
   public void onDrag(InventoryDragEvent e) {
-    if (!inventory.isActive(e.getWhoClicked())) {
+    if (inventory.isNotViewing(e.getWhoClicked())) {
       return;
     }
 

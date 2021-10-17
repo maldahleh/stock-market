@@ -26,6 +26,7 @@ import yahoofinance.Stock;
 import yahoofinance.histquotes.HistoricalQuote;
 
 public class LookupInventory {
+
   private final StockMarket stockMarket;
   private final StockManager stockManager;
   private final Messages messages;

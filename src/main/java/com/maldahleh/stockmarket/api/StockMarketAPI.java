@@ -10,8 +10,8 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class StockMarketAPI {
-  private final PlayerManager playerManager;
+@SuppressWarnings("unused")
+public record StockMarketAPI(PlayerManager playerManager) {
 
   /**
    * Returns a player's portfolio value.

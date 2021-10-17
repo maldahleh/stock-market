@@ -14,7 +14,7 @@ public class StockMarketTabCompleter implements TabCompleter {
   @Override
   public List<String> onTabComplete(CommandSender commandSender, Command command, String s,
       String[] strings) {
-    if (!(commandSender instanceof Player)) {
+    if (!(commandSender instanceof Player player)) {
       return new ArrayList<>();
     }
 
@@ -22,7 +22,6 @@ public class StockMarketTabCompleter implements TabCompleter {
       return new ArrayList<>();
     }
 
-    Player player = (Player) commandSender;
     if (!player.hasPermission("stockmarket.use")) {
       return new ArrayList<>();
     }

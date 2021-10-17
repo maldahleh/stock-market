@@ -12,6 +12,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 public class StockHistoryInventory {
+
   private final PagedInventory<String, Transaction, UUID, Transaction, OfflinePlayer> inventory;
 
   public StockHistoryInventory(StockMarket stockMarket, Storage storage,

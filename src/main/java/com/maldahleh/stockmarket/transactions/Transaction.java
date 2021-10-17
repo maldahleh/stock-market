@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Transaction {
+
   private final int id;
   private final UUID uuid;
   private final String transactionType;

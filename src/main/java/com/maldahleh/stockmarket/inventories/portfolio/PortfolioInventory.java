@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import yahoofinance.Stock;
 
 public class PortfolioInventory {
+
   private final PagedInventory<UUID, String, StockData, Stock, StockData> inventory;
 
   public PortfolioInventory(StockMarket stockMarket, PlayerManager playerManager,

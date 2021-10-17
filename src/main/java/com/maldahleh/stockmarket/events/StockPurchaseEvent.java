@@ -9,6 +9,7 @@ import org.bukkit.event.HandlerList;
 @Getter
 @RequiredArgsConstructor
 public class StockPurchaseEvent extends Event {
+
   private static final HandlerList HANDLER_LIST = new HandlerList();
 
   private final Player player;

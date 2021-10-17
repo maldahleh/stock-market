@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class SQLite implements Storage {
+
   private static final String SQLITE_URL = "jdbc:sqlite:plugins/StockMarket/StockMarket.db";
 
   private static final String CREATE_QUERY = "CREATE TABLE IF NOT EXISTS "

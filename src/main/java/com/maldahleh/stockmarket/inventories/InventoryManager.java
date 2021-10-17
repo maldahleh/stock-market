@@ -19,6 +19,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 public class InventoryManager {
+
   private final LookupInventory lookupInventory;
   private final CompareInventory compareInventory;
   private final ListInventory listInventory;

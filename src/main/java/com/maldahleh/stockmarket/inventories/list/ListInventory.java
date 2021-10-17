@@ -17,6 +17,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
 
 public class ListInventory {
+
   private final Inventory listInventory;
   private final Set<UUID> activeViewers;
   private final Map<Integer, String> symbolMap;
@@ -52,8 +53,8 @@ public class ListInventory {
     return symbolMap.get(slot);
   }
 
-  public boolean isActive(HumanEntity entity) {
-    return activeViewers.contains(entity.getUniqueId());
+  public boolean isNotViewing(HumanEntity entity) {
+    return !activeViewers.contains(entity.getUniqueId());
   }
 
   public void remove(HumanEntity entity) {

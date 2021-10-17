@@ -11,6 +11,7 @@ import lombok.Getter;
 
 @Getter
 public class StockPlayer {
+
   private final NavigableMap<String, StockData> stockMap = new TreeMap<>();
   private final NavigableMap<Instant, Transaction> transactionMap = new TreeMap<>();
 

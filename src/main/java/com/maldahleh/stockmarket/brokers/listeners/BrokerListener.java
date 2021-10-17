@@ -11,9 +11,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 @AllArgsConstructor
-public class BrokerListener implements Listener {
-  private final BrokerManager brokerManager;
-  private final InventoryManager inventoryManager;
+public record BrokerListener(BrokerManager brokerManager,
+                             InventoryManager inventoryManager) implements
+    Listener {
 
   @EventHandler
   public void onLeftClick(NPCLeftClickEvent e) {

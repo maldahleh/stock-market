@@ -13,16 +13,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 public class TutorialInventory {
+
   private final Set<UUID> activeViewers;
-  private final Inventory tutorialInventory;
+  private final Inventory bukkitInventory;
 
   public TutorialInventory(StockMarket plugin, ConfigurationSection section) {
     this.activeViewers = new HashSet<>();
-    this.tutorialInventory = Bukkit.createInventory(null, section
+    this.bukkitInventory = Bukkit.createInventory(null, section
         .getInt("inventory.size"), Utils.color(section.getString("inventory.name")));
 
     for (String key : section.getConfigurationSection("items").getKeys(false)) {
-      tutorialInventory.setItem(Integer.valueOf(key), Utils.createItemStack(section
+      bukkitInventory.setItem(Integer.parseInt(key), Utils.createItemStack(section
           .getConfigurationSection("items." + key)));
     }
 
@@ -30,12 +31,12 @@ public class TutorialInventory {
   }
 
   public void openInventory(Player player) {
-    player.openInventory(tutorialInventory);
+    player.openInventory(bukkitInventory);
     activeViewers.add(player.getUniqueId());
   }
 
-  public boolean isActive(HumanEntity entity) {
-    return activeViewers.contains(entity.getUniqueId());
+  public boolean isNotViewing(HumanEntity entity) {
+    return !activeViewers.contains(entity.getUniqueId());
   }
 
   public void remove(HumanEntity entity) {

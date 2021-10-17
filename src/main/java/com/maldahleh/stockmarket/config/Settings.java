@@ -9,6 +9,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 @Getter
 public class Settings {
+
   private final Locale locale;
   private final String unknownData;
   private final boolean blockTransactionsWhenClosed;

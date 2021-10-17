@@ -18,11 +18,11 @@ import lombok.AllArgsConstructor;
 import org.bukkit.inventory.ItemStack;
 
 @AllArgsConstructor
-public class TransactionInventoryProvider implements IContentProvider<UUID, Instant, Transaction,
-    Instant, Transaction> {
-  private final StockMarket stockMarket;
-  private final PlayerManager playerManager;
-  private final Settings settings;
+public record TransactionInventoryProvider(StockMarket stockMarket,
+                                           PlayerManager playerManager,
+                                           Settings settings) implements
+    IContentProvider<UUID, Instant, Transaction,
+        Instant, Transaction> {
 
   @Override
   public Map<Instant, Transaction> getContent(UUID uuid) {
@@ -37,9 +37,7 @@ public class TransactionInventoryProvider implements IContentProvider<UUID, Inst
   @Override
   public Map<Instant, Transaction> applyTransformations(Map<Instant, Transaction> data) {
     Map<Instant, Transaction> stockDataMap = new TreeMap<>(Collections.reverseOrder());
-    for (Map.Entry<Instant, Transaction> e : data.entrySet()) {
-      stockDataMap.put(e.getKey(), e.getValue());
-    }
+    stockDataMap.putAll(data);
 
     return stockDataMap;
   }

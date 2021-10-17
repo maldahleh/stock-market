@@ -19,11 +19,11 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
 @AllArgsConstructor
-public class StockHistoryProvider implements IContentProvider<String, Transaction, UUID,
-    Transaction, OfflinePlayer> {
-  private final StockMarket stockMarket;
-  private final Storage storage;
-  private final Settings settings;
+public record StockHistoryProvider(StockMarket stockMarket,
+                                   Storage storage,
+                                   Settings settings) implements
+    IContentProvider<String, Transaction, UUID,
+        Transaction, OfflinePlayer> {
 
   @Override
   public Map<Transaction, UUID> getContent(String lookup) {
@@ -82,7 +82,8 @@ public class StockHistoryProvider implements IContentProvider<String, Transactio
     return baseStack;
   }
 
-  class TransactionComparator implements Comparator<Transaction> {
+  static class TransactionComparator implements Comparator<Transaction> {
+
     @Override
     public int compare(Transaction obj1, Transaction obj2) {
       if (obj1 == obj2) {

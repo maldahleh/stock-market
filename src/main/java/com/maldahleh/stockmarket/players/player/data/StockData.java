@@ -6,6 +6,7 @@ import lombok.Getter;
 
 @Getter
 public class StockData {
+
   private int quantity = 0;
   private BigDecimal value = BigDecimal.ZERO;
 

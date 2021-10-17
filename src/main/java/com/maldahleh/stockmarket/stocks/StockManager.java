@@ -26,6 +26,7 @@ import yahoofinance.YahooFinance;
 import yahoofinance.quotes.fx.FxQuote;
 
 public class StockManager {
+
   private final Cache<String, Stock> stockCache;
   private final Cache<String, Boolean> marketOpenCache;
   private final Cache<String, FxQuote> fxCache;
@@ -61,16 +62,14 @@ public class StockManager {
   }
 
   public void cacheStocks(String... symbols) {
-    try {
-      Map<String, Stock> results = YahooFinance.get(symbols);
-      for (Map.Entry<String, Stock> e : results.entrySet()) {
-        if (e.getKey() == null || e.getValue() == null) {
-          continue;
-        }
-
-        stockCache.put(e.getKey().toUpperCase(), e.getValue());
+    Map<String, Stock> results = YahooFinance.get(symbols);
+    for (Map.Entry<String, Stock> e : results.entrySet()) {
+      if (e.getKey() == null || e.getValue() == null) {
+        continue;
       }
-    } catch (IOException ignored) {}
+
+      stockCache.put(e.getKey().toUpperCase(), e.getValue());
+    }
   }
 
   public Stock getStock(String symbol) {

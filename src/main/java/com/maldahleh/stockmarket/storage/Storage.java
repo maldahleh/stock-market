@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface Storage {
+
   int getNextId();
 
   void processPurchase(Transaction transaction);

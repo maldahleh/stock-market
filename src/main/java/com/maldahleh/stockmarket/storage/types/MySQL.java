@@ -15,6 +15,7 @@ import java.util.UUID;
 import org.bukkit.configuration.ConfigurationSection;
 
 public class MySQL implements Storage {
+
   private static final String CREATE_QUERY = "CREATE TABLE IF NOT EXISTS "
       + "sm_transactions(id INTEGER PRIMARY KEY, uuid CHAR(36), tran_type ENUM('purchase', 'sale'), "
       + "tran_date DATETIME, symbol VARCHAR(12), quantity INTEGER, single_price DECIMAL(19, 2), "

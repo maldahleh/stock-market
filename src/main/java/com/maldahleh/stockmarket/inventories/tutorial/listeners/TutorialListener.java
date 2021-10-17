@@ -10,12 +10,13 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 @AllArgsConstructor
-public class TutorialListener implements Listener {
-  private final TutorialInventory inventory;
+public record TutorialListener(
+    TutorialInventory inventory) implements
+    Listener {
 
   @EventHandler
   public void onClick(InventoryClickEvent e) {
-    if (!inventory.isActive(e.getWhoClicked())) {
+    if (inventory.isNotViewing(e.getWhoClicked())) {
       return;
     }
 
@@ -24,7 +25,7 @@ public class TutorialListener implements Listener {
 
   @EventHandler
   public void onDrag(InventoryDragEvent e) {
-    if (!inventory.isActive(e.getWhoClicked())) {
+    if (inventory.isNotViewing(e.getWhoClicked())) {
       return;
     }
 

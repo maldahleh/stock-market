@@ -15,9 +15,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class BrokerManager {
-  @Getter private final boolean enabled;
 
-  @Getter private String simpleBrokerName;
+  @Getter
+  private final boolean enabled;
+
+  @Getter
+  private String simpleBrokerName;
   private boolean disableCommands;
 
   public BrokerManager(Plugin plugin, ConfigurationSection section,

@@ -20,12 +20,12 @@ import org.bukkit.inventory.ItemStack;
 import yahoofinance.Stock;
 
 @AllArgsConstructor
-public class PortfolioInventoryProvider implements IContentProvider<UUID, String, StockData,
-    Stock, StockData> {
-  private final StockMarket stockMarket;
-  private final PlayerManager playerManager;
-  private final StockManager stockManager;
-  private final Settings settings;
+public record PortfolioInventoryProvider(StockMarket stockMarket,
+                                         PlayerManager playerManager,
+                                         StockManager stockManager,
+                                         Settings settings) implements
+    IContentProvider<UUID, String, StockData,
+        Stock, StockData> {
 
   @Override
   public Map<String, StockData> getContent(UUID uuid) {
@@ -103,7 +103,8 @@ public class PortfolioInventoryProvider implements IContentProvider<UUID, String
     ));
   }
 
-  class StockComparator implements Comparator<Stock> {
+  static class StockComparator implements Comparator<Stock> {
+
     @Override
     public int compare(Stock obj1, Stock obj2) {
       if (obj1 == obj2) {

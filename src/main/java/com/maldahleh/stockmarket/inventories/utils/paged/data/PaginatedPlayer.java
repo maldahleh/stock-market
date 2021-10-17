@@ -5,6 +5,7 @@ import java.util.Map;
 import org.bukkit.inventory.Inventory;
 
 public class PaginatedPlayer {
+
   private final Map<Integer, Inventory> pageMap = new HashMap<>();
   private int currentPage = 1;
 
