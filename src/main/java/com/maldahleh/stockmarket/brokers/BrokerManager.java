@@ -1,6 +1,7 @@
 package com.maldahleh.stockmarket.brokers;
 
 import com.maldahleh.stockmarket.brokers.listeners.BrokerListener;
+import com.maldahleh.stockmarket.commands.CommandManager;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
 import com.maldahleh.stockmarket.utils.Utils;
 import lombok.Getter;
@@ -53,7 +54,7 @@ public class BrokerManager {
   }
 
   public boolean areCommandsDisabled(Player player) {
-    if (!enabled || player.hasPermission("stockmarket.commandbypass")) {
+    if (!enabled || player.hasPermission(CommandManager.COMMAND_BYPASS_PERM)) {
       return false;
     }
 

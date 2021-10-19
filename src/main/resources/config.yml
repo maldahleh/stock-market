@@ -1219,7 +1219,6 @@ messages:
   cooldown-message: "&eYou have to wait 2 seconds between transactions."
   invalid-stock: "&eYou specified an invalid stock symbol."
   invalid-quantity: "&eYou specified an invalid quantity."
-  invalid-player: "&eYou specified an invalid player."
   invalid-sale: "&eYou do not have enough of that stock to sell (you must wait 5 minutes before selling any purchase)."
   insufficient-funds: "&eYou do not have enough money to make that purchase."
   invalid-syntax: "&eInvalid syntax! Use &6/stocks help &efor help."

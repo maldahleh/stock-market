@@ -19,7 +19,6 @@ public class Messages {
   private final String cooldownMessage;
   private final String invalidStock;
   private final String invalidQuantity;
-  private final String invalidPlayer;
   private final String invalidSale;
   private final String insufficientFunds;
   private final String invalidSyntax;
@@ -65,7 +64,6 @@ public class Messages {
     this.cooldownMessage = Utils.color(section.getString("cooldown-message"));
     this.invalidStock = Utils.color(section.getString("invalid-stock"));
     this.invalidQuantity = Utils.color(section.getString("invalid-quantity"));
-    this.invalidPlayer = Utils.color(section.getString("invalid-player"));
     this.invalidSale = Utils.color(section.getString("invalid-sale"));
     this.insufficientFunds = Utils.color(section.getString("insufficient-funds"));
     this.invalidSyntax = Utils.color(section.getString("invalid-syntax"));
@@ -135,10 +133,6 @@ public class Messages {
 
   public void sendInvalidQuantity(Player player) {
     player.sendMessage(invalidQuantity);
-  }
-
-  public void sendInvalidPlayer(Player player) {
-    player.sendMessage(invalidPlayer);
   }
 
   public void sendInvalidSale(Player player) {
