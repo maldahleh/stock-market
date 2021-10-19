@@ -2,10 +2,8 @@ package com.maldahleh.stockmarket.commands.subcommands.types;
 
 import com.maldahleh.stockmarket.commands.subcommands.Subcommand;
 import com.maldahleh.stockmarket.config.Messages;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
-@RequiredArgsConstructor
 public record HelpCommand(Messages messages) implements
     Subcommand {
 
