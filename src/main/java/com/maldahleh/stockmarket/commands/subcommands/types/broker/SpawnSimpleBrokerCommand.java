@@ -10,10 +10,13 @@ public record SpawnSimpleBrokerCommand(
     BrokerManager brokerManager,
     Messages messages) implements Subcommand {
 
+  private static final String NOT_ENABLED_MESSAGE =
+      ChatColor.RED + "Citizens is not enabled, and is required for brokers";
+
   @Override
   public void onCommand(Player player, String[] args) {
     if (!brokerManager.isEnabled()) {
-      player.sendMessage(ChatColor.RED + "Citizens is not enabled, and is required for brokers");
+      player.sendMessage(NOT_ENABLED_MESSAGE);
       return;
     }
 

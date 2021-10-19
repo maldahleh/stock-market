@@ -12,7 +12,7 @@ public record BuyCommand(StockProcessor stockProcessor,
   @Override
   public void onCommand(Player player, String[] args) {
     int quantity = CommandUtils.determineQuantity(args);
-    if (quantity == -1) {
+    if (quantity == CommandUtils.INVALID_QUANTITY) {
       messages.sendInvalidQuantity(player);
       return;
     }

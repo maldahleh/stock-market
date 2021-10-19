@@ -6,6 +6,9 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class CommandUtils {
 
+  public final int INVALID_QUANTITY = -1;
+  private final int DEFAULT_QUANTITY = 1;
+
   private final String OTHER_SUFFIX = ".other";
 
   public String buildOtherPermission(String basePermission) {
@@ -14,12 +17,12 @@ public class CommandUtils {
 
   public int determineQuantity(String[] args) {
     if (args.length != 3) {
-      return 1;
+      return DEFAULT_QUANTITY;
     }
 
     Integer quantity = Utils.getInteger(args[2]);
     if (quantity == null || quantity <= 0) {
-      return -1;
+      return INVALID_QUANTITY;
     }
 
     return quantity;
