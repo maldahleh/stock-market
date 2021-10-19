@@ -10,5 +10,7 @@ public interface Subcommand {
 
   int maxArgs();
 
+  String commandName();
+
   String requiredPerm();
 }

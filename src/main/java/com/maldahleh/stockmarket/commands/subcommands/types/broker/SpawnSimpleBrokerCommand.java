@@ -34,6 +34,11 @@ public record SpawnSimpleBrokerCommand(
   }
 
   @Override
+  public String commandName() {
+    return "spawnsimplebroker";
+  }
+
+  @Override
   public String requiredPerm() {
     return "stockmarket.spawnbroker";
   }

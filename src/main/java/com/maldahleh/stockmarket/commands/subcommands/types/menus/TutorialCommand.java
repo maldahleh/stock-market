@@ -23,6 +23,11 @@ public record TutorialCommand(
   }
 
   @Override
+  public String commandName() {
+    return "tutorial";
+  }
+
+  @Override
   public String requiredPerm() {
     return "stockmarket.tutorial";
   }

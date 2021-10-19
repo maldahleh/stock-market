@@ -25,6 +25,11 @@ public record LookupCommand(InventoryManager inventoryManager, Messages messages
   }
 
   @Override
+  public String commandName() {
+    return "lookup";
+  }
+
+  @Override
   public String requiredPerm() {
     return "stockmarket.lookup";
   }

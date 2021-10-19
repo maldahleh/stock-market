@@ -33,6 +33,11 @@ public record PortfolioCommand(Plugin plugin, InventoryManager inventoryManager,
   }
 
   @Override
+  public String commandName() {
+    return "portfolio";
+  }
+
+  @Override
   public String requiredPerm() {
     return "stockmarket.portfolio";
   }

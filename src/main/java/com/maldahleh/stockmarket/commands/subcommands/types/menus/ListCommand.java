@@ -23,6 +23,11 @@ public record ListCommand(
   }
 
   @Override
+  public String commandName() {
+    return "list";
+  }
+
+  @Override
   public String requiredPerm() {
     return "stockmarket.list";
   }

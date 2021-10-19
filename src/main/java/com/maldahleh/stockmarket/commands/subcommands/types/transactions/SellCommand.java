@@ -32,6 +32,11 @@ public record SellCommand(StockProcessor stockProcessor,
   }
 
   @Override
+  public String commandName() {
+    return "sell";
+  }
+
+  @Override
   public String requiredPerm() {
     return null;
   }

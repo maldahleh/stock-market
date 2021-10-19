@@ -2,8 +2,8 @@ package com.maldahleh.stockmarket;
 
 import com.maldahleh.stockmarket.api.StockMarketAPI;
 import com.maldahleh.stockmarket.brokers.BrokerManager;
-import com.maldahleh.stockmarket.commands.StockMarketCommand;
-import com.maldahleh.stockmarket.commands.StockMarketTabCompleter;
+import com.maldahleh.stockmarket.commands.CommandManager;
+import com.maldahleh.stockmarket.commands.impl.StockMarketTabCompleter;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
@@ -58,9 +58,7 @@ public class StockMarket extends JavaPlugin {
     BrokerManager brokerManager = new BrokerManager(this, getConfig()
         .getConfigurationSection("brokers"), inventoryManager);
 
-    getCommand("stockmarket").setExecutor(new StockMarketCommand(this, brokerManager,
-        stockProcessor, inventoryManager, messages));
-    getCommand("stockmarket").setTabCompleter(new StockMarketTabCompleter());
+    new CommandManager(this, brokerManager, inventoryManager, stockProcessor, messages);
 
     if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
       new StocksPlaceholder().register();

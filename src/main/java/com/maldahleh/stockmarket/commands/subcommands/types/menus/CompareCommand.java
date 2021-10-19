@@ -39,6 +39,11 @@ public record CompareCommand(InventoryManager inventoryManager, Messages message
   }
 
   @Override
+  public String commandName() {
+    return "compare";
+  }
+
+  @Override
   public String requiredPerm() {
     return "stockmarket.compare";
   }

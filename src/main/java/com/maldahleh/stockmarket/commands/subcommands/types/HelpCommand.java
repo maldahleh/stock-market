@@ -23,6 +23,11 @@ public record HelpCommand(Messages messages) implements
   }
 
   @Override
+  public String commandName() {
+    return "help";
+  }
+
+  @Override
   public String requiredPerm() {
     return null;
   }

@@ -33,6 +33,11 @@ public record TransactionsCommand(Plugin plugin, InventoryManager inventoryManag
   }
 
   @Override
+  public String commandName() {
+    return "transactions";
+  }
+
+  @Override
   public String requiredPerm() {
     return "stockmarket.transactions";
   }

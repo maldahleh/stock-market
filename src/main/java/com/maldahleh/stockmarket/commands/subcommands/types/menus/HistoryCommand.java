@@ -32,6 +32,11 @@ public record HistoryCommand(Plugin plugin, InventoryManager inventoryManager,
   }
 
   @Override
+  public String commandName() {
+    return "history";
+  }
+
+  @Override
   public String requiredPerm() {
     return "stockmarket.history";
   }
