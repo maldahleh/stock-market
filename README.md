@@ -51,11 +51,15 @@ bypass command restrictions when they are enabled that force players to use brok
 
 ## Commands
 
+#### Help Commands
+
 **/stockmarket** OR **/stockmarket help** - Displays a configurable help message
 
 **/stockmarket list** - _stockmarket.list_ - Displays GUI with popular stocks
 
 **/stockmarket tutorial** - _stockmarket.tutorial_ - Displays tutorial GUI
+
+#### Lookup Commands
 
 **/stockmarket lookup {symbol}** - _stockmarket.lookup_ - Lookup a specific stock
 
@@ -77,11 +81,15 @@ transaction history
 **/stockmarket history {symbol}** - _stockmarket.history_ - View the transaction history of a
 specific stock
 
+#### Transaction Commands
+
 **/stockmarket buy {symbol} {amount, optional, 1 if not included}** - Buy a certain amount of a
 stock
 
 **/stockmarket sell {symbol} {amount, optional, 1 if not included}** - Sell a certain amount of a
 stock
+
+#### Broker Commands
 
 **/stockmarket spawnsimplebroker** - _stockmarket.spawnbroker_ - Spawn a simple broker
 (opens list inventory) at the executor's location
