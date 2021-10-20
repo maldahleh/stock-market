@@ -60,10 +60,6 @@
 
   <repositories>
     <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
-    </repository>
-    <repository>
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
@@ -89,9 +85,9 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.github.polygon-io</groupId>
-      <artifactId>client-jvm</artifactId>
-      <version>v2.0.0</version>
+      <groupId>de.sfuhrm</groupId>
+      <artifactId>YahooFinanceAPI</artifactId>
+      <version>3.16.2</version>
     </dependency>
     <dependency>
       <groupId>com.zaxxer</groupId>
