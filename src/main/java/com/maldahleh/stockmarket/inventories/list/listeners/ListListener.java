@@ -3,7 +3,6 @@ package com.maldahleh.stockmarket.inventories.list.listeners;
 import com.maldahleh.stockmarket.inventories.list.ListInventory;
 import com.maldahleh.stockmarket.inventories.lookup.LookupInventory;
 import com.maldahleh.stockmarket.processor.StockProcessor;
-import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,11 +11,10 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-@AllArgsConstructor
 public record ListListener(ListInventory inventory,
                            LookupInventory lookupInventory,
-                           StockProcessor stockProcessor) implements
-    Listener {
+                           StockProcessor stockProcessor)
+    implements Listener {
 
   @EventHandler
   public void onClick(InventoryClickEvent e) {

@@ -20,8 +20,7 @@ public record StockMarketCommand(CommandManager commandManager,
   @Override
   @SuppressWarnings("java:S3516")
   public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command,
-      @NonNull String s,
-      @NonNull String[] strings) {
+      @NonNull String s, @NonNull String[] strings) {
     if (!(commandSender instanceof Player player)) {
       commandSender.sendMessage(PLAYER_ONLY_MESSAGE);
       return true;
@@ -57,7 +56,12 @@ public record StockMarketCommand(CommandManager commandManager,
       return false;
     }
 
-    return player.hasPermission(subcommand.requiredPerm());
+    String requiredPerm = subcommand.requiredPerm();
+    if (requiredPerm == null) {
+      return true;
+    }
+
+    return player.hasPermission(requiredPerm);
   }
 
   private boolean isValidSyntax(Subcommand subcommand, String[] args) {

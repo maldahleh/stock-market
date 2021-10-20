@@ -10,8 +10,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public record BrokerListener(BrokerManager brokerManager,
-                             InventoryManager inventoryManager) implements
-    Listener {
+                             InventoryManager inventoryManager)
+    implements Listener {
 
   @EventHandler
   public void onLeftClick(NPCLeftClickEvent e) {

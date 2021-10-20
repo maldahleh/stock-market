@@ -3,7 +3,6 @@ package com.maldahleh.stockmarket;
 import com.maldahleh.stockmarket.api.StockMarketAPI;
 import com.maldahleh.stockmarket.brokers.BrokerManager;
 import com.maldahleh.stockmarket.commands.CommandManager;
-import com.maldahleh.stockmarket.commands.impl.StockMarketTabCompleter;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.inventories.InventoryManager;

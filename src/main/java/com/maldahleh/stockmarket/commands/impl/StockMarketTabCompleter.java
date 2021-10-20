@@ -19,8 +19,7 @@ public record StockMarketTabCompleter(
   @Override
   @SuppressWarnings("java:S1168")
   public List<String> onTabComplete(@NonNull CommandSender commandSender, @NonNull Command command,
-      @NonNull String s,
-      @NonNull String[] strings) {
+      @NonNull String s, @NonNull String[] strings) {
     if (!(commandSender instanceof Player player)) {
       return new ArrayList<>();
     }
