@@ -1,4 +1,6 @@
 # StockMarket
+![CI](https://github.com/maldahleh/stock-market/workflows/CI/badge.svg)
+![main](https://github.com/maldahleh/stock-market/workflows/main/badge.svg)
 
 StockMarket is a plugin which allows your players to buy/sell stocks across various stock exchanges
 in the world using in-game currency. This provides players a way to make/loose money based on the

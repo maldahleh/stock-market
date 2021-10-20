@@ -1,7 +1,6 @@
 package com.maldahleh.stockmarket.inventories.utils.paged.listeners;
 
 import com.maldahleh.stockmarket.inventories.utils.paged.PagedInventory;
-import lombok.AllArgsConstructor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -9,7 +8,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-@AllArgsConstructor
 public record PagedInventoryListener(PagedInventory inventory) implements Listener {
 
   @EventHandler

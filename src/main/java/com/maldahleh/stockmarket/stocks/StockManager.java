@@ -81,13 +81,17 @@ public class StockManager {
   }
 
   public void cacheStocks(String... symbols) {
-    Map<String, Stock> results = YahooFinance.get(symbols);
-    for (Map.Entry<String, Stock> e : results.entrySet()) {
-      if (e.getKey() == null || e.getValue() == null) {
-        continue;
-      }
+    try {
+      Map<String, Stock> results = YahooFinance.get(symbols);
+      for (Map.Entry<String, Stock> e : results.entrySet()) {
+        if (e.getKey() == null || e.getValue() == null) {
+          continue;
+        }
 
-      stockCache.put(e.getKey().toUpperCase(), e.getValue());
+        stockCache.put(e.getKey().toUpperCase(), e.getValue());
+      }
+    } catch (IOException e) {
+      // Ignored error
     }
   }
 
