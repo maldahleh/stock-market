@@ -1,7 +1,6 @@
 package com.maldahleh.stockmarket.inventories.tutorial.listeners;
 
 import com.maldahleh.stockmarket.inventories.tutorial.TutorialInventory;
-import lombok.AllArgsConstructor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -9,10 +8,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-@AllArgsConstructor
-public record TutorialListener(
-    TutorialInventory inventory) implements
-    Listener {
+public record TutorialListener(TutorialInventory inventory) implements Listener {
 
   @EventHandler
   public void onClick(InventoryClickEvent e) {

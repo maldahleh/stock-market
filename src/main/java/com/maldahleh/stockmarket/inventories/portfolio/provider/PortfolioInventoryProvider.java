@@ -15,17 +15,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
 import org.bukkit.inventory.ItemStack;
 import yahoofinance.Stock;
 
-@AllArgsConstructor
 public record PortfolioInventoryProvider(StockMarket stockMarket,
                                          PlayerManager playerManager,
                                          StockManager stockManager,
                                          Settings settings) implements
-    IContentProvider<UUID, String, StockData,
-        Stock, StockData> {
+    IContentProvider<UUID, String, StockData, Stock, StockData> {
 
   @Override
   public Map<String, StockData> getContent(UUID uuid) {

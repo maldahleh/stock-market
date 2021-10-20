@@ -1,6 +1,7 @@
 package com.maldahleh.stockmarket.events;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -21,6 +22,7 @@ public class StockSaleEvent extends Event {
   private final double initialPurchase;
   private final double netOnTransaction;
 
+  @NonNull
   @Override
   public HandlerList getHandlers() {
     return HANDLER_LIST;

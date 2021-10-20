@@ -15,20 +15,16 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import yahoofinance.Stock;
 
-@AllArgsConstructor
-public class StockProcessor {
-
-  private final StockMarket stockMarket;
-  private final StockManager stockManager;
-  private final PlayerManager playerManager;
-  private final Storage storage;
-  private final Settings settings;
-  private final Messages messages;
+public record StockProcessor(StockMarket stockMarket,
+                             StockManager stockManager,
+                             PlayerManager playerManager,
+                             Storage storage,
+                             Settings settings,
+                             Messages messages) {
 
   public void buyStock(Player player, String symbol, int quantity) {
     Bukkit.getScheduler().runTaskAsynchronously(stockMarket, () -> {

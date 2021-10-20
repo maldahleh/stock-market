@@ -1,15 +1,12 @@
 package com.maldahleh.stockmarket.players.listeners;
 
 import com.maldahleh.stockmarket.players.PlayerManager;
-import lombok.AllArgsConstructor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-@AllArgsConstructor
-public record PlayerListener(
-    PlayerManager playerManager) implements Listener {
+public record PlayerListener(PlayerManager playerManager) implements Listener {
 
   @EventHandler
   public void onJoin(PlayerJoinEvent e) {

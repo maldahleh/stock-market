@@ -14,15 +14,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
 import org.bukkit.inventory.ItemStack;
 
-@AllArgsConstructor
 public record TransactionInventoryProvider(StockMarket stockMarket,
                                            PlayerManager playerManager,
                                            Settings settings) implements
-    IContentProvider<UUID, Instant, Transaction,
-        Instant, Transaction> {
+    IContentProvider<UUID, Instant, Transaction, Instant, Transaction> {
 
   @Override
   public Map<Instant, Transaction> getContent(UUID uuid) {

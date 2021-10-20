@@ -79,7 +79,7 @@ public class CompareInventory {
 
           Stock stock = entry.getKey();
           for (String key : section.getConfigurationSection("items").getKeys(false)) {
-            int slot = Integer.valueOf(key) + (perStock * index);
+            int slot = Integer.parseInt(key) + (perStock * index);
             inventory.setItem(slot, Utils.createItemStack(section
                 .getConfigurationSection("items." + key), ImmutableMap.<String, Object>builder()
                 .put("<name>", stock.getName())

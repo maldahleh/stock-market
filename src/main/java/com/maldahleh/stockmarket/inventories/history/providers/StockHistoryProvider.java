@@ -13,17 +13,14 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
-@AllArgsConstructor
 public record StockHistoryProvider(StockMarket stockMarket,
                                    Storage storage,
-                                   Settings settings) implements
-    IContentProvider<String, Transaction, UUID,
-        Transaction, OfflinePlayer> {
+                                   Settings settings)
+    implements IContentProvider<String, Transaction, UUID, Transaction, OfflinePlayer> {
 
   @Override
   public Map<Transaction, UUID> getContent(String lookup) {
