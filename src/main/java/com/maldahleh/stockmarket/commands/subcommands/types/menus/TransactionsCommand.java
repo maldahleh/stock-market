@@ -9,9 +9,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-public record TransactionsCommand(Plugin plugin, InventoryManager inventoryManager,
-                                  Messages messages) implements
-    Subcommand {
+public record TransactionsCommand(
+    Plugin plugin, InventoryManager inventoryManager, Messages messages) implements Subcommand {
 
   @Override
   public void onCommand(Player player, String[] args) {
@@ -61,11 +60,14 @@ public record TransactionsCommand(Plugin plugin, InventoryManager inventoryManag
       return;
     }
 
-    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-      OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(targetName);
+    Bukkit.getScheduler()
+        .runTaskAsynchronously(
+            plugin,
+            () -> {
+              OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(targetName);
 
-      messages.sendPendingTransactionsOther(executor);
-      inventoryManager.openTransactionInventory(executor, offlinePlayer.getUniqueId());
-    });
+              messages.sendPendingTransactionsOther(executor);
+              inventoryManager.openTransactionInventory(executor, offlinePlayer.getUniqueId());
+            });
   }
 }

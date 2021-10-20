@@ -22,12 +22,18 @@ public class ListInventory {
   private final Set<UUID> activeViewers;
   private final Map<Integer, String> symbolMap;
 
-  public ListInventory(Plugin plugin, StockProcessor processor,
-      LookupInventory lookupInventory, ConfigurationSection section) {
+  public ListInventory(
+      Plugin plugin,
+      StockProcessor processor,
+      LookupInventory lookupInventory,
+      ConfigurationSection section) {
     this.activeViewers = new HashSet<>();
     this.symbolMap = new HashMap<>();
-    this.listInventory = Bukkit.createInventory(null, section.getInt("inventory.size"),
-        Utils.color(section.getString("inventory.name")));
+    this.listInventory =
+        Bukkit.createInventory(
+            null,
+            section.getInt("inventory.size"),
+            Utils.color(section.getString("inventory.name")));
 
     for (String key : section.getConfigurationSection("items").getKeys(false)) {
       Integer slot = Integer.valueOf(key);
@@ -36,12 +42,13 @@ public class ListInventory {
         symbolMap.put(slot, symbol.toUpperCase());
       }
 
-      listInventory.setItem(slot, Utils.createItemStack(section.getConfigurationSection("items."
-          + key)));
+      listInventory.setItem(
+          slot, Utils.createItemStack(section.getConfigurationSection("items." + key)));
     }
 
-    Bukkit.getServer().getPluginManager().registerEvents(new ListListener(this,
-        lookupInventory, processor), plugin);
+    Bukkit.getServer()
+        .getPluginManager()
+        .registerEvents(new ListListener(this, lookupInventory, processor), plugin);
   }
 
   public void openInventory(Player player) {

@@ -34,8 +34,12 @@ public class CommandManager {
 
   private final Map<String, Subcommand> subcommandMap = new HashMap<>();
 
-  public CommandManager(Plugin plugin, BrokerManager brokerManager,
-      InventoryManager inventoryManager, StockProcessor stockProcessor, Messages messages) {
+  public CommandManager(
+      Plugin plugin,
+      BrokerManager brokerManager,
+      InventoryManager inventoryManager,
+      StockProcessor stockProcessor,
+      Messages messages) {
     registerSubcommand(new HelpCommand(messages));
     registerSubcommand(new BuyCommand(stockProcessor, messages));
     registerSubcommand(new SellCommand(stockProcessor, messages));

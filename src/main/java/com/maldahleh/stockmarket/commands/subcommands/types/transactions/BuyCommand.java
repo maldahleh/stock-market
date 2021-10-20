@@ -6,8 +6,7 @@ import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.processor.StockProcessor;
 import org.bukkit.entity.Player;
 
-public record BuyCommand(StockProcessor stockProcessor,
-                         Messages messages) implements Subcommand {
+public record BuyCommand(StockProcessor stockProcessor, Messages messages) implements Subcommand {
 
   @Override
   public void onCommand(Player player, String[] args) {

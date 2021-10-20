@@ -17,16 +17,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
-public record StockHistoryProvider(StockMarket stockMarket,
-                                   Storage storage,
-                                   Settings settings)
+public record StockHistoryProvider(StockMarket stockMarket, Storage storage, Settings settings)
     implements IContentProvider<String, Transaction, UUID, Transaction, OfflinePlayer> {
 
   @Override
   public Map<Transaction, UUID> getContent(String lookup) {
     if (lookup == null) {
-      return storage.getTransactionHistory().stream().collect(Collectors.toMap(t -> t,
-          Transaction::getUuid));
+      return storage.getTransactionHistory().stream()
+          .collect(Collectors.toMap(t -> t, Transaction::getUuid));
     }
 
     return storage.getStockTransactions(lookup.toUpperCase()).stream()
@@ -53,25 +51,31 @@ public record StockHistoryProvider(StockMarket stockMarket,
   }
 
   @Override
-  public ItemStack getContentStack(ItemStack baseStack, int position, Transaction key,
-      OfflinePlayer value) {
-    return Utils.updateItemStack(baseStack.clone(), ImmutableMap.<String, Object>builder()
-        .put("<name>", value.getName())
-        .put("<date>", Utils.formatInstant(key.getTransactionDate(), settings.getLocale()))
-        .put("<symbol>", key.getSymbol().toUpperCase())
-        .put("<transaction-type>", key.getTransactionType())
-        .put("<quantity>", key.getQuantity())
-        .put("<stock-value>", Utils.formatCurrency(key.getStockValue().doubleValue(),
-            settings.getLocale()))
-        .put("<broker-fees>", Utils.formatCurrency(key.getBrokerFee().doubleValue(), settings
-            .getLocale()))
-        .put("<grand-total>", Utils.formatCurrency(key.getGrandTotal().doubleValue(),
-            settings.getLocale()))
-        .put("<earnings>", Utils.format(key.getEarnings(), settings.getUnknownData(),
-            settings.getLocale()))
-        .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
-        .put("<sold>", String.valueOf(key.isSold()))
-        .build());
+  public ItemStack getContentStack(
+      ItemStack baseStack, int position, Transaction key, OfflinePlayer value) {
+    return Utils.updateItemStack(
+        baseStack.clone(),
+        ImmutableMap.<String, Object>builder()
+            .put("<name>", value.getName())
+            .put("<date>", Utils.formatInstant(key.getTransactionDate(), settings.getLocale()))
+            .put("<symbol>", key.getSymbol().toUpperCase())
+            .put("<transaction-type>", key.getTransactionType())
+            .put("<quantity>", key.getQuantity())
+            .put(
+                "<stock-value>",
+                Utils.formatCurrency(key.getStockValue().doubleValue(), settings.getLocale()))
+            .put(
+                "<broker-fees>",
+                Utils.formatCurrency(key.getBrokerFee().doubleValue(), settings.getLocale()))
+            .put(
+                "<grand-total>",
+                Utils.formatCurrency(key.getGrandTotal().doubleValue(), settings.getLocale()))
+            .put(
+                "<earnings>",
+                Utils.format(key.getEarnings(), settings.getUnknownData(), settings.getLocale()))
+            .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
+            .put("<sold>", String.valueOf(key.isSold()))
+            .build());
   }
 
   @Override

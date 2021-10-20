@@ -6,9 +6,8 @@ import com.maldahleh.stockmarket.config.Messages;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public record SpawnSimpleBrokerCommand(
-    BrokerManager brokerManager,
-    Messages messages) implements Subcommand {
+public record SpawnSimpleBrokerCommand(BrokerManager brokerManager, Messages messages)
+    implements Subcommand {
 
   private static final String NOT_ENABLED_MESSAGE =
       ChatColor.RED + "Citizens is not enabled, and is required for brokers";

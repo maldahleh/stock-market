@@ -28,23 +28,53 @@ public class InventoryManager {
   private final TransactionInventory transactionInventory;
   private final StockHistoryInventory stockHistoryInventory;
 
-  public InventoryManager(StockMarket stockMarket, PlayerManager playerManager,
-      StockManager stockManager, StockProcessor processor, FileConfiguration config,
-      Messages messages, Storage storage, Settings settings) {
-    this.lookupInventory = new LookupInventory(stockMarket, stockManager, messages, settings,
-        config.getConfigurationSection("inventories.lookup"));
-    this.compareInventory = new CompareInventory(stockMarket, stockManager, messages, settings,
-        config.getConfigurationSection("inventories.compare"));
-    this.tutorialInventory = new TutorialInventory(stockMarket, config
-        .getConfigurationSection("inventories.tutorial"));
-    this.listInventory = new ListInventory(stockMarket, processor, lookupInventory, config
-        .getConfigurationSection("inventories.list"));
-    this.portfolioInventory = new PortfolioInventory(stockMarket, playerManager, stockManager,
-        settings, config.getConfigurationSection("inventories.portfolio"));
-    this.transactionInventory = new TransactionInventory(stockMarket, playerManager, settings,
-        config.getConfigurationSection("inventories.transactions"));
-    this.stockHistoryInventory = new StockHistoryInventory(stockMarket, storage, settings,
-        config.getConfigurationSection("inventories.history"));
+  public InventoryManager(
+      StockMarket stockMarket,
+      PlayerManager playerManager,
+      StockManager stockManager,
+      StockProcessor processor,
+      FileConfiguration config,
+      Messages messages,
+      Storage storage,
+      Settings settings) {
+    this.lookupInventory =
+        new LookupInventory(
+            stockMarket,
+            stockManager,
+            messages,
+            settings,
+            config.getConfigurationSection("inventories.lookup"));
+    this.compareInventory =
+        new CompareInventory(
+            stockMarket,
+            stockManager,
+            messages,
+            settings,
+            config.getConfigurationSection("inventories.compare"));
+    this.tutorialInventory =
+        new TutorialInventory(stockMarket, config.getConfigurationSection("inventories.tutorial"));
+    this.listInventory =
+        new ListInventory(
+            stockMarket,
+            processor,
+            lookupInventory,
+            config.getConfigurationSection("inventories.list"));
+    this.portfolioInventory =
+        new PortfolioInventory(
+            stockMarket,
+            playerManager,
+            stockManager,
+            settings,
+            config.getConfigurationSection("inventories.portfolio"));
+    this.transactionInventory =
+        new TransactionInventory(
+            stockMarket,
+            playerManager,
+            settings,
+            config.getConfigurationSection("inventories.transactions"));
+    this.stockHistoryInventory =
+        new StockHistoryInventory(
+            stockMarket, storage, settings, config.getConfigurationSection("inventories.history"));
   }
 
   public void openLookupInventory(Player player, String symbol) {

@@ -5,8 +5,8 @@ import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
 import org.bukkit.entity.Player;
 
-public record CompareCommand(InventoryManager inventoryManager, Messages messages) implements
-    Subcommand {
+public record CompareCommand(InventoryManager inventoryManager, Messages messages)
+    implements Subcommand {
 
   private static final String SEPARATOR = ",";
   private static final int MAX_SYMBOLS = 3;

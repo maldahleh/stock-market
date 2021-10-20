@@ -31,17 +31,16 @@ public class Utils {
 
   public ItemStack createItemStack(ConfigurationSection configurationSection) {
     return new ItemStackBuilder(
-        Material.valueOf(configurationSection.getString("material")),
-        configurationSection.getInt("amount"),
-        (byte) configurationSection.getInt("durability")
-    )
+            Material.valueOf(configurationSection.getString("material")),
+            configurationSection.getInt("amount"),
+            (byte) configurationSection.getInt("durability"))
         .setDisplayName(configurationSection.getString("name"))
         .addLore(configurationSection.getStringList("lore"))
         .buildItemStack();
   }
 
-  public ItemStack createItemStack(ConfigurationSection section,
-      Map<String, Object> replacementMap) {
+  public ItemStack createItemStack(
+      ConfigurationSection section, Map<String, Object> replacementMap) {
     return updateItemStack(createItemStack(section), replacementMap);
   }
 
@@ -136,20 +135,21 @@ public class Utils {
   }
 
   public String formatInstant(Instant instant, Locale locale) {
-    DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
-        .withLocale(locale).withZone(ZoneId.systemDefault());
+    DateTimeFormatter formatter =
+        DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+            .withLocale(locale)
+            .withZone(ZoneId.systemDefault());
     return formatter.format(instant);
   }
 
   public String formatCurrency(double input, Locale locale) {
-    NumberFormat decimalFormat = new DecimalFormat("#,##0.00", DecimalFormatSymbols
-        .getInstance(locale));
+    NumberFormat decimalFormat =
+        new DecimalFormat("#,##0.00", DecimalFormatSymbols.getInstance(locale));
     return decimalFormat.format(input);
   }
 
   private String singleDecimal(double input, Locale locale) {
-    NumberFormat decimalFormat = new DecimalFormat("0.#", DecimalFormatSymbols
-        .getInstance(locale));
+    NumberFormat decimalFormat = new DecimalFormat("0.#", DecimalFormatSymbols.getInstance(locale));
     return decimalFormat.format(input);
   }
 }

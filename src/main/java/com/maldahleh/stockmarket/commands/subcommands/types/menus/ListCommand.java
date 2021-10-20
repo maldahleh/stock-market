@@ -4,8 +4,7 @@ import com.maldahleh.stockmarket.commands.subcommands.Subcommand;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
 import org.bukkit.entity.Player;
 
-public record ListCommand(
-    InventoryManager inventoryManager) implements Subcommand {
+public record ListCommand(InventoryManager inventoryManager) implements Subcommand {
 
   @Override
   public void onCommand(Player player, String[] args) {

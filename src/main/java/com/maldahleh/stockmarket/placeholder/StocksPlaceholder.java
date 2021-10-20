@@ -76,8 +76,8 @@ public class StocksPlaceholder extends PlaceholderExpansion {
       }
 
       if (splitInfo[2].equalsIgnoreCase("cap")) {
-        return Utils.sigFigNumber(placeholderStock.getStock().getStats().getMarketCap()
-            .doubleValue());
+        return Utils.sigFigNumber(
+            placeholderStock.getStock().getStats().getMarketCap().doubleValue());
       }
 
       if (splitInfo[2].equalsIgnoreCase("sp")) {

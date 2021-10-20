@@ -10,9 +10,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 @AllArgsConstructor
-public record PagedInventoryListener(
-    PagedInventory inventory) implements
-    Listener {
+public record PagedInventoryListener(PagedInventory inventory) implements Listener {
 
   @EventHandler
   public void onClick(InventoryClickEvent e) {

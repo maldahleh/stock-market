@@ -17,15 +17,13 @@ import org.bukkit.plugin.Plugin;
 
 public class BrokerManager {
 
-  @Getter
-  private final boolean enabled;
+  @Getter private final boolean enabled;
 
-  @Getter
-  private String simpleBrokerName;
+  @Getter private String simpleBrokerName;
   private boolean disableCommands;
 
-  public BrokerManager(Plugin plugin, ConfigurationSection section,
-      InventoryManager inventoryManager) {
+  public BrokerManager(
+      Plugin plugin, ConfigurationSection section, InventoryManager inventoryManager) {
     this.enabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
     if (!enabled) {
       return;
@@ -34,8 +32,10 @@ public class BrokerManager {
     this.simpleBrokerName = Utils.color(section.getString("names.simple"));
     this.disableCommands = section.getBoolean("settings.disable-commands");
 
-    plugin.getServer().getPluginManager().registerEvents(new BrokerListener(this,
-        inventoryManager), plugin);
+    plugin
+        .getServer()
+        .getPluginManager()
+        .registerEvents(new BrokerListener(this, inventoryManager), plugin);
   }
 
   public void spawnSimpleBroker(Location location) {

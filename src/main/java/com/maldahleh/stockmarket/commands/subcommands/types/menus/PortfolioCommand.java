@@ -9,9 +9,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-public record PortfolioCommand(Plugin plugin, InventoryManager inventoryManager,
-                               Messages messages) implements
-    Subcommand {
+public record PortfolioCommand(Plugin plugin, InventoryManager inventoryManager, Messages messages)
+    implements Subcommand {
 
   @Override
   public void onCommand(Player player, String[] args) {
@@ -61,11 +60,14 @@ public record PortfolioCommand(Plugin plugin, InventoryManager inventoryManager,
       return;
     }
 
-    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-      OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(targetName);
+    Bukkit.getScheduler()
+        .runTaskAsynchronously(
+            plugin,
+            () -> {
+              OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(targetName);
 
-      messages.sendPendingPortfolioOther(executor);
-      inventoryManager.openPortfolioInventory(executor, offlinePlayer.getUniqueId());
-    });
+              messages.sendPendingPortfolioOther(executor);
+              inventoryManager.openPortfolioInventory(executor, offlinePlayer.getUniqueId());
+            });
   }
 }

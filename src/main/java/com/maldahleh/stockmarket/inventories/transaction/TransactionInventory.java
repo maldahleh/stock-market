@@ -15,10 +15,16 @@ public class TransactionInventory {
 
   private final PagedInventory<UUID, Instant, Transaction, Instant, Transaction> inventory;
 
-  public TransactionInventory(StockMarket stockMarket, PlayerManager playerManager,
-      Settings settings, ConfigurationSection section) {
-    inventory = new PagedInventory<>(stockMarket, new TransactionInventoryProvider(stockMarket,
-        playerManager, settings), section);
+  public TransactionInventory(
+      StockMarket stockMarket,
+      PlayerManager playerManager,
+      Settings settings,
+      ConfigurationSection section) {
+    inventory =
+        new PagedInventory<>(
+            stockMarket,
+            new TransactionInventoryProvider(stockMarket, playerManager, settings),
+            section);
   }
 
   public void openInventory(Player player, UUID target) {

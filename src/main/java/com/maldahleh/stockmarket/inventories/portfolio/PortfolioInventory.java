@@ -16,10 +16,17 @@ public class PortfolioInventory {
 
   private final PagedInventory<UUID, String, StockData, Stock, StockData> inventory;
 
-  public PortfolioInventory(StockMarket stockMarket, PlayerManager playerManager,
-      StockManager stockManager, Settings settings, ConfigurationSection section) {
-    inventory = new PagedInventory<>(stockMarket, new PortfolioInventoryProvider(stockMarket,
-        playerManager, stockManager, settings), section);
+  public PortfolioInventory(
+      StockMarket stockMarket,
+      PlayerManager playerManager,
+      StockManager stockManager,
+      Settings settings,
+      ConfigurationSection section) {
+    inventory =
+        new PagedInventory<>(
+            stockMarket,
+            new PortfolioInventoryProvider(stockMarket, playerManager, stockManager, settings),
+            section);
   }
 
   public void openInventory(Player player, UUID target) {

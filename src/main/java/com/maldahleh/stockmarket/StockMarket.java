@@ -46,16 +46,24 @@ public class StockMarket extends JavaPlugin {
 
     Settings settings = new Settings(getConfig().getConfigurationSection("settings"));
     Messages messages = new Messages(getConfig().getConfigurationSection("messages"), settings);
-    this.stockManager = new StockManager(this, getConfig()
-        .getConfigurationSection("stocks"), settings);
+    this.stockManager =
+        new StockManager(this, getConfig().getConfigurationSection("stocks"), settings);
     this.playerManager = new PlayerManager(this, stockManager, storage, settings);
     this.api = new StockMarketAPI(playerManager);
-    StockProcessor stockProcessor = new StockProcessor(this, stockManager,
-        playerManager, storage, settings, messages);
-    InventoryManager inventoryManager = new InventoryManager(this, playerManager,
-        stockManager, stockProcessor, getConfig(), messages, storage, settings);
-    BrokerManager brokerManager = new BrokerManager(this, getConfig()
-        .getConfigurationSection("brokers"), inventoryManager);
+    StockProcessor stockProcessor =
+        new StockProcessor(this, stockManager, playerManager, storage, settings, messages);
+    InventoryManager inventoryManager =
+        new InventoryManager(
+            this,
+            playerManager,
+            stockManager,
+            stockProcessor,
+            getConfig(),
+            messages,
+            storage,
+            settings);
+    BrokerManager brokerManager =
+        new BrokerManager(this, getConfig().getConfigurationSection("brokers"), inventoryManager);
 
     new CommandManager(this, brokerManager, inventoryManager, stockProcessor, messages);
 
@@ -69,8 +77,8 @@ public class StockMarket extends JavaPlugin {
       return false;
     }
 
-    RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager()
-        .getRegistration(Economy.class);
+    RegisteredServiceProvider<Economy> rsp =
+        getServer().getServicesManager().getRegistration(Economy.class);
     if (rsp == null) {
       return false;
     }

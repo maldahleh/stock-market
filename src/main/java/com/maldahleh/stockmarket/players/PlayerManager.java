@@ -24,8 +24,8 @@ public class PlayerManager {
   private final Storage storage;
   private final Settings settings;
 
-  public PlayerManager(StockMarket stockMarket, StockManager stockManager, Storage storage,
-      Settings settings) {
+  public PlayerManager(
+      StockMarket stockMarket, StockManager stockManager, Storage storage, Settings settings) {
     this.lastActionMap = new ConcurrentHashMap<>();
     this.stockPlayerMap = new ConcurrentHashMap<>();
     this.stockMarket = stockMarket;
@@ -40,14 +40,20 @@ public class PlayerManager {
     StockPlayer player = new StockPlayer();
     stockPlayerMap.put(uuid, player);
 
-    Bukkit.getScheduler().runTaskAsynchronously(stockMarket, () -> storage
-        .getPlayerTransactions(uuid).forEach(transaction -> {
-          if (transaction.getTransactionType().equalsIgnoreCase("purchase")) {
-            addPurchaseTransaction(uuid, transaction);
-          } else {
-            addSaleTransaction(uuid, transaction);
-          }
-        }));
+    Bukkit.getScheduler()
+        .runTaskAsynchronously(
+            stockMarket,
+            () ->
+                storage
+                    .getPlayerTransactions(uuid)
+                    .forEach(
+                        transaction -> {
+                          if (transaction.getTransactionType().equalsIgnoreCase("purchase")) {
+                            addPurchaseTransaction(uuid, transaction);
+                          } else {
+                            addSaleTransaction(uuid, transaction);
+                          }
+                        }));
   }
 
   public boolean canNotPerformTransaction(UUID uuid) {
@@ -60,8 +66,8 @@ public class PlayerManager {
       return false;
     }
 
-    return ((System.currentTimeMillis() - lastAction) / 1000) <
-        settings.getTransactionCooldownSeconds();
+    return ((System.currentTimeMillis() - lastAction) / 1000)
+        < settings.getTransactionCooldownSeconds();
   }
 
   public StockPlayer getStockPlayer(UUID uuid) {
@@ -75,13 +81,16 @@ public class PlayerManager {
     }
 
     StockPlayer stockPlayer = new StockPlayer();
-    storage.getPlayerTransactions(uuid).forEach(transaction -> {
-      if (transaction.getTransactionType().equalsIgnoreCase("purchase")) {
-        addPurchaseTransaction(uuid, transaction);
-      } else {
-        addSaleTransaction(uuid, transaction);
-      }
-    });
+    storage
+        .getPlayerTransactions(uuid)
+        .forEach(
+            transaction -> {
+              if (transaction.getTransactionType().equalsIgnoreCase("purchase")) {
+                addPurchaseTransaction(uuid, transaction);
+              } else {
+                addSaleTransaction(uuid, transaction);
+              }
+            });
     return stockPlayer;
   }
 
@@ -98,8 +107,8 @@ public class PlayerManager {
         continue;
       }
 
-      currentValue = currentValue.add(serverPrice.multiply(BigDecimal.valueOf(e.getValue()
-          .getQuantity())));
+      currentValue =
+          currentValue.add(serverPrice.multiply(BigDecimal.valueOf(e.getValue().getQuantity())));
     }
 
     return currentValue;

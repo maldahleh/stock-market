@@ -4,8 +4,7 @@ import com.maldahleh.stockmarket.commands.subcommands.Subcommand;
 import com.maldahleh.stockmarket.config.Messages;
 import org.bukkit.entity.Player;
 
-public record HelpCommand(Messages messages) implements
-    Subcommand {
+public record HelpCommand(Messages messages) implements Subcommand {
 
   @Override
   public void onCommand(Player player, String[] args) {

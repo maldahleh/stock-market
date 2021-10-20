@@ -19,12 +19,16 @@ public class TutorialInventory {
 
   public TutorialInventory(StockMarket plugin, ConfigurationSection section) {
     this.activeViewers = new HashSet<>();
-    this.bukkitInventory = Bukkit.createInventory(null, section
-        .getInt("inventory.size"), Utils.color(section.getString("inventory.name")));
+    this.bukkitInventory =
+        Bukkit.createInventory(
+            null,
+            section.getInt("inventory.size"),
+            Utils.color(section.getString("inventory.name")));
 
     for (String key : section.getConfigurationSection("items").getKeys(false)) {
-      bukkitInventory.setItem(Integer.parseInt(key), Utils.createItemStack(section
-          .getConfigurationSection("items." + key)));
+      bukkitInventory.setItem(
+          Integer.parseInt(key),
+          Utils.createItemStack(section.getConfigurationSection("items." + key)));
     }
 
     Bukkit.getServer().getPluginManager().registerEvents(new TutorialListener(this), plugin);

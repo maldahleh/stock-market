@@ -38,12 +38,21 @@ public class StockManager {
   private final Settings settings;
 
   public StockManager(Plugin plugin, ConfigurationSection section, Settings settings) {
-    this.stockCache = CacheBuilder.newBuilder().expireAfterWrite(section
-        .getInt("cache.expire-minutes"), TimeUnit.MINUTES).maximumSize(500).build();
-    this.marketOpenCache = CacheBuilder.newBuilder().expireAfterWrite(section
-        .getInt("cache.expire-minutes"), TimeUnit.MINUTES).maximumSize(500).build();
-    this.fxCache = CacheBuilder.newBuilder().expireAfterWrite(section
-        .getInt("cache.expire-minutes"), TimeUnit.MINUTES).maximumSize(500).build();
+    this.stockCache =
+        CacheBuilder.newBuilder()
+            .expireAfterWrite(section.getInt("cache.expire-minutes"), TimeUnit.MINUTES)
+            .maximumSize(500)
+            .build();
+    this.marketOpenCache =
+        CacheBuilder.newBuilder()
+            .expireAfterWrite(section.getInt("cache.expire-minutes"), TimeUnit.MINUTES)
+            .maximumSize(500)
+            .build();
+    this.fxCache =
+        CacheBuilder.newBuilder()
+            .expireAfterWrite(section.getInt("cache.expire-minutes"), TimeUnit.MINUTES)
+            .maximumSize(500)
+            .build();
 
     this.placeholderMap = new ConcurrentHashMap<>();
     this.pendingOperations = ConcurrentHashMap.newKeySet();
@@ -51,14 +60,24 @@ public class StockManager {
     this.plugin = plugin;
     this.settings = settings;
 
-    Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-      for (Entry<String, PlaceholderStock> entry : placeholderMap.entrySet()) {
-        Stock stock = getStock(entry.getKey());
-        entry.getValue().setStock(stock);
-        entry.getValue().setServerPrice(Utils.format(getServerPrice(stock),
-            settings.getUnknownData(), settings.getLocale()));
-      }
-    }, 20L, section.getInt("cache.expire-minutes") * 60L * 20L);
+    Bukkit.getScheduler()
+        .runTaskTimerAsynchronously(
+            plugin,
+            () -> {
+              for (Entry<String, PlaceholderStock> entry : placeholderMap.entrySet()) {
+                Stock stock = getStock(entry.getKey());
+                entry.getValue().setStock(stock);
+                entry
+                    .getValue()
+                    .setServerPrice(
+                        Utils.format(
+                            getServerPrice(stock),
+                            settings.getUnknownData(),
+                            settings.getLocale()));
+              }
+            },
+            20L,
+            section.getInt("cache.expire-minutes") * 60L * 20L);
   }
 
   public void cacheStocks(String... symbols) {
@@ -100,12 +119,19 @@ public class StockManager {
     }
 
     pendingOperations.add(uppercaseSymbol);
-    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-      Stock stock = getStock(uppercaseSymbol);
-      placeholderMap.put(uppercaseSymbol, new PlaceholderStock(stock, Utils.format(
-          getServerPrice(stock), settings.getUnknownData(), settings.getLocale())));
-      pendingOperations.remove(uppercaseSymbol);
-    });
+    Bukkit.getScheduler()
+        .runTaskAsynchronously(
+            plugin,
+            () -> {
+              Stock stock = getStock(uppercaseSymbol);
+              placeholderMap.put(
+                  uppercaseSymbol,
+                  new PlaceholderStock(
+                      stock,
+                      Utils.format(
+                          getServerPrice(stock), settings.getUnknownData(), settings.getLocale())));
+              pendingOperations.remove(uppercaseSymbol);
+            });
 
     return null;
   }
@@ -133,11 +159,14 @@ public class StockManager {
     }
 
     try {
-      String requestXml = "<?xml version='1.0' encoding='utf−8'?><request devtype='Apple_OSX' " +
-          "deployver='APPLE_DASHBOARD_1_0' app='YGoAppleStocksWidget' appver='unknown' " +
-          "api='finance' apiver='1.0.1' acknotification='0000'><query id='0' timestamp='`" +
-          "date +%s000`' type='getquotes'><list><symbol>" + symbol.toUpperCase() + "</symbol>"
-          + "</list></query></request>";
+      String requestXml =
+          "<?xml version='1.0' encoding='utf−8'?><request devtype='Apple_OSX' "
+              + "deployver='APPLE_DASHBOARD_1_0' app='YGoAppleStocksWidget' appver='unknown' "
+              + "api='finance' apiver='1.0.1' acknotification='0000'><query id='0' timestamp='`"
+              + "date +%s000`' type='getquotes'><list><symbol>"
+              + symbol.toUpperCase()
+              + "</symbol>"
+              + "</list></query></request>";
       URL url = new URL("http://wu-quotes.apple.com/dgw?imei=42&apptype=finance");
       URLConnection con = url.openConnection();
       con.setDoInput(true);

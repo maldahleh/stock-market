@@ -50,8 +50,8 @@ public class Transaction {
       return true;
     }
 
-    return Duration.between(transactionDate, Instant.now()).compareTo(Duration
-        .ofMinutes(minutes)) >= 0;
+    return Duration.between(transactionDate, Instant.now()).compareTo(Duration.ofMinutes(minutes))
+        >= 0;
   }
 
   public void markSold() {

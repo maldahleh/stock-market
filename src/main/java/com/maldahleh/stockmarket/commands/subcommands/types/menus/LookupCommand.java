@@ -5,8 +5,8 @@ import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
 import org.bukkit.entity.Player;
 
-public record LookupCommand(InventoryManager inventoryManager, Messages messages) implements
-    Subcommand {
+public record LookupCommand(InventoryManager inventoryManager, Messages messages)
+    implements Subcommand {
 
   @Override
   public void onCommand(Player player, String[] args) {

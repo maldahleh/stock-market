@@ -11,9 +11,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public record ListListener(ListInventory inventory,
-                           LookupInventory lookupInventory,
-                           StockProcessor stockProcessor)
+public record ListListener(
+    ListInventory inventory, LookupInventory lookupInventory, StockProcessor stockProcessor)
     implements Listener {
 
   @EventHandler

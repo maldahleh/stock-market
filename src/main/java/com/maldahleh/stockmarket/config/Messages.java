@@ -68,12 +68,14 @@ public class Messages {
     this.insufficientFunds = Utils.color(section.getString("insufficient-funds"));
     this.invalidSyntax = Utils.color(section.getString("invalid-syntax"));
     this.noPermission = Utils.color(section.getString("no-permission"));
-    this.boughtMessage = section.getStringList("bought-stock").stream().map(Utils::color)
-        .collect(Collectors.toList());
-    this.soldMessage = section.getStringList("sold-stock").stream().map(Utils::color)
-        .collect(Collectors.toList());
-    this.helpMessage = section.getStringList("help").stream().map(Utils::color)
-        .collect(Collectors.toList());
+    this.boughtMessage =
+        section.getStringList("bought-stock").stream()
+            .map(Utils::color)
+            .collect(Collectors.toList());
+    this.soldMessage =
+        section.getStringList("sold-stock").stream().map(Utils::color).collect(Collectors.toList());
+    this.helpMessage =
+        section.getStringList("help").stream().map(Utils::color).collect(Collectors.toList());
 
     this.helpCommandInfo = Utils.color(section.getString("commands.help"));
     this.listCommandInfo = Utils.color(section.getString("commands.list"));
@@ -83,8 +85,8 @@ public class Messages {
     this.portfolioCommandInfo = Utils.color(section.getString("commands.portfolio"));
     this.portfolioOtherCommandInfo = Utils.color(section.getString("commands.portfolio-other"));
     this.transactionsCommandInfo = Utils.color(section.getString("commands.transactions"));
-    this.transactionsOtherCommandInfo = Utils.color(
-        section.getString("commands.transactions-other"));
+    this.transactionsOtherCommandInfo =
+        Utils.color(section.getString("commands.transactions-other"));
     this.historyCommandInfo = Utils.color(section.getString("commands.history"));
     this.historySymbolCommandInfo = Utils.color(section.getString("commands.history-symbol"));
     this.buyCommandInfo = Utils.color(section.getString("commands.buy"));
@@ -153,31 +155,49 @@ public class Messages {
 
   public void sendBoughtStockMessage(Player player, String company, Transaction transaction) {
     for (String line : boughtMessage) {
-      player.sendMessage(line.replace("<date>", Utils.getCurrentTime())
-          .replace("<company>", company).replace("<symbol>", transaction.getSymbol())
-          .replace("<quantity>", String.valueOf(transaction.getQuantity()))
-          .replace("<stock-value>", Utils.formatCurrency(transaction.getSinglePrice()
-              .doubleValue(), settings.getLocale()))
-          .replace("<broker-fees>", Utils.formatCurrency(transaction.getBrokerFee()
-              .doubleValue(), settings.getLocale()))
-          .replace("<total>", Utils.formatCurrency(transaction.getGrandTotal().doubleValue(),
-              settings.getLocale())));
+      player.sendMessage(
+          line.replace("<date>", Utils.getCurrentTime())
+              .replace("<company>", company)
+              .replace("<symbol>", transaction.getSymbol())
+              .replace("<quantity>", String.valueOf(transaction.getQuantity()))
+              .replace(
+                  "<stock-value>",
+                  Utils.formatCurrency(
+                      transaction.getSinglePrice().doubleValue(), settings.getLocale()))
+              .replace(
+                  "<broker-fees>",
+                  Utils.formatCurrency(
+                      transaction.getBrokerFee().doubleValue(), settings.getLocale()))
+              .replace(
+                  "<total>",
+                  Utils.formatCurrency(
+                      transaction.getGrandTotal().doubleValue(), settings.getLocale())));
     }
   }
 
   public void sendSoldStockMessage(Player player, String company, Transaction transaction) {
     for (String line : soldMessage) {
-      player.sendMessage(line.replace("<date>", Utils.getCurrentTime())
-          .replace("<company>", company).replace("<symbol>", transaction.getSymbol())
-          .replace("<quantity>", String.valueOf(transaction.getQuantity()))
-          .replace("<stock-value>", Utils.formatCurrency(transaction.getSinglePrice()
-              .doubleValue(), settings.getLocale()))
-          .replace("<broker-fees>", Utils.formatCurrency(transaction.getBrokerFee()
-              .doubleValue(), settings.getLocale()))
-          .replace("<total>", Utils.formatCurrency(transaction.getGrandTotal().doubleValue(),
-              settings.getLocale()))
-          .replace("<net>", Utils.formatCurrency(transaction.getEarnings().doubleValue(),
-              settings.getLocale())));
+      player.sendMessage(
+          line.replace("<date>", Utils.getCurrentTime())
+              .replace("<company>", company)
+              .replace("<symbol>", transaction.getSymbol())
+              .replace("<quantity>", String.valueOf(transaction.getQuantity()))
+              .replace(
+                  "<stock-value>",
+                  Utils.formatCurrency(
+                      transaction.getSinglePrice().doubleValue(), settings.getLocale()))
+              .replace(
+                  "<broker-fees>",
+                  Utils.formatCurrency(
+                      transaction.getBrokerFee().doubleValue(), settings.getLocale()))
+              .replace(
+                  "<total>",
+                  Utils.formatCurrency(
+                      transaction.getGrandTotal().doubleValue(), settings.getLocale()))
+              .replace(
+                  "<net>",
+                  Utils.formatCurrency(
+                      transaction.getEarnings().doubleValue(), settings.getLocale())));
     }
   }
 

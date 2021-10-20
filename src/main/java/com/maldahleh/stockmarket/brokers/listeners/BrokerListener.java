@@ -9,8 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public record BrokerListener(BrokerManager brokerManager,
-                             InventoryManager inventoryManager)
+public record BrokerListener(BrokerManager brokerManager, InventoryManager inventoryManager)
     implements Listener {
 
   @EventHandler
