@@ -13,19 +13,28 @@ import org.bukkit.OfflinePlayer;
 @RequiredArgsConstructor
 public class StocksPlaceholder extends PlaceholderExpansion {
 
+  private static final String STOCK_IDENTIFIER = "sm";
+  private static final String NAME_DATA_POINT = "name";
+  private static final String MARKET_CAP_DATA_POINT = "cap";
+  private static final String SERVER_PRICE_DATA_POINT = "sp";
+  private static final String VOLUME_DATA_POINT = "vol";
+  private static final String PORTFOLIO_VALUE_POINT = "portfolio-value";
+
   /**
-   * Prefix for stock data placeholders
-   * Example: sd-ba-vol (display the volume for BA - Boeing)
+   * Prefix for stock data placeholders Example: sd-ba-vol (display the volume for BA - Boeing)
    */
   private static final String STOCK_DATA_PREFIX = "sd";
   /**
-   * The minimum number of args required for a stock data placeholder
-   * Arg 1 (index 0) - sd
-   * Arg 2 (index 1) - symbol, ex: ba
-   * Arg 3 (index 2) - data point, ex: vol
+   * The minimum number of args required for a stock data placeholder Arg 1 (index 0) - sd Arg 2
+   * (index 1) - symbol, ex: ba Arg 3 (index 2) - data point, ex: vol
    */
   private static final int STOCK_DATA_REQ_ARGS = 3;
+  private static final int DATA_POINT_NAME_INDEX = 2;
   private static final String STOCK_DATA_SEPARATOR = "-";
+
+  private static final String ZERO_VALUE = "0";
+  private static final String OFFLINE_PLAYER = "Player Offline";
+  private static final String NOT_APPLICABLE = "N/A";
 
   private final PlayerManager playerManager;
   private final StockManager stockManager;
@@ -33,7 +42,7 @@ public class StocksPlaceholder extends PlaceholderExpansion {
   @NonNull
   @Override
   public String getIdentifier() {
-    return "sm";
+    return STOCK_IDENTIFIER;
   }
 
   @NonNull
@@ -68,17 +77,17 @@ public class StocksPlaceholder extends PlaceholderExpansion {
   }
 
   private boolean isPortfolioValue(String params) {
-    return params.equalsIgnoreCase("portfolio-value");
+    return params.equalsIgnoreCase(PORTFOLIO_VALUE_POINT);
   }
 
   private String getPortfolioValue(OfflinePlayer p) {
     if (p == null || !p.isOnline()) {
-      return "Player Offline";
+      return OFFLINE_PLAYER;
     }
 
     StockPlayer player = playerManager.getStockPlayer(p.getUniqueId());
     if (player == null) {
-      return "0";
+      return ZERO_VALUE;
     }
 
     return Utils.sigFigNumber(player.getPortfolioValue().doubleValue());
@@ -99,16 +108,17 @@ public class StocksPlaceholder extends PlaceholderExpansion {
 
     PlaceholderStock placeholderStock = stockManager.getPlaceholderStock(splitInfo[1]);
     if (placeholderStock == null) {
-      return "N/A";
+      return NOT_APPLICABLE;
     }
 
-    String dataPoint = splitInfo[2].toLowerCase();
+    String dataPoint = splitInfo[DATA_POINT_NAME_INDEX].toLowerCase();
     return switch (dataPoint) {
-      case "name" -> placeholderStock.getStock().getName();
-      case "cap" -> Utils.sigFigNumber(
+      case NAME_DATA_POINT -> placeholderStock.getStock().getName();
+      case MARKET_CAP_DATA_POINT -> Utils.sigFigNumber(
           placeholderStock.getStock().getStats().getMarketCap().doubleValue());
-      case "sp" -> placeholderStock.getServerPrice();
-      case "vol" -> Utils.sigFigNumber(placeholderStock.getStock().getQuote().getVolume());
+      case SERVER_PRICE_DATA_POINT -> placeholderStock.getServerPrice();
+      case VOLUME_DATA_POINT -> Utils.sigFigNumber(
+          placeholderStock.getStock().getQuote().getVolume());
       default -> null;
     };
   }
