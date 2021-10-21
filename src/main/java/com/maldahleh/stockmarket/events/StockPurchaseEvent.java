@@ -1,5 +1,6 @@
 package com.maldahleh.stockmarket.events;
 
+import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,9 @@ public class StockPurchaseEvent extends Event {
   private final Player player;
   private final String stockSymbol;
   private final int quantity;
-  private final double stockValue;
-  private final double brokerFees;
-  private final double grandTotal;
+  private final BigDecimal stockValue;
+  private final BigDecimal brokerFees;
+  private final BigDecimal grandTotal;
 
   @NonNull
   @Override
