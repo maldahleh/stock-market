@@ -13,6 +13,20 @@ import org.bukkit.OfflinePlayer;
 @RequiredArgsConstructor
 public class StocksPlaceholder extends PlaceholderExpansion {
 
+  /**
+   * Prefix for stock data placeholders
+   * Example: sd-ba-vol (display the volume for BA - Boeing)
+   */
+  private static final String STOCK_DATA_PREFIX = "sd";
+  /**
+   * The minimum number of args required for a stock data placeholder
+   * Arg 1 (index 0) - sd
+   * Arg 2 (index 1) - symbol, ex: ba
+   * Arg 3 (index 2) - data point, ex: vol
+   */
+  private static final int STOCK_DATA_REQ_ARGS = 3;
+  private static final String STOCK_DATA_SEPARATOR = "-";
+
   private final PlayerManager playerManager;
   private final StockManager stockManager;
 
@@ -71,15 +85,15 @@ public class StocksPlaceholder extends PlaceholderExpansion {
   }
 
   private String[] getStockDataParams(String params) {
-    if (!params.startsWith("sd")) {
+    if (!params.startsWith(STOCK_DATA_PREFIX)) {
       return new String[0];
     }
 
-    return params.split("-");
+    return params.split(STOCK_DATA_SEPARATOR);
   }
 
   private String getStockData(String[] splitInfo) {
-    if (splitInfo.length != 3) {
+    if (splitInfo.length != STOCK_DATA_REQ_ARGS) {
       return null;
     }
 

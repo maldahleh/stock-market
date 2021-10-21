@@ -1,5 +1,6 @@
 package com.maldahleh.stockmarket.transactions;
 
+import com.maldahleh.stockmarket.utils.TimeUtils;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
@@ -50,8 +51,7 @@ public class Transaction {
       return true;
     }
 
-    return Duration.between(transactionDate, Instant.now()).compareTo(Duration.ofMinutes(minutes))
-        >= 0;
+    return TimeUtils.minutesSince(transactionDate) >= minutes;
   }
 
   public void markSold() {

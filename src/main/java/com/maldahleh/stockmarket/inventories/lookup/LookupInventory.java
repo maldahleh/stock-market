@@ -6,26 +6,22 @@ import com.google.common.collect.ImmutableMap;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
-import com.maldahleh.stockmarket.inventories.lookup.listeners.LookupListener;
+import com.maldahleh.stockmarket.inventories.utils.common.StockInventory;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import yahoofinance.Stock;
 import yahoofinance.histquotes.HistoricalQuote;
 
-public class LookupInventory {
+public class LookupInventory extends StockInventory {
 
   private final StockMarket stockMarket;
   private final StockManager stockManager;
@@ -42,7 +38,6 @@ public class LookupInventory {
 
   private final boolean useCache;
   private final Cache<String, Inventory> inventoryCache;
-  private final Set<UUID> activeViewers;
 
   public LookupInventory(
       StockMarket stockMarket,
@@ -50,6 +45,8 @@ public class LookupInventory {
       Messages messages,
       Settings settings,
       ConfigurationSection section) {
+    super(stockMarket);
+
     this.stockMarket = stockMarket;
     this.stockManager = stockManager;
     this.messages = messages;
@@ -75,17 +72,13 @@ public class LookupInventory {
     } else {
       this.inventoryCache = CacheBuilder.newBuilder().build();
     }
-
-    this.activeViewers = new HashSet<>();
-
-    Bukkit.getServer().getPluginManager().registerEvents(new LookupListener(this), stockMarket);
   }
 
   public void openInventory(Player player, String symbol) {
     Inventory cachedInventory = inventoryCache.getIfPresent(symbol.toUpperCase());
     if (cachedInventory != null) {
       player.openInventory(cachedInventory);
-      activeViewers.add(player.getUniqueId());
+      addViewer(player);
       return;
     }
 
@@ -272,20 +265,12 @@ public class LookupInventory {
                         }
 
                         player.openInventory(inventory);
-                        activeViewers.add(player.getUniqueId());
+                        addViewer(player);
 
                         if (useCache) {
                           inventoryCache.put(symbol.toUpperCase(), inventory);
                         }
                       });
             });
-  }
-
-  public boolean hasActiveInventory(HumanEntity entity) {
-    return activeViewers.contains(entity.getUniqueId());
-  }
-
-  public void remove(HumanEntity entity) {
-    activeViewers.remove(entity.getUniqueId());
   }
 }

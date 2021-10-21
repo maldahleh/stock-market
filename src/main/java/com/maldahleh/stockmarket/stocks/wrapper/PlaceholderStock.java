@@ -1,12 +1,10 @@
 package com.maldahleh.stockmarket.stocks.wrapper;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import yahoofinance.Stock;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 public class PlaceholderStock {
 

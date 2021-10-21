@@ -209,6 +209,15 @@ public class StockManager {
     return result;
   }
 
+  public BigDecimal getServerPrice(String symbol) {
+    Stock stock = getStock(symbol);
+    if (stock == null) {
+      return null;
+    }
+
+    return getServerPrice(stock);
+  }
+
   public BigDecimal getServerPrice(Stock stock) {
     BigDecimal price = stock.getQuote().getPrice().multiply(settings.getPriceMultiplier());
     if (!stock.getCurrency().equalsIgnoreCase("USD")) {

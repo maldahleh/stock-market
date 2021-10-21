@@ -18,6 +18,7 @@ import com.maldahleh.stockmarket.commands.subcommands.types.transactions.SellCom
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
 import com.maldahleh.stockmarket.processor.StockProcessor;
+import com.maldahleh.stockmarket.utils.Logger;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,23 +41,23 @@ public class CommandManager {
       InventoryManager inventoryManager,
       StockProcessor stockProcessor,
       Messages messages) {
-    registerSubcommand(new HelpCommand(messages));
-    registerSubcommand(new BuyCommand(stockProcessor, messages));
-    registerSubcommand(new SellCommand(stockProcessor, messages));
-    registerSubcommand(new TutorialCommand(inventoryManager));
-    registerSubcommand(new TransactionsCommand(plugin, inventoryManager, messages));
-    registerSubcommand(new PortfolioCommand(plugin, inventoryManager, messages));
-    registerSubcommand(new LookupCommand(inventoryManager, messages));
-    registerSubcommand(new ListCommand(inventoryManager));
-    registerSubcommand(new HistoryCommand(plugin, inventoryManager, messages));
-    registerSubcommand(new CompareCommand(inventoryManager, messages));
-    registerSubcommand(new SpawnSimpleBrokerCommand(brokerManager, messages));
-
     PluginCommand pluginCommand = Bukkit.getPluginCommand(ROOT_COMMAND);
     if (pluginCommand == null) {
-      Bukkit.getLogger().severe("StockMarket - failed to find command");
+      Logger.severe("failed to find command");
       return;
     }
+
+    registerSubcommands(new HelpCommand(messages),
+        new BuyCommand(stockProcessor, messages),
+        new SellCommand(stockProcessor, messages),
+        new TutorialCommand(inventoryManager),
+        new TransactionsCommand(plugin, inventoryManager, messages),
+        new PortfolioCommand(plugin, inventoryManager, messages),
+        new LookupCommand(inventoryManager, messages),
+        new ListCommand(inventoryManager),
+        new HistoryCommand(plugin, inventoryManager, messages),
+        new CompareCommand(inventoryManager, messages),
+        new SpawnSimpleBrokerCommand(brokerManager, messages));
 
     pluginCommand.setExecutor(new StockMarketCommand(this, brokerManager, messages));
     pluginCommand.setTabCompleter(new StockMarketTabCompleter(this));
@@ -71,7 +72,9 @@ public class CommandManager {
     return subcommandMap.get(lowercaseSubcommand);
   }
 
-  private void registerSubcommand(Subcommand subcommand) {
-    subcommandMap.put(subcommand.commandName(), subcommand);
+  private void registerSubcommands(Subcommand... subcommands) {
+    for (Subcommand subcommand : subcommands) {
+      subcommandMap.put(subcommand.commandName(), subcommand);
+    }
   }
 }

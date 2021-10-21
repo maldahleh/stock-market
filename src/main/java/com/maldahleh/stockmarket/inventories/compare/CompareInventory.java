@@ -4,26 +4,22 @@ import com.google.common.collect.ImmutableMap;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
-import com.maldahleh.stockmarket.inventories.compare.listeners.CompareListener;
+import com.maldahleh.stockmarket.inventories.utils.common.StockInventory;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import yahoofinance.Stock;
 
-public class CompareInventory {
+public class CompareInventory extends StockInventory {
   private final StockMarket stockMarket;
   private final StockManager stockManager;
   private final Messages messages;
@@ -33,14 +29,14 @@ public class CompareInventory {
   private final String inventoryName;
   private final int perStock;
 
-  private final Set<UUID> activeViewers;
-
   public CompareInventory(
       StockMarket stockMarket,
       StockManager stockManager,
       Messages messages,
       Settings settings,
       ConfigurationSection section) {
+    super(stockMarket);
+
     this.stockMarket = stockMarket;
     this.stockManager = stockManager;
     this.messages = messages;
@@ -49,10 +45,6 @@ public class CompareInventory {
 
     this.inventoryName = Utils.color(section.getString("inventory.name"));
     this.perStock = section.getInt("inventory.per-stock");
-
-    this.activeViewers = new HashSet<>();
-
-    Bukkit.getServer().getPluginManager().registerEvents(new CompareListener(this), stockMarket);
   }
 
   public void openInventory(Player player, String... symbols) {
@@ -204,16 +196,8 @@ public class CompareInventory {
                         }
 
                         player.openInventory(inventory);
-                        activeViewers.add(player.getUniqueId());
+                        addViewer(player);
                       });
             });
-  }
-
-  public boolean isNotViewing(HumanEntity entity) {
-    return !activeViewers.contains(entity.getUniqueId());
-  }
-
-  public void remove(HumanEntity entity) {
-    activeViewers.remove(entity.getUniqueId());
   }
 }
