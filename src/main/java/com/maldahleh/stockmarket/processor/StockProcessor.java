@@ -88,7 +88,7 @@ public record StockProcessor(
                                     price.doubleValue(),
                                     brokerFees.doubleValue(),
                                     grandTotal.doubleValue()));
-                        playerManager.addPurchaseTransaction(player.getUniqueId(), transaction);
+                        playerManager.registerTransaction(player.getUniqueId(), transaction);
                         messages.sendBoughtStockMessage(player, stock.getName(), transaction);
                       });
 
@@ -204,7 +204,7 @@ public record StockProcessor(
                         stockMarket
                             .getEcon()
                             .depositPlayer(player, transaction.getGrandTotal().doubleValue());
-                        playerManager.addSaleTransaction(player.getUniqueId(), transaction);
+                        playerManager.registerTransaction(player.getUniqueId(), transaction);
                         messages.sendSoldStockMessage(player, stock.getName(), transaction);
                       });
 
