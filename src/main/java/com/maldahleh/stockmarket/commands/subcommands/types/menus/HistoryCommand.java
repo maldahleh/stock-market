@@ -1,14 +1,17 @@
 package com.maldahleh.stockmarket.commands.subcommands.types.menus;
 
-import com.maldahleh.stockmarket.commands.subcommands.Subcommand;
+import com.maldahleh.stockmarket.commands.subcommands.common.BaseCommand;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
-public record HistoryCommand(Plugin plugin, InventoryManager inventoryManager, Messages messages)
-    implements Subcommand {
+@RequiredArgsConstructor
+public class HistoryCommand extends BaseCommand {
+
+  private final InventoryManager inventoryManager;
+  private final Messages messages;
 
   @Override
   public void onCommand(Player player, String[] args) {
@@ -22,11 +25,6 @@ public record HistoryCommand(Plugin plugin, InventoryManager inventoryManager, M
   }
 
   @Override
-  public int minArgs() {
-    return 1;
-  }
-
-  @Override
   public int maxArgs() {
     return 2;
   }
@@ -34,11 +32,6 @@ public record HistoryCommand(Plugin plugin, InventoryManager inventoryManager, M
   @Override
   public String commandName() {
     return "history";
-  }
-
-  @Override
-  public String requiredPerm() {
-    return "stockmarket.history";
   }
 
   @Override

@@ -93,7 +93,7 @@ stock
 
 #### Broker Commands
 
-**/stockmarket spawnsimplebroker** - _stockmarket.spawnbroker_ - Spawn a simple broker
+**/stockmarket simplebroker** - _stockmarket.spawnbroker_ - Spawn a simple broker
 (opens list inventory) at the executor's location
 
 ### Command Aliases

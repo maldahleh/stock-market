@@ -1,6 +1,5 @@
 package com.maldahleh.stockmarket.commands.subcommands.common;
 
-import com.maldahleh.stockmarket.commands.subcommands.Subcommand;
 import com.maldahleh.stockmarket.commands.util.CommandUtils;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.processor.StockProcessor;
@@ -8,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
-public abstract class TransactionCommand implements Subcommand {
+public abstract class TransactionCommand extends NoPermissionCommand {
 
   protected final StockProcessor stockProcessor;
   protected final Messages messages;
@@ -35,10 +34,5 @@ public abstract class TransactionCommand implements Subcommand {
   @Override
   public int maxArgs() {
     return 3;
-  }
-
-  @Override
-  public String requiredPerm() {
-    return null;
   }
 }
