@@ -10,9 +10,7 @@ import java.util.List;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
-public record Messages(StockMarket stockMarket,
-                       ConfigurationSection section,
-                       Settings settings) {
+public record Messages(StockMarket stockMarket, ConfigurationSection section, Settings settings) {
 
   public void sendCommandsDisabled(Player player) {
     player.sendMessage(Utils.color(section.getString("commands-disabled")));
@@ -112,10 +110,13 @@ public record Messages(StockMarket stockMarket,
   public void sendSoldStockMessage(Player player, String company, Transaction transaction) {
     section.getStringList("sold-stock").stream()
         .map(Utils::color)
-        .map(line -> getFormattedTransactionLine(line, company, transaction)
-            .replace("<net>",
-                CurrencyUtils.formatCurrency(
-                    transaction.getEarnings().doubleValue(), settings.getLocale())))
+        .map(
+            line ->
+                getFormattedTransactionLine(line, company, transaction)
+                    .replace(
+                        "<net>",
+                        CurrencyUtils.formatCurrency(
+                            transaction.getEarnings().doubleValue(), settings.getLocale())))
         .forEach(player::sendMessage);
   }
 
