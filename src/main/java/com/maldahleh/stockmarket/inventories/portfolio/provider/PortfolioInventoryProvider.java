@@ -8,6 +8,7 @@ import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.players.player.StockPlayer;
 import com.maldahleh.stockmarket.players.player.data.StockData;
 import com.maldahleh.stockmarket.stocks.StockManager;
+import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -83,11 +84,11 @@ public record PortfolioInventoryProvider(
             .put("<quantity>", value.getQuantity())
             .put(
                 "<current-value>",
-                Utils.formatCurrency(currentPrice.doubleValue(), settings.getLocale()))
+                CurrencyUtils.formatCurrency(currentPrice.doubleValue(), settings.getLocale()))
             .put(
                 "<purchase-value>",
-                Utils.formatCurrency(value.getValue().doubleValue(), settings.getLocale()))
-            .put("<net>", Utils.formatCurrency(net.doubleValue(), settings.getLocale()))
+                CurrencyUtils.formatCurrency(value.getValue().doubleValue(), settings.getLocale()))
+            .put("<net>", CurrencyUtils.formatCurrency(net.doubleValue(), settings.getLocale()))
             .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
             .build());
   }
@@ -96,17 +97,17 @@ public record PortfolioInventoryProvider(
   public ItemStack getExtraItem(ItemStack baseStack, Map<String, Object> extraData) {
     return Utils.updateItemStack(
         baseStack.clone(),
-        ImmutableMap.of(
+        Map.of(
             "<purchase-value>",
-                Utils.formatCurrency(
+                CurrencyUtils.formatCurrency(
                     ((BigDecimal) extraData.get("purchase_value")).doubleValue(),
                     settings.getLocale()),
             "<current-value>",
-                Utils.formatCurrency(
+                CurrencyUtils.formatCurrency(
                     ((BigDecimal) extraData.get("current_value")).doubleValue(),
                     settings.getLocale()),
             "<net-value>",
-                Utils.formatCurrency(
+                CurrencyUtils.formatCurrency(
                     ((BigDecimal) extraData.get("net_value")).doubleValue(), settings.getLocale()),
             "<server-currency>", stockMarket.getEcon().currencyNamePlural()));
   }
