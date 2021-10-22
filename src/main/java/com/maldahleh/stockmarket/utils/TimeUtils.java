@@ -15,8 +15,12 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class TimeUtils {
 
+  public long secondsSince(Instant timestamp) {
+    return durationSince(timestamp).toSeconds();
+  }
+
   public long minutesSince(Instant timestamp) {
-    return Duration.between(timestamp, Instant.now()).toMinutes();
+    return durationSince(timestamp).toMinutes();
   }
 
   public String getCurrentTime() {
@@ -36,5 +40,9 @@ public class TimeUtils {
         .withLocale(locale)
         .withZone(ZoneId.systemDefault())
         .format(instant);
+  }
+
+  private Duration durationSince(Instant timestamp) {
+    return Duration.between(timestamp, Instant.now());
   }
 }

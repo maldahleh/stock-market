@@ -2,6 +2,7 @@ package com.maldahleh.stockmarket.players.player;
 
 import com.maldahleh.stockmarket.players.player.data.StockData;
 import com.maldahleh.stockmarket.transactions.Transaction;
+import com.maldahleh.stockmarket.transactions.types.TransactionType;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Collection;
@@ -17,24 +18,19 @@ public class StockPlayer {
 
   private BigDecimal portfolioValue = BigDecimal.ZERO;
 
-  public void addPurchaseTransaction(Transaction transaction) {
-    portfolioValue = portfolioValue.add(transaction.getStockValue());
+  public void addTransaction(Transaction transaction) {
+    String symbol = transaction.getSymbol().toUpperCase();
+    StockData data = stockMap.getOrDefault(symbol, new StockData());
+    if (transaction.getTransactionType() == TransactionType.PURCHASE) {
+      portfolioValue = portfolioValue.add(transaction.getStockValue());
+      data.increase(transaction);
+    } else if (transaction.getTransactionType() == TransactionType.SALE) {
+      portfolioValue = portfolioValue.subtract(transaction.getStockValue());
+      data.decrease(transaction);
+    }
+
     transactionMap.put(transaction.getTransactionDate(), transaction);
-
-    StockData data = stockMap.getOrDefault(transaction.getSymbol().toUpperCase(), new StockData());
-    data.increase(transaction);
-
-    stockMap.put(transaction.getSymbol().toUpperCase(), data);
-  }
-
-  public void addSaleTransaction(Transaction transaction) {
-    portfolioValue = portfolioValue.subtract(transaction.getStockValue());
-    transactionMap.put(transaction.getTransactionDate(), transaction);
-
-    StockData data = stockMap.getOrDefault(transaction.getSymbol().toUpperCase(), new StockData());
-    data.decrease(transaction);
-
-    stockMap.put(transaction.getSymbol().toUpperCase(), data);
+    stockMap.put(symbol, data);
   }
 
   public Collection<Transaction> getTransactions() {
