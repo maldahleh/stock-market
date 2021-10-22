@@ -1,6 +1,7 @@
 # StockMarket
 
 ![CI](https://github.com/maldahleh/stock-market/workflows/CI/badge.svg)
+[![CodeFactor](https://www.codefactor.io/repository/github/maldahleh/stock-market/badge)](https://www.codefactor.io/repository/github/maldahleh/stock-market)
 [![codecov](https://codecov.io/gh/maldahleh/stock-market/branch/main/graph/badge.svg?token=uJi0uupg8u)](https://codecov.io/gh/maldahleh/stock-market)
 
 StockMarket is a Minecraft plugin that allows players to buy or sell real stocks using in-game
