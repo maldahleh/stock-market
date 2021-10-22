@@ -10,8 +10,14 @@ public class StockSaleEvent extends StockPurchaseEvent {
   private final BigDecimal initialPurchase;
   private final BigDecimal netOnTransaction;
 
-  public StockSaleEvent(Player player, String stockSymbol, int quantity, BigDecimal stockValue,
-      BigDecimal brokerFees, BigDecimal grandTotal, BigDecimal initialPurchase,
+  public StockSaleEvent(
+      Player player,
+      String stockSymbol,
+      int quantity,
+      BigDecimal stockValue,
+      BigDecimal brokerFees,
+      BigDecimal grandTotal,
+      BigDecimal initialPurchase,
       BigDecimal netOnTransaction) {
     super(player, stockSymbol, quantity, stockValue, brokerFees, grandTotal);
 

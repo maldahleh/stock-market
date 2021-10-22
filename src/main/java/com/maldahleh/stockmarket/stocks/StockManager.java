@@ -6,7 +6,6 @@ import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.stocks.wrapper.PlaceholderStock;
 import com.maldahleh.stockmarket.utils.CurrencyUtils;
-import com.maldahleh.stockmarket.utils.Utils;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;

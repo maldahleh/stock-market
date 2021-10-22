@@ -17,8 +17,7 @@ import org.bukkit.plugin.Plugin;
 
 public class BrokerManager {
 
-  @Getter
-  private final boolean enabled;
+  @Getter private final boolean enabled;
 
   private String simpleBrokerName;
   private boolean disableCommands;

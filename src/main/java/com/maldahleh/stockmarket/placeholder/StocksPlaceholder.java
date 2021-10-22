@@ -20,15 +20,14 @@ public class StocksPlaceholder extends PlaceholderExpansion {
   private static final String VOLUME_DATA_POINT = "vol";
   private static final String PORTFOLIO_VALUE_POINT = "portfolio-value";
 
-  /**
-   * Prefix for stock data placeholders Example: sd-ba-vol (display the volume for BA - Boeing)
-   */
+  /** Prefix for stock data placeholders Example: sd-ba-vol (display the volume for BA - Boeing) */
   private static final String STOCK_DATA_PREFIX = "sd";
   /**
    * The minimum number of args required for a stock data placeholder Arg 1 (index 0) - sd Arg 2
    * (index 1) - symbol, ex: ba Arg 3 (index 2) - data point, ex: vol
    */
   private static final int STOCK_DATA_REQ_ARGS = 3;
+
   private static final int DATA_POINT_NAME_INDEX = 2;
   private static final String STOCK_DATA_SEPARATOR = "-";
 

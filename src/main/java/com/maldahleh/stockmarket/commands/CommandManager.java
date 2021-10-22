@@ -47,7 +47,8 @@ public class CommandManager {
       return;
     }
 
-    registerSubcommands(new HelpCommand(messages),
+    registerSubcommands(
+        new HelpCommand(messages),
         new BuyCommand(stockProcessor, messages),
         new SellCommand(stockProcessor, messages),
         new TutorialCommand(inventoryManager),

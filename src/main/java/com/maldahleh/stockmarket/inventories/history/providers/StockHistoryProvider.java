@@ -65,20 +65,20 @@ public record StockHistoryProvider(StockMarket stockMarket, Storage storage, Set
             .put("<quantity>", key.getQuantity())
             .put(
                 "<stock-value>",
-                CurrencyUtils.formatCurrency(key.getStockValue().doubleValue(),
-                    settings.getLocale()))
+                CurrencyUtils.formatCurrency(
+                    key.getStockValue().doubleValue(), settings.getLocale()))
             .put(
                 "<broker-fees>",
-                CurrencyUtils.formatCurrency(key.getBrokerFee().doubleValue(),
-                    settings.getLocale()))
+                CurrencyUtils.formatCurrency(
+                    key.getBrokerFee().doubleValue(), settings.getLocale()))
             .put(
                 "<grand-total>",
-                CurrencyUtils.formatCurrency(key.getGrandTotal().doubleValue(),
-                    settings.getLocale()))
+                CurrencyUtils.formatCurrency(
+                    key.getGrandTotal().doubleValue(), settings.getLocale()))
             .put(
                 "<earnings>",
-                CurrencyUtils.format(key.getEarnings(), settings.getUnknownData(),
-                    settings.getLocale()))
+                CurrencyUtils.format(
+                    key.getEarnings(), settings.getUnknownData(), settings.getLocale()))
             .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
             .put("<sold>", String.valueOf(key.isSold()))
             .build());

@@ -32,8 +32,7 @@ public class TimeUtils {
   }
 
   public String formatInstant(Instant instant, Locale locale) {
-    return DateTimeFormatter
-        .ofLocalizedDateTime(FormatStyle.SHORT)
+    return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
         .withLocale(locale)
         .withZone(ZoneId.systemDefault())
         .format(instant);

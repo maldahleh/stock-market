@@ -7,10 +7,11 @@ import lombok.experimental.UtilityClass;
 public class CommandUtils {
 
   /**
-   * The minimum number of args we need to look up a quantity.
-   * This is because the user supplied quantity is always the 2nd index (3rd argument).
+   * The minimum number of args we need to look up a quantity. This is because the user supplied
+   * quantity is always the 2nd index (3rd argument).
    */
   private final int MIN_ARGS_QUANTITY = 3;
+
   private final int QUANTITY_ARG_INDEX = 2;
 
   public final int INVALID_QUANTITY = -1;

@@ -51,27 +51,27 @@ public record TransactionInventoryProvider(
     return Utils.updateItemStack(
         baseStack.clone(),
         ImmutableMap.<String, Object>builder()
-            .put("<date>",
-                TimeUtils.formatInstant(value.getTransactionDate(), settings.getLocale()))
+            .put(
+                "<date>", TimeUtils.formatInstant(value.getTransactionDate(), settings.getLocale()))
             .put("<symbol>", value.getSymbol().toUpperCase())
             .put("<transaction-type>", value.getTransactionType())
             .put("<quantity>", value.getQuantity())
             .put(
                 "<stock-value>",
-                CurrencyUtils.formatCurrency(value.getStockValue().doubleValue(),
-                    settings.getLocale()))
+                CurrencyUtils.formatCurrency(
+                    value.getStockValue().doubleValue(), settings.getLocale()))
             .put(
                 "<broker-fees>",
-                CurrencyUtils.formatCurrency(value.getBrokerFee().doubleValue(),
-                    settings.getLocale()))
+                CurrencyUtils.formatCurrency(
+                    value.getBrokerFee().doubleValue(), settings.getLocale()))
             .put(
                 "<grand-total>",
-                CurrencyUtils.formatCurrency(value.getGrandTotal().doubleValue(),
-                    settings.getLocale()))
+                CurrencyUtils.formatCurrency(
+                    value.getGrandTotal().doubleValue(), settings.getLocale()))
             .put(
                 "<earnings>",
-                CurrencyUtils.format(value.getEarnings(), settings.getUnknownData(),
-                    settings.getLocale()))
+                CurrencyUtils.format(
+                    value.getEarnings(), settings.getUnknownData(), settings.getLocale()))
             .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
             .put("<sold>", String.valueOf(value.isSold()))
             .build());

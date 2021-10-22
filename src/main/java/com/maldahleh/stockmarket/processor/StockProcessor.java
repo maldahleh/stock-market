@@ -83,12 +83,7 @@ public record StockProcessor(
                         Bukkit.getPluginManager()
                             .callEvent(
                                 new StockPurchaseEvent(
-                                    player,
-                                    symbol,
-                                    quantity,
-                                    price,
-                                    brokerFees,
-                                    grandTotal));
+                                    player, symbol, quantity, price, brokerFees, grandTotal));
                         playerManager.registerTransaction(player.getUniqueId(), transaction);
                         messages.sendBoughtStockMessage(player, stock.getName(), transaction);
                       });

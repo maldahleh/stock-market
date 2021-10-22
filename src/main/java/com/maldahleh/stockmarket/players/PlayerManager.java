@@ -25,8 +25,8 @@ public class PlayerManager {
   private final Storage storage;
   private final Settings settings;
 
-  public PlayerManager(StockMarket stockMarket, StockManager stockManager, Storage storage,
-      Settings settings) {
+  public PlayerManager(
+      StockMarket stockMarket, StockManager stockManager, Storage storage, Settings settings) {
     this.stockMarket = stockMarket;
     this.stockManager = stockManager;
     this.storage = storage;
@@ -36,8 +36,7 @@ public class PlayerManager {
   }
 
   public void cachePlayer(UUID uuid) {
-    Bukkit.getScheduler()
-        .runTaskAsynchronously(stockMarket, () -> loadPlayerTransactions(uuid));
+    Bukkit.getScheduler().runTaskAsynchronously(stockMarket, () -> loadPlayerTransactions(uuid));
   }
 
   public StockPlayer getStockPlayer(UUID uuid) {
@@ -103,8 +102,7 @@ public class PlayerManager {
         < settings.getTransactionCooldownSeconds();
   }
 
-  private StockPlayer getAndRemoveStockPlayer(UUID uuid)
-  {
+  private StockPlayer getAndRemoveStockPlayer(UUID uuid) {
     StockPlayer player = getStockPlayer(uuid);
     uncachePlayer(uuid);
 
