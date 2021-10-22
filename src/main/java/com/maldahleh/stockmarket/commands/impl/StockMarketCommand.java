@@ -39,7 +39,12 @@ public record StockMarketCommand(
       return true;
     }
 
-    Subcommand subcommand = commandManager.findSubcommand(strings[1]);
+    Subcommand subcommand = commandManager.findSubcommand(strings[0]);
+    if (subcommand == null) {
+      messages.sendInvalidSyntax(player);
+      return true;
+    }
+
     if (doesPlayerHaveNoPermission(player, subcommand)) {
       messages.sendNoPermission(player);
       return true;
