@@ -30,7 +30,7 @@ public record StockMarketTabCompleter(CommandManager commandManager) implements 
       return new ArrayList<>();
     }
 
-    if (!player.hasPermission(CommandManager.DEFAULT_PERM)) {
+    if (!CommandManager.hasBaseCommandPermission(player)) {
       return new ArrayList<>();
     }
 

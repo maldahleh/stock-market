@@ -2,6 +2,7 @@ package com.maldahleh.stockmarket.commands.subcommands.types;
 
 import com.maldahleh.stockmarket.commands.subcommands.Subcommand;
 import com.maldahleh.stockmarket.config.Messages;
+import java.util.List;
 import org.bukkit.entity.Player;
 
 public record HelpCommand(Messages messages) implements Subcommand {
@@ -29,5 +30,10 @@ public record HelpCommand(Messages messages) implements Subcommand {
   @Override
   public String requiredPerm() {
     return null;
+  }
+
+  @Override
+  public List<String> commandHelpKeys(Player player) {
+    return List.of("help");
   }
 }

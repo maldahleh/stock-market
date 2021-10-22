@@ -25,6 +25,7 @@ public class StockMarket extends JavaPlugin {
   private StockMarketAPI api;
   private Economy econ;
 
+  private CommandManager commandManager;
   private StockManager stockManager;
   private PlayerManager playerManager;
 
@@ -45,7 +46,8 @@ public class StockMarket extends JavaPlugin {
     }
 
     Settings settings = new Settings(getConfig().getConfigurationSection("settings"));
-    Messages messages = new Messages(getConfig().getConfigurationSection("messages"), settings);
+    Messages messages = new Messages(this, getConfig().getConfigurationSection("messages"),
+        settings);
     this.stockManager =
         new StockManager(this, getConfig().getConfigurationSection("stocks"), settings);
     this.playerManager = new PlayerManager(this, stockManager, storage, settings);
@@ -65,7 +67,8 @@ public class StockMarket extends JavaPlugin {
     BrokerManager brokerManager =
         new BrokerManager(this, getConfig().getConfigurationSection("brokers"), inventoryManager);
 
-    new CommandManager(this, brokerManager, inventoryManager, stockProcessor, messages);
+    this.commandManager = new CommandManager(this, brokerManager, inventoryManager, stockProcessor,
+        messages);
 
     if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
       new StocksPlaceholder(playerManager, stockManager).register();
