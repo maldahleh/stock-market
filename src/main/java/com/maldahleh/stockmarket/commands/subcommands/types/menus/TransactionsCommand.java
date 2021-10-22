@@ -4,6 +4,8 @@ import com.maldahleh.stockmarket.commands.subcommands.Subcommand;
 import com.maldahleh.stockmarket.commands.util.CommandUtils;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -39,6 +41,16 @@ public record TransactionsCommand(
   @Override
   public String requiredPerm() {
     return "stockmarket.transactions";
+  }
+
+  @Override
+  public List<String> commandHelpKeys(Player player) {
+    List<String> keys = new ArrayList<>(List.of("portfolio"));
+    if (player.hasPermission(CommandUtils.buildOtherPermission(requiredPerm()))) {
+      keys.add("portfolio-other");
+    }
+
+    return keys;
   }
 
   private void openPersonalTransactions(Player player) {

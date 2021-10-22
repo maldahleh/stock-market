@@ -24,11 +24,12 @@ import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class CommandManager {
 
-  public static final String DEFAULT_PERM = "stockmarket.use";
+  private static final String DEFAULT_PERM = "stockmarket.use";
   public static final String COMMAND_BYPASS_PERM = "stockmarket.commandbypass";
 
   private static final String ROOT_COMMAND = "stockmarket";
@@ -49,19 +50,23 @@ public class CommandManager {
 
     registerSubcommands(
         new HelpCommand(messages),
+        new TutorialCommand(inventoryManager),
+        new ListCommand(inventoryManager),
+        new LookupCommand(inventoryManager, messages),
+        new CompareCommand(inventoryManager, messages),
+        new PortfolioCommand(plugin, inventoryManager, messages),
+        new TransactionsCommand(plugin, inventoryManager, messages),
+        new HistoryCommand(plugin, inventoryManager, messages),
         new BuyCommand(stockProcessor, messages),
         new SellCommand(stockProcessor, messages),
-        new TutorialCommand(inventoryManager),
-        new TransactionsCommand(plugin, inventoryManager, messages),
-        new PortfolioCommand(plugin, inventoryManager, messages),
-        new LookupCommand(inventoryManager, messages),
-        new ListCommand(inventoryManager),
-        new HistoryCommand(plugin, inventoryManager, messages),
-        new CompareCommand(inventoryManager, messages),
         new SpawnSimpleBrokerCommand(brokerManager, messages));
 
     pluginCommand.setExecutor(new StockMarketCommand(this, brokerManager, messages));
     pluginCommand.setTabCompleter(new StockMarketTabCompleter(this));
+  }
+
+  public static boolean hasBaseCommandPermission(Player player) {
+    return player.hasPermission(DEFAULT_PERM);
   }
 
   public Collection<Subcommand> getRegisteredSubcommands() {

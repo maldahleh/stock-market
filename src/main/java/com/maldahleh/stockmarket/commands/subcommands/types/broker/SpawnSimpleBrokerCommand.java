@@ -3,6 +3,7 @@ package com.maldahleh.stockmarket.commands.subcommands.types.broker;
 import com.maldahleh.stockmarket.brokers.BrokerManager;
 import com.maldahleh.stockmarket.commands.subcommands.Subcommand;
 import com.maldahleh.stockmarket.config.Messages;
+import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -40,5 +41,10 @@ public record SpawnSimpleBrokerCommand(BrokerManager brokerManager, Messages mes
   @Override
   public String requiredPerm() {
     return "stockmarket.spawnbroker";
+  }
+
+  @Override
+  public List<String> commandHelpKeys(Player player) {
+    return List.of("simplebroker");
   }
 }

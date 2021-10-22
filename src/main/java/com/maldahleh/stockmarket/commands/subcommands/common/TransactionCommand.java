@@ -1,4 +1,4 @@
-package com.maldahleh.stockmarket.commands.subcommands.types.transactions;
+package com.maldahleh.stockmarket.commands.subcommands.common;
 
 import com.maldahleh.stockmarket.commands.subcommands.Subcommand;
 import com.maldahleh.stockmarket.commands.util.CommandUtils;
@@ -23,7 +23,8 @@ public abstract class TransactionCommand implements Subcommand {
       return;
     }
 
-    processTransaction(player, args[1], quantity);
+    String symbol = args[1];
+    processTransaction(player, symbol, quantity);
   }
 
   @Override
@@ -34,11 +35,6 @@ public abstract class TransactionCommand implements Subcommand {
   @Override
   public int maxArgs() {
     return 3;
-  }
-
-  @Override
-  public String commandName() {
-    return "transaction";
   }
 
   @Override

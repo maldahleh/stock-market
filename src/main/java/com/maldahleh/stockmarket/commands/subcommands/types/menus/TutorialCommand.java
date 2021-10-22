@@ -2,6 +2,7 @@ package com.maldahleh.stockmarket.commands.subcommands.types.menus;
 
 import com.maldahleh.stockmarket.commands.subcommands.Subcommand;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
+import java.util.List;
 import org.bukkit.entity.Player;
 
 public record TutorialCommand(InventoryManager inventoryManager) implements Subcommand {
@@ -29,5 +30,10 @@ public record TutorialCommand(InventoryManager inventoryManager) implements Subc
   @Override
   public String requiredPerm() {
     return "stockmarket.tutorial";
+  }
+
+  @Override
+  public List<String> commandHelpKeys(Player player) {
+    return List.of("tutorial");
   }
 }
