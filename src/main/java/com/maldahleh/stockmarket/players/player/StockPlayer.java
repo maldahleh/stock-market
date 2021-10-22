@@ -21,12 +21,9 @@ public class StockPlayer {
     portfolioValue = portfolioValue.add(transaction.getStockValue());
     transactionMap.put(transaction.getTransactionDate(), transaction);
 
-    StockData data = stockMap.get(transaction.getSymbol().toUpperCase());
-    if (data == null) {
-      data = new StockData();
-    }
-
+    StockData data = stockMap.getOrDefault(transaction.getSymbol().toUpperCase(), new StockData());
     data.increase(transaction);
+
     stockMap.put(transaction.getSymbol().toUpperCase(), data);
   }
 
@@ -34,12 +31,9 @@ public class StockPlayer {
     portfolioValue = portfolioValue.subtract(transaction.getStockValue());
     transactionMap.put(transaction.getTransactionDate(), transaction);
 
-    StockData data = stockMap.get(transaction.getSymbol().toUpperCase());
-    if (data == null) {
-      data = new StockData();
-    }
-
+    StockData data = stockMap.getOrDefault(transaction.getSymbol().toUpperCase(), new StockData());
     data.decrease(transaction);
+
     stockMap.put(transaction.getSymbol().toUpperCase(), data);
   }
 

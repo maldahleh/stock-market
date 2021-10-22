@@ -10,8 +10,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public record StockMarketCommand(
-    CommandManager commandManager, BrokerManager brokerManager, Messages messages)
+public record StockMarketCommand(CommandManager commandManager, BrokerManager brokerManager,
+                                 Messages messages)
     implements CommandExecutor {
 
   private static final String PLAYER_ONLY_MESSAGE =
@@ -40,12 +40,12 @@ public record StockMarketCommand(
     }
 
     Subcommand subcommand = commandManager.findSubcommand(strings[1]);
-    if (!canPlayerExecuteSubcommand(player, subcommand)) {
+    if (doesPlayerHaveNoPermission(player, subcommand)) {
       messages.sendNoPermission(player);
       return true;
     }
 
-    if (!isValidSyntax(subcommand, strings)) {
+    if (isInvalidSyntax(subcommand, strings)) {
       messages.sendInvalidSyntax(player);
       return true;
     }
@@ -54,20 +54,20 @@ public record StockMarketCommand(
     return true;
   }
 
-  private boolean canPlayerExecuteSubcommand(Player player, Subcommand subcommand) {
-    if (!player.hasPermission(CommandManager.DEFAULT_PERM)) {
+  private boolean doesPlayerHaveNoPermission(Player player, Subcommand subcommand) {
+    if (player.hasPermission(CommandManager.DEFAULT_PERM)) {
       return false;
     }
 
     String requiredPerm = subcommand.requiredPerm();
     if (requiredPerm == null) {
-      return true;
+      return false;
     }
 
-    return player.hasPermission(requiredPerm);
+    return !player.hasPermission(requiredPerm);
   }
 
-  private boolean isValidSyntax(Subcommand subcommand, String[] args) {
-    return args.length >= subcommand.minArgs() && args.length <= subcommand.maxArgs();
+  private boolean isInvalidSyntax(Subcommand subcommand, String[] args) {
+    return args.length < subcommand.minArgs() || args.length > subcommand.maxArgs();
   }
 }

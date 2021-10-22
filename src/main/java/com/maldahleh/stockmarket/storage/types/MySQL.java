@@ -2,6 +2,7 @@ package com.maldahleh.stockmarket.storage.types;
 
 import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
+import com.maldahleh.stockmarket.transactions.types.TransactionType;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
@@ -142,7 +143,7 @@ public class MySQL implements Storage {
             new Transaction(
                 resultSet.getInt(1),
                 uuid,
-                resultSet.getString(2).toUpperCase(),
+                TransactionType.valueOf(resultSet.getString(2)),
                 resultSet.getTimestamp(3).toInstant(),
                 resultSet.getString(4),
                 resultSet.getInt(5),
@@ -172,7 +173,7 @@ public class MySQL implements Storage {
             new Transaction(
                 resultSet.getInt(1),
                 UUID.fromString(resultSet.getString(2)),
-                resultSet.getString(3).toUpperCase(),
+                TransactionType.valueOf(resultSet.getString(3)),
                 resultSet.getTimestamp(4).toInstant(),
                 resultSet.getString(5),
                 resultSet.getInt(6),
@@ -202,7 +203,7 @@ public class MySQL implements Storage {
             new Transaction(
                 resultSet.getInt(1),
                 UUID.fromString(resultSet.getString(2)),
-                resultSet.getString(3).toUpperCase(),
+                TransactionType.valueOf(resultSet.getString(3)),
                 resultSet.getTimestamp(4).toInstant(),
                 resultSet.getString(5),
                 resultSet.getInt(6),

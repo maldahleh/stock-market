@@ -1,6 +1,8 @@
 package com.maldahleh.stockmarket.config;
 
 import com.maldahleh.stockmarket.transactions.Transaction;
+import com.maldahleh.stockmarket.utils.CurrencyUtils;
+import com.maldahleh.stockmarket.utils.TimeUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -156,21 +158,21 @@ public class Messages {
   public void sendBoughtStockMessage(Player player, String company, Transaction transaction) {
     for (String line : boughtMessage) {
       player.sendMessage(
-          line.replace("<date>", Utils.getCurrentTime())
+          line.replace("<date>", TimeUtils.getCurrentTime())
               .replace("<company>", company)
               .replace("<symbol>", transaction.getSymbol())
               .replace("<quantity>", String.valueOf(transaction.getQuantity()))
               .replace(
                   "<stock-value>",
-                  Utils.formatCurrency(
+                  CurrencyUtils.formatCurrency(
                       transaction.getSinglePrice().doubleValue(), settings.getLocale()))
               .replace(
                   "<broker-fees>",
-                  Utils.formatCurrency(
+                  CurrencyUtils.formatCurrency(
                       transaction.getBrokerFee().doubleValue(), settings.getLocale()))
               .replace(
                   "<total>",
-                  Utils.formatCurrency(
+                  CurrencyUtils.formatCurrency(
                       transaction.getGrandTotal().doubleValue(), settings.getLocale())));
     }
   }
@@ -178,25 +180,25 @@ public class Messages {
   public void sendSoldStockMessage(Player player, String company, Transaction transaction) {
     for (String line : soldMessage) {
       player.sendMessage(
-          line.replace("<date>", Utils.getCurrentTime())
+          line.replace("<date>", TimeUtils.getCurrentTime())
               .replace("<company>", company)
               .replace("<symbol>", transaction.getSymbol())
               .replace("<quantity>", String.valueOf(transaction.getQuantity()))
               .replace(
                   "<stock-value>",
-                  Utils.formatCurrency(
+                  CurrencyUtils.formatCurrency(
                       transaction.getSinglePrice().doubleValue(), settings.getLocale()))
               .replace(
                   "<broker-fees>",
-                  Utils.formatCurrency(
+                  CurrencyUtils.formatCurrency(
                       transaction.getBrokerFee().doubleValue(), settings.getLocale()))
               .replace(
                   "<total>",
-                  Utils.formatCurrency(
+                  CurrencyUtils.formatCurrency(
                       transaction.getGrandTotal().doubleValue(), settings.getLocale()))
               .replace(
                   "<net>",
-                  Utils.formatCurrency(
+                  CurrencyUtils.formatCurrency(
                       transaction.getEarnings().doubleValue(), settings.getLocale())));
     }
   }
