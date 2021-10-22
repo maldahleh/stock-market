@@ -1,6 +1,5 @@
 package com.maldahleh.stockmarket.commands.subcommands.common;
 
-import com.maldahleh.stockmarket.commands.subcommands.Subcommand;
 import com.maldahleh.stockmarket.commands.util.CommandUtils;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.inventories.InventoryManager;

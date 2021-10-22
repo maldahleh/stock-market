@@ -4,7 +4,6 @@ import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.players.listeners.PlayerListener;
 import com.maldahleh.stockmarket.players.player.StockPlayer;
-import com.maldahleh.stockmarket.players.player.data.StockData;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
@@ -58,7 +57,7 @@ public class PlayerManager {
 
   public BigDecimal getCurrentValue(StockPlayer stockPlayer) {
     BigDecimal currentValue = BigDecimal.ZERO;
-    for (Map.Entry<String, StockData> e : stockPlayer.getStockMap().entrySet()) {
+    for (var e : stockPlayer.getStockMap().entrySet()) {
       BigDecimal serverPrice = stockManager.getServerPrice(e.getKey());
       BigDecimal quantity = BigDecimal.valueOf(e.getValue().getQuantity());
       BigDecimal totalValue = serverPrice.multiply(quantity);

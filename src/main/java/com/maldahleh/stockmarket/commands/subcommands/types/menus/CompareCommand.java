@@ -1,10 +1,8 @@
 package com.maldahleh.stockmarket.commands.subcommands.types.menus;
 
-import com.maldahleh.stockmarket.commands.subcommands.Subcommand;
 import com.maldahleh.stockmarket.commands.subcommands.common.BaseCommand;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 

@@ -29,9 +29,4 @@ public class TransactionsCommand extends TargetableCommand {
   public String commandName() {
     return "transactions";
   }
-
-  @Override
-  public String requiredPerm() {
-    return "stockmarket.transactions";
-  }
 }
