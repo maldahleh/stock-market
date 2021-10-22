@@ -4,12 +4,12 @@ import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.players.listeners.PlayerListener;
 import com.maldahleh.stockmarket.players.player.StockPlayer;
-import com.maldahleh.stockmarket.players.player.data.StockData;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
-import com.maldahleh.stockmarket.transactions.types.TransactionType;
+import com.maldahleh.stockmarket.utils.TimeUtils;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,7 +17,7 @@ import org.bukkit.Bukkit;
 
 public class PlayerManager {
 
-  private final Map<UUID, Long> lastActionMap = new ConcurrentHashMap<>();
+  private final Map<UUID, Instant> lastActionMap = new ConcurrentHashMap<>();
   private final Map<UUID, StockPlayer> stockPlayerMap = new ConcurrentHashMap<>();
 
   private final StockMarket stockMarket;
@@ -57,7 +57,7 @@ public class PlayerManager {
 
   public BigDecimal getCurrentValue(StockPlayer stockPlayer) {
     BigDecimal currentValue = BigDecimal.ZERO;
-    for (Map.Entry<String, StockData> e : stockPlayer.getStockMap().entrySet()) {
+    for (var e : stockPlayer.getStockMap().entrySet()) {
       BigDecimal serverPrice = stockManager.getServerPrice(e.getKey());
       BigDecimal quantity = BigDecimal.valueOf(e.getValue().getQuantity());
       BigDecimal totalValue = serverPrice.multiply(quantity);
@@ -74,13 +74,9 @@ public class PlayerManager {
 
   public void registerTransaction(UUID uuid, Transaction transaction) {
     StockPlayer player = getOrCreateStockPlayer(uuid);
-    if (transaction.getTransactionType() == TransactionType.PURCHASE) {
-      player.addPurchaseTransaction(transaction);
-    } else if (transaction.getTransactionType() == TransactionType.SALE) {
-      player.addSaleTransaction(transaction);
-    }
+    player.addTransaction(transaction);
 
-    lastActionMap.put(uuid, System.currentTimeMillis());
+    lastActionMap.put(uuid, Instant.now());
   }
 
   public void uncachePlayer(UUID uuid) {
@@ -93,13 +89,12 @@ public class PlayerManager {
       return false;
     }
 
-    Long lastAction = lastActionMap.get(uuid);
+    Instant lastAction = lastActionMap.get(uuid);
     if (lastAction == null) {
       return false;
     }
 
-    return ((System.currentTimeMillis() - lastAction) / 1000)
-        < settings.getTransactionCooldownSeconds();
+    return TimeUtils.secondsSince(lastAction) < settings.getTransactionCooldownSeconds();
   }
 
   private StockPlayer getAndRemoveStockPlayer(UUID uuid) {

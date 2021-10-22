@@ -1,21 +1,22 @@
 # StockMarket
+
 ![CI](https://github.com/maldahleh/stock-market/workflows/CI/badge.svg)
+[![CodeFactor](https://www.codefactor.io/repository/github/maldahleh/stock-market/badge)](https://www.codefactor.io/repository/github/maldahleh/stock-market)
 [![codecov](https://codecov.io/gh/maldahleh/stock-market/branch/main/graph/badge.svg?token=uJi0uupg8u)](https://codecov.io/gh/maldahleh/stock-market)
 
-StockMarket is a plugin which allows your players to buy/sell stocks across various stock exchanges
-in the world using in-game currency. This provides players a way to make/loose money based on the
-performance of the stocks they buy while providing a risk-free way for your players to learn about
-the stock market.
+StockMarket is a Minecraft plugin that allows players to buy or sell real stocks using in-game
+currency. This provides players a way to make or lose money based on the performance of the stocks
+they pick, providing a risk-free way for players to learn about the stock market.
 
 [**Spigot Page**](https://www.spigotmc.org/resources/stockmarket-beta.67766/)
 
 ## Dependencies
 
-**Vault and a Vault compatible economy plugin** - Used for economy integration.
+**Vault and a Vault compatible economy plugin**
 
-**Citizens** - _Optional_ - Used for stockbrokers
+**Citizens** - _Optional_ - Used for brokers.
 
-**PlaceholderAPI** - _Optional_ - Used for providing placeholders.
+**PlaceholderAPI** - _Optional_ - Used for placeholders.
 
 ## PlaceholderAPI Placeholders
 
@@ -25,9 +26,9 @@ the stock market.
 
 ### Stock Placeholders
 
-**%sm_sd-<symbol>-<point>%** - Display various pieces of information on a stock. You may get N/A
-the first time you attempt to use one of these placeholders on start-up, this happens until the
-data is loaded in.
+**%sm_sd-\<symbol>-\<point>%** - Display various pieces of information on a stock. You may get N/A
+the first time you attempt to use one of these placeholders on start-up, this happens until the data
+is loaded in.
 
 #### Available Points
 
@@ -39,7 +40,7 @@ data is loaded in.
 
 **server price** - Example: %sm_sd-ba-sp% - Return the stock's server price.
 
-In the above examples, BA is used as the stock symbol, BA is the symbol for The Boeing Company.
+In the above examples, BA (Boeing) is used as the stock symbol.
 
 # Commands and Permissions
 
@@ -93,7 +94,7 @@ stock
 
 #### Broker Commands
 
-**/stockmarket spawnsimplebroker** - _stockmarket.spawnbroker_ - Spawn a simple broker
+**/stockmarket simplebroker** - _stockmarket.spawnbroker_ - Spawn a simple broker
 (opens list inventory) at the executor's location
 
 ### Command Aliases
@@ -101,11 +102,6 @@ stock
 - /sm
 - /stock
 - /stocks
-
-## Configuration
-
-If you need to update your configuration file, the latest version can be found
-[here](src/main/resources/config.yml).
 
 ## Developers
 

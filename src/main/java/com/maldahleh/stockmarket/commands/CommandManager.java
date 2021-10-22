@@ -56,10 +56,10 @@ public class CommandManager {
         new CompareCommand(inventoryManager, messages),
         new PortfolioCommand(plugin, inventoryManager, messages),
         new TransactionsCommand(plugin, inventoryManager, messages),
-        new HistoryCommand(plugin, inventoryManager, messages),
+        new HistoryCommand(inventoryManager, messages),
         new BuyCommand(stockProcessor, messages),
         new SellCommand(stockProcessor, messages),
-        new SpawnSimpleBrokerCommand(brokerManager, messages));
+        new SpawnSimpleBrokerCommand(brokerManager));
 
     pluginCommand.setExecutor(new StockMarketCommand(this, brokerManager, messages));
     pluginCommand.setTabCompleter(new StockMarketTabCompleter(this));

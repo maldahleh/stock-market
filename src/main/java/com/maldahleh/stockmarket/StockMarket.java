@@ -13,6 +13,7 @@ import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.storage.types.MySQL;
 import com.maldahleh.stockmarket.storage.types.SQLite;
+import com.maldahleh.stockmarket.utils.Logger;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -32,7 +33,7 @@ public class StockMarket extends JavaPlugin {
   @Override
   public void onEnable() {
     if (!setupEconomy()) {
-      getLogger().severe("Vault/economy plugin not found.");
+      Logger.severe("Vault/economy plugin not found.");
       return;
     }
 
