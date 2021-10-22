@@ -8,6 +8,7 @@ import com.maldahleh.stockmarket.players.player.data.StockData;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
+import com.maldahleh.stockmarket.transactions.types.TransactionType;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
@@ -74,9 +75,9 @@ public class PlayerManager {
 
   public void registerTransaction(UUID uuid, Transaction transaction) {
     StockPlayer player = getOrCreateStockPlayer(uuid);
-    if (transaction.getTransactionType().equalsIgnoreCase("purchase")) {
+    if (transaction.getTransactionType() == TransactionType.PURCHASE) {
       player.addPurchaseTransaction(transaction);
-    } else {
+    } else if (transaction.getTransactionType() == TransactionType.SALE) {
       player.addSaleTransaction(transaction);
     }
 

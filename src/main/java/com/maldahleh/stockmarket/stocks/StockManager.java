@@ -5,6 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.stocks.wrapper.PlaceholderStock;
+import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -70,7 +71,7 @@ public class StockManager {
                 entry
                     .getValue()
                     .setServerPrice(
-                        Utils.format(
+                        CurrencyUtils.format(
                             getServerPrice(stock),
                             settings.getUnknownData(),
                             settings.getLocale()));
@@ -132,7 +133,7 @@ public class StockManager {
                   uppercaseSymbol,
                   new PlaceholderStock(
                       stock,
-                      Utils.format(
+                      CurrencyUtils.format(
                           getServerPrice(stock), settings.getUnknownData(), settings.getLocale())));
               pendingOperations.remove(uppercaseSymbol);
             });

@@ -4,7 +4,7 @@ import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.players.player.StockPlayer;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.stocks.wrapper.PlaceholderStock;
-import com.maldahleh.stockmarket.utils.Utils;
+import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -90,7 +90,7 @@ public class StocksPlaceholder extends PlaceholderExpansion {
       return ZERO_VALUE;
     }
 
-    return Utils.sigFigNumber(player.getPortfolioValue().doubleValue());
+    return CurrencyUtils.sigFigNumber(player.getPortfolioValue().doubleValue());
   }
 
   private String[] getStockDataParams(String params) {
@@ -114,10 +114,10 @@ public class StocksPlaceholder extends PlaceholderExpansion {
     String dataPoint = splitInfo[DATA_POINT_NAME_INDEX].toLowerCase();
     return switch (dataPoint) {
       case NAME_DATA_POINT -> placeholderStock.getStock().getName();
-      case MARKET_CAP_DATA_POINT -> Utils.sigFigNumber(
+      case MARKET_CAP_DATA_POINT -> CurrencyUtils.sigFigNumber(
           placeholderStock.getStock().getStats().getMarketCap().doubleValue());
       case SERVER_PRICE_DATA_POINT -> placeholderStock.getServerPrice();
-      case VOLUME_DATA_POINT -> Utils.sigFigNumber(
+      case VOLUME_DATA_POINT -> CurrencyUtils.sigFigNumber(
           placeholderStock.getStock().getQuote().getVolume());
       default -> null;
     };

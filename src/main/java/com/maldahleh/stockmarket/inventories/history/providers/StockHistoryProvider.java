@@ -6,6 +6,8 @@ import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.inventories.utils.paged.provider.IContentProvider;
 import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
+import com.maldahleh.stockmarket.utils.CurrencyUtils;
+import com.maldahleh.stockmarket.utils.TimeUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -57,22 +59,26 @@ public record StockHistoryProvider(StockMarket stockMarket, Storage storage, Set
         baseStack.clone(),
         ImmutableMap.<String, Object>builder()
             .put("<name>", value.getName())
-            .put("<date>", Utils.formatInstant(key.getTransactionDate(), settings.getLocale()))
+            .put("<date>", TimeUtils.formatInstant(key.getTransactionDate(), settings.getLocale()))
             .put("<symbol>", key.getSymbol().toUpperCase())
             .put("<transaction-type>", key.getTransactionType())
             .put("<quantity>", key.getQuantity())
             .put(
                 "<stock-value>",
-                Utils.formatCurrency(key.getStockValue().doubleValue(), settings.getLocale()))
+                CurrencyUtils.formatCurrency(key.getStockValue().doubleValue(),
+                    settings.getLocale()))
             .put(
                 "<broker-fees>",
-                Utils.formatCurrency(key.getBrokerFee().doubleValue(), settings.getLocale()))
+                CurrencyUtils.formatCurrency(key.getBrokerFee().doubleValue(),
+                    settings.getLocale()))
             .put(
                 "<grand-total>",
-                Utils.formatCurrency(key.getGrandTotal().doubleValue(), settings.getLocale()))
+                CurrencyUtils.formatCurrency(key.getGrandTotal().doubleValue(),
+                    settings.getLocale()))
             .put(
                 "<earnings>",
-                Utils.format(key.getEarnings(), settings.getUnknownData(), settings.getLocale()))
+                CurrencyUtils.format(key.getEarnings(), settings.getUnknownData(),
+                    settings.getLocale()))
             .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
             .put("<sold>", String.valueOf(key.isSold()))
             .build());

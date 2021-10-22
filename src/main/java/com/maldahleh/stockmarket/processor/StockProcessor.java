@@ -10,6 +10,7 @@ import com.maldahleh.stockmarket.players.player.StockPlayer;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
+import com.maldahleh.stockmarket.transactions.types.TransactionType;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ public record StockProcessor(
                   new Transaction(
                       storage.getNextId(),
                       player.getUniqueId(),
-                      "PURCHASE",
+                      TransactionType.PURCHASE,
                       Instant.now(),
                       stock.getSymbol(),
                       quantity,
@@ -133,7 +134,7 @@ public record StockProcessor(
               for (Transaction transaction : transactions) {
                 if (!transaction.getSymbol().equalsIgnoreCase(symbol)
                     || transaction.isSold()
-                    || transaction.getTransactionType().equalsIgnoreCase("sale")
+                    || transaction.getTransactionType() == TransactionType.SALE
                     || !transaction.hasElapsed(settings.getMinutesBetweenSale())
                     || (soldQuantity + transaction.getQuantity()) > quantity) {
                   continue;
@@ -175,7 +176,7 @@ public record StockProcessor(
                   new Transaction(
                       storage.getNextId(),
                       player.getUniqueId(),
-                      "SALE",
+                      TransactionType.SALE,
                       Instant.now(),
                       stock.getSymbol(),
                       quantity,
