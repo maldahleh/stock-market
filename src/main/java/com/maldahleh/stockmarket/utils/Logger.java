@@ -8,7 +8,8 @@ public class Logger {
   private final String PREFIX = "StockMarket - ";
 
   public void severe(String message) {
-    Bukkit.getLogger().severe(buildLogMessage(message));
+    String logMessage = buildLogMessage(message);
+    Bukkit.getLogger().severe(logMessage);
   }
 
   private String buildLogMessage(String message) {
