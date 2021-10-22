@@ -20,7 +20,7 @@ import com.maldahleh.stockmarket.inventories.InventoryManager;
 import com.maldahleh.stockmarket.processor.StockProcessor;
 import com.maldahleh.stockmarket.utils.Logger;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -34,7 +34,7 @@ public class CommandManager {
 
   private static final String ROOT_COMMAND = "stockmarket";
 
-  private final Map<String, Subcommand> subcommandMap = new HashMap<>();
+  private final Map<String, Subcommand> subcommandMap = new LinkedHashMap<>();
 
   public CommandManager(
       Plugin plugin,
