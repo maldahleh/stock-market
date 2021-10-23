@@ -7,6 +7,8 @@ import com.maldahleh.stockmarket.inventories.utils.paged.provider.IContentProvid
 import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.players.player.StockPlayer;
 import com.maldahleh.stockmarket.transactions.Transaction;
+import com.maldahleh.stockmarket.utils.CurrencyUtils;
+import com.maldahleh.stockmarket.utils.TimeUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.time.Instant;
 import java.util.Collections;
@@ -16,10 +18,9 @@ import java.util.TreeMap;
 import java.util.UUID;
 import org.bukkit.inventory.ItemStack;
 
-public record TransactionInventoryProvider(StockMarket stockMarket,
-                                           PlayerManager playerManager,
-                                           Settings settings) implements
-    IContentProvider<UUID, Instant, Transaction, Instant, Transaction> {
+public record TransactionInventoryProvider(
+    StockMarket stockMarket, PlayerManager playerManager, Settings settings)
+    implements IContentProvider<UUID, Instant, Transaction, Instant, Transaction> {
 
   @Override
   public Map<Instant, Transaction> getContent(UUID uuid) {
@@ -45,24 +46,35 @@ public record TransactionInventoryProvider(StockMarket stockMarket,
   }
 
   @Override
-  public ItemStack getContentStack(ItemStack baseStack, int position, Instant key,
-      Transaction value) {
-    return Utils.updateItemStack(baseStack.clone(), ImmutableMap.<String, Object>builder()
-        .put("<date>", Utils.formatInstant(value.getTransactionDate(), settings.getLocale()))
-        .put("<symbol>", value.getSymbol().toUpperCase())
-        .put("<transaction-type>", value.getTransactionType())
-        .put("<quantity>", value.getQuantity())
-        .put("<stock-value>", Utils.formatCurrency(value.getStockValue().doubleValue(),
-            settings.getLocale()))
-        .put("<broker-fees>", Utils.formatCurrency(value.getBrokerFee().doubleValue(), settings
-            .getLocale()))
-        .put("<grand-total>", Utils.formatCurrency(value.getGrandTotal().doubleValue(),
-            settings.getLocale()))
-        .put("<earnings>", Utils.format(value.getEarnings(), settings.getUnknownData(),
-            settings.getLocale()))
-        .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
-        .put("<sold>", String.valueOf(value.isSold()))
-        .build());
+  public ItemStack getContentStack(
+      ItemStack baseStack, int position, Instant key, Transaction value) {
+    return Utils.updateItemStack(
+        baseStack.clone(),
+        ImmutableMap.<String, Object>builder()
+            .put(
+                "<date>", TimeUtils.formatInstant(value.getTransactionDate(), settings.getLocale()))
+            .put("<symbol>", value.getSymbol().toUpperCase())
+            .put("<transaction-type>", value.getTransactionType())
+            .put("<quantity>", value.getQuantity())
+            .put(
+                "<stock-value>",
+                CurrencyUtils.formatCurrency(
+                    value.getStockValue().doubleValue(), settings.getLocale()))
+            .put(
+                "<broker-fees>",
+                CurrencyUtils.formatCurrency(
+                    value.getBrokerFee().doubleValue(), settings.getLocale()))
+            .put(
+                "<grand-total>",
+                CurrencyUtils.formatCurrency(
+                    value.getGrandTotal().doubleValue(), settings.getLocale()))
+            .put(
+                "<earnings>",
+                CurrencyUtils.format(
+                    value.getEarnings(), settings.getUnknownData(), settings.getLocale()))
+            .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
+            .put("<sold>", String.valueOf(value.isSold()))
+            .build());
   }
 
   @Override

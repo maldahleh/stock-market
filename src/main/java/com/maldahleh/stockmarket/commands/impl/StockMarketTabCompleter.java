@@ -12,13 +12,15 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-public record StockMarketTabCompleter(
-    CommandManager commandManager) implements TabCompleter {
+public record StockMarketTabCompleter(CommandManager commandManager) implements TabCompleter {
 
   @Override
   @SuppressWarnings("java:S1168")
-  public List<String> onTabComplete(@NonNull CommandSender commandSender, @NonNull Command command,
-      @NonNull String s, @NonNull String[] strings) {
+  public List<String> onTabComplete(
+      @NonNull CommandSender commandSender,
+      @NonNull Command command,
+      @NonNull String s,
+      @NonNull String[] strings) {
     if (!(commandSender instanceof Player player)) {
       return new ArrayList<>();
     }
@@ -27,7 +29,7 @@ public record StockMarketTabCompleter(
       return new ArrayList<>();
     }
 
-    if (!player.hasPermission(CommandManager.DEFAULT_PERM)) {
+    if (!CommandManager.hasBaseCommandPermission(player)) {
       return new ArrayList<>();
     }
 

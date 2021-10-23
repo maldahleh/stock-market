@@ -1,12 +1,16 @@
 package com.maldahleh.stockmarket.commands.subcommands.types.menus;
 
-import com.maldahleh.stockmarket.commands.subcommands.Subcommand;
+import com.maldahleh.stockmarket.commands.subcommands.common.BaseCommand;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
-public record LookupCommand(InventoryManager inventoryManager, Messages messages) implements
-    Subcommand {
+@RequiredArgsConstructor
+public class LookupCommand extends BaseCommand {
+
+  private final InventoryManager inventoryManager;
+  private final Messages messages;
 
   @Override
   public void onCommand(Player player, String[] args) {
@@ -27,10 +31,5 @@ public record LookupCommand(InventoryManager inventoryManager, Messages messages
   @Override
   public String commandName() {
     return "lookup";
-  }
-
-  @Override
-  public String requiredPerm() {
-    return "stockmarket.lookup";
   }
 }

@@ -11,6 +11,7 @@ import java.util.UUID;
 @SuppressWarnings("unused")
 public record StockMarketAPI(PlayerManager playerManager) {
 
+  /** Value returned when a target is not found */
   private static final BigDecimal NOT_FOUND = BigDecimal.valueOf(-1);
 
   /**

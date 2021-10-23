@@ -1,11 +1,14 @@
 package com.maldahleh.stockmarket.commands.subcommands.types;
 
-import com.maldahleh.stockmarket.commands.subcommands.Subcommand;
+import com.maldahleh.stockmarket.commands.subcommands.common.NoPermissionCommand;
 import com.maldahleh.stockmarket.config.Messages;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
-public record HelpCommand(Messages messages) implements
-    Subcommand {
+@RequiredArgsConstructor
+public class HelpCommand extends NoPermissionCommand {
+
+  private final Messages messages;
 
   @Override
   public void onCommand(Player player, String[] args) {
@@ -13,22 +16,7 @@ public record HelpCommand(Messages messages) implements
   }
 
   @Override
-  public int minArgs() {
-    return 1;
-  }
-
-  @Override
-  public int maxArgs() {
-    return 1;
-  }
-
-  @Override
   public String commandName() {
     return "help";
-  }
-
-  @Override
-  public String requiredPerm() {
-    return null;
   }
 }

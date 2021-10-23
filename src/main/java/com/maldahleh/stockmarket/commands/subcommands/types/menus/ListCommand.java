@@ -1,11 +1,14 @@
 package com.maldahleh.stockmarket.commands.subcommands.types.menus;
 
-import com.maldahleh.stockmarket.commands.subcommands.Subcommand;
+import com.maldahleh.stockmarket.commands.subcommands.common.BaseCommand;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
-public record ListCommand(
-    InventoryManager inventoryManager) implements Subcommand {
+@RequiredArgsConstructor
+public class ListCommand extends BaseCommand {
+
+  private final InventoryManager inventoryManager;
 
   @Override
   public void onCommand(Player player, String[] args) {
@@ -13,22 +16,7 @@ public record ListCommand(
   }
 
   @Override
-  public int minArgs() {
-    return 1;
-  }
-
-  @Override
-  public int maxArgs() {
-    return 1;
-  }
-
-  @Override
   public String commandName() {
     return "list";
-  }
-
-  @Override
-  public String requiredPerm() {
-    return "stockmarket.list";
   }
 }

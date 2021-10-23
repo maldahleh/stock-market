@@ -8,6 +8,7 @@ import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.players.player.StockPlayer;
 import com.maldahleh.stockmarket.players.player.data.StockData;
 import com.maldahleh.stockmarket.stocks.StockManager;
+import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -18,11 +19,12 @@ import java.util.UUID;
 import org.bukkit.inventory.ItemStack;
 import yahoofinance.Stock;
 
-public record PortfolioInventoryProvider(StockMarket stockMarket,
-                                         PlayerManager playerManager,
-                                         StockManager stockManager,
-                                         Settings settings) implements
-    IContentProvider<UUID, String, StockData, Stock, StockData> {
+public record PortfolioInventoryProvider(
+    StockMarket stockMarket,
+    PlayerManager playerManager,
+    StockManager stockManager,
+    Settings settings)
+    implements IContentProvider<UUID, String, StockData, Stock, StockData> {
 
   @Override
   public Map<String, StockData> getContent(UUID uuid) {
@@ -74,30 +76,40 @@ public record PortfolioInventoryProvider(StockMarket stockMarket,
 
     currentPrice = currentPrice.multiply(BigDecimal.valueOf(value.getQuantity()));
     BigDecimal net = currentPrice.subtract(value.getValue());
-    return Utils.updateItemStack(baseStack.clone(), ImmutableMap.<String, Object>builder()
-        .put("<symbol>", key.getSymbol().toUpperCase())
-        .put("<name>", key.getName())
-        .put("<quantity>", value.getQuantity())
-        .put("<current-value>", Utils.formatCurrency(currentPrice.doubleValue(),
-            settings.getLocale()))
-        .put("<purchase-value>", Utils.formatCurrency(value.getValue().doubleValue(), settings
-            .getLocale()))
-        .put("<net>", Utils.formatCurrency(net.doubleValue(), settings.getLocale()))
-        .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
-        .build());
+    return Utils.updateItemStack(
+        baseStack.clone(),
+        ImmutableMap.<String, Object>builder()
+            .put("<symbol>", key.getSymbol().toUpperCase())
+            .put("<name>", key.getName())
+            .put("<quantity>", value.getQuantity())
+            .put(
+                "<current-value>",
+                CurrencyUtils.formatCurrency(currentPrice.doubleValue(), settings.getLocale()))
+            .put(
+                "<purchase-value>",
+                CurrencyUtils.formatCurrency(value.getValue().doubleValue(), settings.getLocale()))
+            .put("<net>", CurrencyUtils.formatCurrency(net.doubleValue(), settings.getLocale()))
+            .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
+            .build());
   }
 
   @Override
   public ItemStack getExtraItem(ItemStack baseStack, Map<String, Object> extraData) {
-    return Utils.updateItemStack(baseStack.clone(), ImmutableMap.of(
-        "<purchase-value>", Utils.formatCurrency(((BigDecimal) extraData.get("purchase_value"))
-            .doubleValue(), settings.getLocale()),
-        "<current-value>", Utils.formatCurrency(((BigDecimal) extraData.get("current_value"))
-            .doubleValue(), settings.getLocale()),
-        "<net-value>", Utils.formatCurrency(((BigDecimal) extraData.get("net_value"))
-            .doubleValue(), settings.getLocale()),
-        "<server-currency>", stockMarket.getEcon().currencyNamePlural()
-    ));
+    return Utils.updateItemStack(
+        baseStack.clone(),
+        Map.of(
+            "<purchase-value>",
+                CurrencyUtils.formatCurrency(
+                    ((BigDecimal) extraData.get("purchase_value")).doubleValue(),
+                    settings.getLocale()),
+            "<current-value>",
+                CurrencyUtils.formatCurrency(
+                    ((BigDecimal) extraData.get("current_value")).doubleValue(),
+                    settings.getLocale()),
+            "<net-value>",
+                CurrencyUtils.formatCurrency(
+                    ((BigDecimal) extraData.get("net_value")).doubleValue(), settings.getLocale()),
+            "<server-currency>", stockMarket.getEcon().currencyNamePlural()));
   }
 
   static class StockComparator implements Comparator<Stock> {

@@ -5,7 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.stocks.wrapper.PlaceholderStock;
-import com.maldahleh.stockmarket.utils.Utils;
+import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -38,12 +38,21 @@ public class StockManager {
   private final Settings settings;
 
   public StockManager(Plugin plugin, ConfigurationSection section, Settings settings) {
-    this.stockCache = CacheBuilder.newBuilder().expireAfterWrite(section
-        .getInt("cache.expire-minutes"), TimeUnit.MINUTES).maximumSize(500).build();
-    this.marketOpenCache = CacheBuilder.newBuilder().expireAfterWrite(section
-        .getInt("cache.expire-minutes"), TimeUnit.MINUTES).maximumSize(500).build();
-    this.fxCache = CacheBuilder.newBuilder().expireAfterWrite(section
-        .getInt("cache.expire-minutes"), TimeUnit.MINUTES).maximumSize(500).build();
+    this.stockCache =
+        CacheBuilder.newBuilder()
+            .expireAfterWrite(section.getInt("cache.expire-minutes"), TimeUnit.MINUTES)
+            .maximumSize(500)
+            .build();
+    this.marketOpenCache =
+        CacheBuilder.newBuilder()
+            .expireAfterWrite(section.getInt("cache.expire-minutes"), TimeUnit.MINUTES)
+            .maximumSize(500)
+            .build();
+    this.fxCache =
+        CacheBuilder.newBuilder()
+            .expireAfterWrite(section.getInt("cache.expire-minutes"), TimeUnit.MINUTES)
+            .maximumSize(500)
+            .build();
 
     this.placeholderMap = new ConcurrentHashMap<>();
     this.pendingOperations = ConcurrentHashMap.newKeySet();
@@ -51,24 +60,38 @@ public class StockManager {
     this.plugin = plugin;
     this.settings = settings;
 
-    Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-      for (Entry<String, PlaceholderStock> entry : placeholderMap.entrySet()) {
-        Stock stock = getStock(entry.getKey());
-        entry.getValue().setStock(stock);
-        entry.getValue().setServerPrice(Utils.format(getServerPrice(stock),
-            settings.getUnknownData(), settings.getLocale()));
-      }
-    }, 20L, section.getInt("cache.expire-minutes") * 60L * 20L);
+    Bukkit.getScheduler()
+        .runTaskTimerAsynchronously(
+            plugin,
+            () -> {
+              for (Entry<String, PlaceholderStock> entry : placeholderMap.entrySet()) {
+                Stock stock = getStock(entry.getKey());
+                entry.getValue().setStock(stock);
+                entry
+                    .getValue()
+                    .setServerPrice(
+                        CurrencyUtils.format(
+                            getServerPrice(stock),
+                            settings.getUnknownData(),
+                            settings.getLocale()));
+              }
+            },
+            20L,
+            section.getInt("cache.expire-minutes") * 60L * 20L);
   }
 
   public void cacheStocks(String... symbols) {
-    Map<String, Stock> results = YahooFinance.get(symbols);
-    for (Map.Entry<String, Stock> e : results.entrySet()) {
-      if (e.getKey() == null || e.getValue() == null) {
-        continue;
-      }
+    try {
+      Map<String, Stock> results = YahooFinance.get(symbols);
+      for (Map.Entry<String, Stock> e : results.entrySet()) {
+        if (e.getKey() == null || e.getValue() == null) {
+          continue;
+        }
 
-      stockCache.put(e.getKey().toUpperCase(), e.getValue());
+        stockCache.put(e.getKey().toUpperCase(), e.getValue());
+      }
+    } catch (IOException e) {
+      // Ignored error
     }
   }
 
@@ -100,12 +123,19 @@ public class StockManager {
     }
 
     pendingOperations.add(uppercaseSymbol);
-    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-      Stock stock = getStock(uppercaseSymbol);
-      placeholderMap.put(uppercaseSymbol, new PlaceholderStock(stock, Utils.format(
-          getServerPrice(stock), settings.getUnknownData(), settings.getLocale())));
-      pendingOperations.remove(uppercaseSymbol);
-    });
+    Bukkit.getScheduler()
+        .runTaskAsynchronously(
+            plugin,
+            () -> {
+              Stock stock = getStock(uppercaseSymbol);
+              placeholderMap.put(
+                  uppercaseSymbol,
+                  new PlaceholderStock(
+                      stock,
+                      CurrencyUtils.format(
+                          getServerPrice(stock), settings.getUnknownData(), settings.getLocale())));
+              pendingOperations.remove(uppercaseSymbol);
+            });
 
     return null;
   }
@@ -133,11 +163,14 @@ public class StockManager {
     }
 
     try {
-      String requestXml = "<?xml version='1.0' encoding='utf−8'?><request devtype='Apple_OSX' " +
-          "deployver='APPLE_DASHBOARD_1_0' app='YGoAppleStocksWidget' appver='unknown' " +
-          "api='finance' apiver='1.0.1' acknotification='0000'><query id='0' timestamp='`" +
-          "date +%s000`' type='getquotes'><list><symbol>" + symbol.toUpperCase() + "</symbol>"
-          + "</list></query></request>";
+      String requestXml =
+          "<?xml version='1.0' encoding='utf−8'?><request devtype='Apple_OSX' "
+              + "deployver='APPLE_DASHBOARD_1_0' app='YGoAppleStocksWidget' appver='unknown' "
+              + "api='finance' apiver='1.0.1' acknotification='0000'><query id='0' timestamp='`"
+              + "date +%s000`' type='getquotes'><list><symbol>"
+              + symbol.toUpperCase()
+              + "</symbol>"
+              + "</list></query></request>";
       URL url = new URL("http://wu-quotes.apple.com/dgw?imei=42&apptype=finance");
       URLConnection con = url.openConnection();
       con.setDoInput(true);
@@ -174,6 +207,15 @@ public class StockManager {
 
     marketOpenCache.put(symbol.toUpperCase(), result);
     return result;
+  }
+
+  public BigDecimal getServerPrice(String symbol) {
+    Stock stock = getStock(symbol);
+    if (stock == null) {
+      return null;
+    }
+
+    return getServerPrice(stock);
   }
 
   public BigDecimal getServerPrice(Stock stock) {

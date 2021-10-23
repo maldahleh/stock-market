@@ -15,10 +15,11 @@ public class StockHistoryInventory {
 
   private final PagedInventory<String, Transaction, UUID, Transaction, OfflinePlayer> inventory;
 
-  public StockHistoryInventory(StockMarket stockMarket, Storage storage,
-      Settings settings, ConfigurationSection section) {
-    inventory = new PagedInventory<>(stockMarket, new StockHistoryProvider(stockMarket,
-        storage, settings), section);
+  public StockHistoryInventory(
+      StockMarket stockMarket, Storage storage, Settings settings, ConfigurationSection section) {
+    inventory =
+        new PagedInventory<>(
+            stockMarket, new StockHistoryProvider(stockMarket, storage, settings), section);
   }
 
   public void openInventory(Player player, String target) {

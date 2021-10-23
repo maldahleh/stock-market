@@ -1,7 +1,8 @@
 package com.maldahleh.stockmarket.transactions;
 
+import com.maldahleh.stockmarket.transactions.types.TransactionType;
+import com.maldahleh.stockmarket.utils.TimeUtils;
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ public class Transaction {
 
   private final int id;
   private final UUID uuid;
-  private final String transactionType;
+  private final TransactionType transactionType;
   private final Instant transactionDate;
   private final String symbol;
   private final int quantity;
@@ -50,8 +51,7 @@ public class Transaction {
       return true;
     }
 
-    return Duration.between(transactionDate, Instant.now()).compareTo(Duration
-        .ofMinutes(minutes)) >= 0;
+    return TimeUtils.minutesSince(transactionDate) >= minutes;
   }
 
   public void markSold() {

@@ -1,6 +1,6 @@
-package com.maldahleh.stockmarket.inventories.compare.listeners;
+package com.maldahleh.stockmarket.inventories.utils.common.listener;
 
-import com.maldahleh.stockmarket.inventories.compare.CompareInventory;
+import com.maldahleh.stockmarket.inventories.utils.common.StockInventory;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -8,7 +8,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public record CompareListener(CompareInventory inventory) implements Listener {
+public record StockInventoryListener(StockInventory inventory) implements Listener {
 
   @EventHandler
   public void onClick(InventoryClickEvent e) {
