@@ -19,8 +19,7 @@ public class BrokerManager {
 
   @Getter private final boolean enabled;
 
-  private String simpleBrokerName;
-  private boolean disableCommands;
+  private ConfigurationSection section;
 
   public BrokerManager(
       Plugin plugin, ConfigurationSection section, InventoryManager inventoryManager) {
@@ -29,8 +28,7 @@ public class BrokerManager {
       return;
     }
 
-    this.simpleBrokerName = Utils.color(section.getString("names.simple"));
-    this.disableCommands = section.getBoolean("settings.disable-commands");
+    this.section = section;
 
     plugin
         .getServer()
@@ -39,7 +37,7 @@ public class BrokerManager {
   }
 
   public void spawnSimpleBroker(Location location) {
-    NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.VILLAGER, simpleBrokerName);
+    NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.VILLAGER, getSimpleBrokerName());
     npc.setProtected(true);
     npc.getDefaultGoalController().clear();
     npc.spawn(location, SpawnReason.CREATE);
@@ -50,7 +48,7 @@ public class BrokerManager {
       return false;
     }
 
-    return npc.getName().equalsIgnoreCase(simpleBrokerName);
+    return npc.getName().equalsIgnoreCase(getSimpleBrokerName());
   }
 
   public boolean areCommandsDisabled(Player player) {
@@ -58,6 +56,10 @@ public class BrokerManager {
       return false;
     }
 
-    return disableCommands;
+    return section.getBoolean("settings.disable-commands");
+  }
+
+  private String getSimpleBrokerName() {
+    return Utils.color(section.getString("names.simple"));
   }
 }

@@ -10,9 +10,11 @@ import org.junit.jupiter.api.Test;
 class BaseCommandTests {
 
   @Test
-  void baseCommandHasRightProperties() {
+  void hasRightProperties() {
     // GIVEN
     Player player = mock(Player.class);
+
+    // WHEN
     BaseCommand baseCommand = new BaseCommand() {
       @Override
       public void onCommand(Player player, String[] args) {
@@ -25,7 +27,7 @@ class BaseCommandTests {
       }
     };
 
-    // VERIFY
+    // THEN
     assertEquals(1, baseCommand.minArgs());
     assertEquals(1, baseCommand.maxArgs());
     assertEquals("stockmarket.test", baseCommand.requiredPerm());

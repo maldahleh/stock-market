@@ -60,8 +60,8 @@ public record StockMarketCommand(
   }
 
   private boolean doesPlayerHaveNoPermission(Player player, Subcommand subcommand) {
-    if (CommandManager.hasBaseCommandPermission(player)) {
-      return false;
+    if (!CommandManager.hasBaseCommandPermission(player)) {
+      return true;
     }
 
     String requiredPerm = subcommand.requiredPerm();

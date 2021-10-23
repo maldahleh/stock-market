@@ -10,6 +10,7 @@ public class StockSaleEvent extends StockPurchaseEvent {
   private final BigDecimal initialPurchase;
   private final BigDecimal netOnTransaction;
 
+  @SuppressWarnings("java:S107") // too many constructor args
   public StockSaleEvent(
       Player player,
       String stockSymbol,

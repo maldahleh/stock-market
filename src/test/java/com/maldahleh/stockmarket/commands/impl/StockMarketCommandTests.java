@@ -128,6 +128,25 @@ class StockMarketCommandTests {
     }
 
     @Test
+    void noGlobalPermission() {
+      // GIVEN
+      Player player = mock(Player.class);
+
+      when(commandManager.findSubcommand(SUBCOMMAND_NAME))
+          .thenReturn(subcommand);
+
+      when(player.hasPermission("stockmarket.use"))
+          .thenReturn(false);
+
+      // WHEN
+      stockMarketCommand.onCommand(player, command, "", ARGS);
+
+      // THEN
+      verify(messages, times(1))
+          .sendNoPermission(player);
+    }
+
+    @Test
     void invalidSyntax() {
       // GIVEN
       Player player = mock(Player.class);
@@ -135,6 +154,9 @@ class StockMarketCommandTests {
 
       when(commandManager.findSubcommand(SUBCOMMAND_NAME))
           .thenReturn(subcommand);
+
+      when(player.hasPermission("stockmarket.use"))
+          .thenReturn(true);
 
       when(player.hasPermission(SUBCOMMAND_PERM))
           .thenReturn(true);
@@ -155,6 +177,9 @@ class StockMarketCommandTests {
       when(commandManager.findSubcommand(SUBCOMMAND_NAME))
           .thenReturn(subcommand);
 
+      when(player.hasPermission("stockmarket.use"))
+          .thenReturn(true);
+
       when(player.hasPermission(SUBCOMMAND_PERM))
           .thenReturn(true);
 
@@ -170,6 +195,9 @@ class StockMarketCommandTests {
     void correctSyntax_noPermSubcommand() {
       // GIVEN
       Player player = mock(Player.class);
+
+      when(player.hasPermission("stockmarket.use"))
+          .thenReturn(true);
 
       when(subcommand.requiredPerm())
           .thenReturn(null);
