@@ -3,7 +3,7 @@ package com.maldahleh.stockmarket.inventories.compare;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
-import com.maldahleh.stockmarket.inventories.utils.common.StockInventory;
+import com.maldahleh.stockmarket.inventories.utils.common.StockDataInventory;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.utils.StockDataUtils;
 import com.maldahleh.stockmarket.utils.Utils;
@@ -19,15 +19,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import yahoofinance.Stock;
 
-public class CompareInventory extends StockInventory {
+public class CompareInventory extends StockDataInventory {
 
-  private final StockMarket stockMarket;
-  private final StockManager stockManager;
-  private final Messages messages;
-  private final Settings settings;
-  private final ConfigurationSection section;
-
-  private final String inventoryName;
   private final int perStock;
 
   public CompareInventory(
@@ -36,15 +29,8 @@ public class CompareInventory extends StockInventory {
       Messages messages,
       Settings settings,
       ConfigurationSection section) {
-    super(stockMarket);
+    super(stockMarket, stockManager, messages, settings, section);
 
-    this.stockMarket = stockMarket;
-    this.stockManager = stockManager;
-    this.messages = messages;
-    this.settings = settings;
-    this.section = section;
-
-    this.inventoryName = Utils.color(section.getString("inventory.name"));
     this.perStock = section.getInt("inventory.per-stock");
   }
 

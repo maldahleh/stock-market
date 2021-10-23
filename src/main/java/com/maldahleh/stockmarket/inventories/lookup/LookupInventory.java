@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableMap;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
-import com.maldahleh.stockmarket.inventories.utils.common.StockInventory;
+import com.maldahleh.stockmarket.inventories.utils.common.StockDataInventory;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.utils.StockDataUtils;
 import com.maldahleh.stockmarket.utils.TimeUtils;
@@ -24,15 +24,8 @@ import org.bukkit.inventory.ItemStack;
 import yahoofinance.Stock;
 import yahoofinance.histquotes.HistoricalQuote;
 
-public class LookupInventory extends StockInventory {
+public class LookupInventory extends StockDataInventory {
 
-  private final StockMarket stockMarket;
-  private final StockManager stockManager;
-  private final Messages messages;
-  private final Settings settings;
-  private final ConfigurationSection section;
-
-  private final String inventoryName;
   private final int inventorySize;
 
   private final ItemStack historicalStack;
@@ -48,15 +41,8 @@ public class LookupInventory extends StockInventory {
       Messages messages,
       Settings settings,
       ConfigurationSection section) {
-    super(stockMarket);
+    super(stockMarket, stockManager, messages, settings, section);
 
-    this.stockMarket = stockMarket;
-    this.stockManager = stockManager;
-    this.messages = messages;
-    this.settings = settings;
-    this.section = section;
-
-    this.inventoryName = Utils.color(section.getString("inventory.name"));
     this.inventorySize = section.getInt("inventory.size");
 
     this.historicalStack =
@@ -112,7 +98,7 @@ public class LookupInventory extends StockInventory {
 
                         for (String key : section.getConfigurationSection("items").getKeys(false)) {
                           inventory.setItem(
-                              Integer.valueOf(key),
+                              Integer.parseInt(key),
                               Utils.createItemStack(
                                   section.getConfigurationSection("items." + key),
                                   StockDataUtils.buildStockDataMap(stock, price,
