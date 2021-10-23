@@ -6,6 +6,7 @@ import com.maldahleh.stockmarket.processor.StockProcessor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -22,19 +23,12 @@ public record ListListener(
       return;
     }
 
-    e.setCancelled(true);
     String symbol = inventory.getSymbol(e.getRawSlot());
     if (symbol == null) {
       return;
     }
 
-    switch (e.getClick()) {
-      case SHIFT_LEFT -> stockProcessor.buyStock(player, symbol, 5);
-      case LEFT -> stockProcessor.buyStock(player, symbol, 1);
-      case MIDDLE -> lookupInventory.openInventory(player, symbol.toUpperCase());
-      case RIGHT -> stockProcessor.sellStock(player, symbol, 1);
-      case SHIFT_RIGHT -> stockProcessor.sellStock(player, symbol, 5);
-    }
+    processClick(e.getClick(), player, symbol);
   }
 
   @EventHandler
@@ -54,5 +48,18 @@ public record ListListener(
   @EventHandler
   public void onQuit(PlayerQuitEvent e) {
     inventory.remove(e.getPlayer());
+  }
+
+  private void processClick(ClickType clickType, Player player, String symbol) {
+    switch (clickType) {
+      case SHIFT_LEFT -> stockProcessor.buyStock(player, symbol, 5);
+      case LEFT -> stockProcessor.buyStock(player, symbol, 1);
+      case MIDDLE -> lookupInventory.openInventory(player, symbol.toUpperCase());
+      case RIGHT -> stockProcessor.sellStock(player, symbol, 1);
+      case SHIFT_RIGHT -> stockProcessor.sellStock(player, symbol, 5);
+      default -> {
+        // other actions not supported
+      }
+    }
   }
 }
