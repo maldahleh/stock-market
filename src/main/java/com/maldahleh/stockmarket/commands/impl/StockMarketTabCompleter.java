@@ -5,7 +5,6 @@ import com.maldahleh.stockmarket.commands.subcommands.Subcommand;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.NonNull;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -63,7 +62,7 @@ public record StockMarketTabCompleter(
     return commandManager.getRegisteredSubcommands().stream()
         .filter(subcommand -> hasPermission(player, subcommand))
         .map(Subcommand::commandName)
-        .collect(Collectors.toList());
+        .toList();
   }
 
   private boolean hasPermission(Player player, Subcommand subcommand) {
