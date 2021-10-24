@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@SuppressWarnings("unused")
 public record StockMarketAPI(PlayerManager playerManager) {
 
   /** Value returned when a target is not found */
