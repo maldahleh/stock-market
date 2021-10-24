@@ -6,15 +6,22 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.maldahleh.stockmarket.commands.CommandManager;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.GoalController;
+import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -89,6 +96,39 @@ class BrokerManagerTests {
 
       verify(configurationSection, never())
           .getBoolean("settings.disable-commands");
+    }
+  }
+
+  @Test
+  void spawnSimpleBroker() {
+    // GIVEN
+    NPC npc = mock(NPC.class);
+    Location location = mock(Location.class);
+    NPCRegistry registry = mock(NPCRegistry.class);
+    GoalController goalController = mock(GoalController.class);
+
+    try (MockedStatic<CitizensAPI> citizensAPI = mockStatic(CitizensAPI.class)) {
+      citizensAPI.when(CitizensAPI::getNPCRegistry)
+          .thenReturn(registry);
+
+      when(registry.createNPC(EntityType.VILLAGER, "broker"))
+          .thenReturn(npc);
+
+      when(npc.getDefaultGoalController())
+          .thenReturn(goalController);
+
+      // WHEN
+      brokerManager.spawnSimpleBroker(location);
+
+      // THEN
+      verify(npc, times(1))
+          .setProtected(true);
+
+      verify(npc, times(1))
+          .spawn(location, SpawnReason.CREATE);
+
+      verify(goalController, times(1))
+          .clear();
     }
   }
 
