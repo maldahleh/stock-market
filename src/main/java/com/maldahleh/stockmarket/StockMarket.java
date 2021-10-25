@@ -43,7 +43,7 @@ public class StockMarket extends JavaPlugin {
     if (getConfig().getBoolean("storage.mysql.enabled", false)) {
       storage = new MySQL(getConfig().getConfigurationSection("storage.mysql"));
     } else {
-      storage = new SQLite();
+      storage = new SQLite(null);
     }
 
     Settings settings = new Settings(getConfig().getConfigurationSection("settings"));

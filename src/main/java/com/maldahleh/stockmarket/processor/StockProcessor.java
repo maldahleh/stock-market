@@ -88,7 +88,7 @@ public record StockProcessor(
                         messages.sendBoughtStockMessage(player, stock.getName(), transaction);
                       });
 
-              storage.processPurchase(transaction);
+              storage.processTransaction(transaction);
             });
   }
 
@@ -204,7 +204,7 @@ public record StockProcessor(
                         messages.sendSoldStockMessage(player, stock.getName(), transaction);
                       });
 
-              storage.processSale(transaction);
+              storage.processTransaction(transaction);
             });
   }
 }
