@@ -8,13 +8,15 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Transaction {
 
-  private final int id;
+  @Setter
+  private Integer id;
   private final UUID uuid;
   private final TransactionType transactionType;
   private final Instant transactionDate;

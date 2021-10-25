@@ -63,7 +63,7 @@ public record StockProcessor(
 
               Transaction transaction =
                   new Transaction(
-                      storage.getNextId(),
+                      null,
                       player.getUniqueId(),
                       TransactionType.PURCHASE,
                       Instant.now(),
@@ -169,7 +169,7 @@ public record StockProcessor(
 
               Transaction transaction =
                   new Transaction(
-                      storage.getNextId(),
+                      null,
                       player.getUniqueId(),
                       TransactionType.SALE,
                       Instant.now(),
