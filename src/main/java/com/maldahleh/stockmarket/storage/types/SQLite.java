@@ -19,7 +19,7 @@ public class SQLite extends Storage {
   @Override
   protected HikariConfig buildHikariConfig(ConfigurationSection section) {
     HikariConfig config = new HikariConfig();
-    config.setPoolName("AuthMeSQLitePool");
+    config.setPoolName("StockMarketPool");
     config.setDriverClassName("org.sqlite.JDBC");
     config.setJdbcUrl("jdbc:sqlite:plugins/StockMarket/StockMarket.db");
     config.setConnectionTestQuery("SELECT 1");
