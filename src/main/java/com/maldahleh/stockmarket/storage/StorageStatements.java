@@ -1,13 +1,12 @@
 package com.maldahleh.stockmarket.storage;
 
+@SuppressWarnings("java:S3400") // use constant instead of method
 public abstract class StorageStatements {
 
   private static final String SELECT_ALL = "SELECT id, uuid, tran_type, tran_date, symbol, "
       + "quantity, single_price, broker_fee, earnings, sold FROM sm_transactions";
 
-  protected String getCreateTableQuery() {
-    return null;
-  }
+  protected abstract String getCreateTableQuery();
 
   protected String getPurchaseQuery() {
     return "INSERT INTO sm_transactions (id, uuid, tran_type, tran_date, symbol, quantity, "

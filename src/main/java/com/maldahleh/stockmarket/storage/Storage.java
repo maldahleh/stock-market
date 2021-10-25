@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 import org.bukkit.configuration.ConfigurationSection;
 
+@SuppressWarnings("java:S2095") // use prepared statement in try/finally
 public abstract class Storage extends StorageStatements {
 
   private final HikariDataSource pool;
