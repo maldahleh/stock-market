@@ -1,28 +1,21 @@
 package com.maldahleh.stockmarket.stocks;
 
 import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
+import com.maldahleh.stockmarket.stocks.utils.StockUtils;
 import com.maldahleh.stockmarket.stocks.wrapper.PlaceholderStock;
 import com.maldahleh.stockmarket.utils.CurrencyUtils;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import yahoofinance.Stock;
-import yahoofinance.YahooFinance;
 import yahoofinance.quotes.fx.FxQuote;
 
 public class StockManager {
@@ -31,31 +24,16 @@ public class StockManager {
   private final Cache<String, Boolean> marketOpenCache;
   private final Cache<String, FxQuote> fxCache;
 
-  private final Map<String, PlaceholderStock> placeholderMap;
-  private final Set<String> pendingOperations;
-
   private final Plugin plugin;
   private final Settings settings;
 
-  public StockManager(Plugin plugin, ConfigurationSection section, Settings settings) {
-    this.stockCache =
-        CacheBuilder.newBuilder()
-            .expireAfterWrite(section.getInt("cache.expire-minutes"), TimeUnit.MINUTES)
-            .maximumSize(500)
-            .build();
-    this.marketOpenCache =
-        CacheBuilder.newBuilder()
-            .expireAfterWrite(section.getInt("cache.expire-minutes"), TimeUnit.MINUTES)
-            .maximumSize(500)
-            .build();
-    this.fxCache =
-        CacheBuilder.newBuilder()
-            .expireAfterWrite(section.getInt("cache.expire-minutes"), TimeUnit.MINUTES)
-            .maximumSize(500)
-            .build();
+  private final Map<String, PlaceholderStock> placeholderMap = new ConcurrentHashMap<>();
+  private final Set<String> pendingOperations = ConcurrentHashMap.newKeySet();
 
-    this.placeholderMap = new ConcurrentHashMap<>();
-    this.pendingOperations = ConcurrentHashMap.newKeySet();
+  public StockManager(Plugin plugin, ConfigurationSection section, Settings settings) {
+    this.stockCache = StockUtils.buildCache(section);
+    this.marketOpenCache = StockUtils.buildCache(section);
+    this.fxCache = StockUtils.buildCache(section);
 
     this.plugin = plugin;
     this.settings = settings;
@@ -81,17 +59,9 @@ public class StockManager {
   }
 
   public void cacheStocks(String... symbols) {
-    try {
-      Map<String, Stock> results = YahooFinance.get(symbols);
-      for (Map.Entry<String, Stock> e : results.entrySet()) {
-        if (e.getKey() == null || e.getValue() == null) {
-          continue;
-        }
-
-        stockCache.put(e.getKey().toUpperCase(), e.getValue());
-      }
-    } catch (IOException e) {
-      // Ignored error
+    Map<String, Stock> results = StockUtils.fetchStocks(symbols);
+    for (Map.Entry<String, Stock> e : results.entrySet()) {
+      stockCache.put(e.getKey().toUpperCase(), e.getValue());
     }
   }
 
@@ -102,13 +72,13 @@ public class StockManager {
       return stock;
     }
 
-    try {
-      stock = YahooFinance.get(upperSymbol, true);
-      stockCache.put(upperSymbol, stock);
-      return stock;
-    } catch (IOException e) {
+    Stock fetchedStock = StockUtils.fetchStock(upperSymbol);
+    if (fetchedStock == null) {
       return null;
     }
+
+    stockCache.put(upperSymbol, fetchedStock);
+    return fetchedStock;
   }
 
   public PlaceholderStock getPlaceholderStock(String symbol) {
@@ -147,66 +117,25 @@ public class StockManager {
       return quote.getPrice();
     }
 
-    try {
-      quote = YahooFinance.getFx(fxQuote);
-      fxCache.put(fxQuote, quote);
-      return quote.getPrice();
-    } catch (IOException e) {
+    FxQuote fetchedQuote = StockUtils.fetchFxQuote(fxQuote);
+    if (fetchedQuote == null) {
       return null;
     }
+
+    fxCache.put(fxQuote, fetchedQuote);
+    return fetchedQuote.getPrice();
   }
 
   private boolean isMarketOpen(String symbol) {
-    Boolean result = marketOpenCache.getIfPresent(symbol.toUpperCase());
+    String uppercaseSymbol = symbol.toUpperCase();
+    Boolean result = marketOpenCache.getIfPresent(uppercaseSymbol);
     if (result != null) {
       return result;
     }
 
-    try {
-      String requestXml =
-          "<?xml version='1.0' encoding='utf−8'?><request devtype='Apple_OSX' "
-              + "deployver='APPLE_DASHBOARD_1_0' app='YGoAppleStocksWidget' appver='unknown' "
-              + "api='finance' apiver='1.0.1' acknotification='0000'><query id='0' timestamp='`"
-              + "date +%s000`' type='getquotes'><list><symbol>"
-              + symbol.toUpperCase()
-              + "</symbol>"
-              + "</list></query></request>";
-      URL url = new URL("http://wu-quotes.apple.com/dgw?imei=42&apptype=finance");
-      URLConnection con = url.openConnection();
-      con.setDoInput(true);
-      con.setDoOutput(true);
-      con.setConnectTimeout(20_000);
-      con.setReadTimeout(20_000);
-      con.setUseCaches(false);
-      con.setDefaultUseCaches(false);
-      con.setRequestProperty("Content-Type", "text/xml");
-
-      OutputStreamWriter writer = new OutputStreamWriter(con.getOutputStream());
-      writer.write(requestXml);
-      writer.flush();
-      writer.close();
-
-      InputStreamReader reader = new InputStreamReader(con.getInputStream());
-      StringBuilder buf = new StringBuilder();
-      char[] cbuf = new char[2048];
-      int num;
-      while (-1 != (num = reader.read(cbuf))) {
-        buf.append(cbuf, 0, num);
-      }
-
-      reader.close();
-
-      String finalResult = buf.toString();
-      String[] initialSplit = finalResult.split("<status>");
-      String[] finalSplit = initialSplit[1].split("</status>");
-
-      result = finalSplit[0].equalsIgnoreCase("1");
-    } catch (Throwable t) {
-      result = false;
-    }
-
-    marketOpenCache.put(symbol.toUpperCase(), result);
-    return result;
+    boolean fetchedResult = StockUtils.isMarketOpen(uppercaseSymbol);
+    marketOpenCache.put(uppercaseSymbol, fetchedResult);
+    return fetchedResult;
   }
 
   public BigDecimal getServerPrice(String symbol) {

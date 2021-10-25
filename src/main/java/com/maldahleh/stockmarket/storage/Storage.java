@@ -18,7 +18,6 @@ import org.bukkit.configuration.ConfigurationSection;
 public abstract class Storage extends StorageStatements {
 
   private final HikariDataSource pool;
-  private int currentId;
 
   protected abstract HikariConfig buildHikariConfig(ConfigurationSection section);
 
@@ -27,19 +26,15 @@ public abstract class Storage extends StorageStatements {
   protected Storage(ConfigurationSection section) {
     pool = new HikariDataSource(buildHikariConfig(section));
     createTable();
-
-    currentId = getLastId();
-  }
-
-  public int getNextId() {
-    currentId++;
-    return currentId;
   }
 
   public void processTransaction(Transaction transaction) {
     try (Connection connection = pool.getConnection();
-        PreparedStatement statement = buildActionStatement(connection, transaction)) {
-      statement.executeUpdate();
+        PreparedStatement statement = buildActionStatement(connection, transaction);
+        ResultSet resultSet = statement.executeQuery()) {
+      if (resultSet.next()) {
+        transaction.setId(resultSet.getInt(1));
+      }
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -111,32 +106,17 @@ public abstract class Storage extends StorageStatements {
     }
   }
 
-  private int getLastId() {
-    try (Connection connection = pool.getConnection();
-        PreparedStatement statement = connection.prepareStatement(getMaxIdQuery());
-        ResultSet resultSet = statement.executeQuery()) {
-      if (resultSet.next()) {
-        return resultSet.getInt(1);
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-
-    return -1;
-  }
-
   private PreparedStatement buildActionStatement(Connection connection, Transaction transaction)
       throws SQLException {
     PreparedStatement statement = connection.prepareStatement(getActionQuery(transaction));
-    statement.setInt(1, transaction.getId());
-    statement.setString(2, transaction.getUuid().toString());
-    statement.setTimestamp(3, Timestamp.from(transaction.getTransactionDate()));
-    statement.setString(4, transaction.getSymbol().toUpperCase());
-    statement.setInt(5, transaction.getQuantity());
-    statement.setString(6, transaction.getSinglePrice().toPlainString());
-    statement.setString(7, transaction.getBrokerFee().toPlainString());
+    statement.setString(1, transaction.getUuid().toString());
+    statement.setTimestamp(2, Timestamp.from(transaction.getTransactionDate()));
+    statement.setString(3, transaction.getSymbol().toUpperCase());
+    statement.setInt(4, transaction.getQuantity());
+    statement.setString(5, transaction.getSinglePrice().toPlainString());
+    statement.setString(6, transaction.getBrokerFee().toPlainString());
     if (transaction.getEarnings() != null) {
-      statement.setString(8, transaction.getEarnings().toPlainString());
+      statement.setString(7, transaction.getEarnings().toPlainString());
     }
 
     return statement;

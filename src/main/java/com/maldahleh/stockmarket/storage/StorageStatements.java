@@ -8,14 +8,16 @@ public abstract class StorageStatements {
 
   protected abstract String getCreateTableQuery();
 
+  protected abstract String getLastInsertQuery();
+
   protected String getPurchaseQuery() {
-    return "INSERT INTO sm_transactions (id, uuid, tran_type, tran_date, symbol, quantity, "
-        + "single_price, broker_fee) VALUES (?, ?, 'purchase', ?, ?, ?, ?, ?)";
+    return "INSERT INTO sm_transactions (uuid, tran_type, tran_date, symbol, quantity, single_price"
+        + ", broker_fee) VALUES (?, 'purchase', ?, ?, ?, ?, ?);" + getLastInsertQuery();
   }
 
   protected String getSaleQuery() {
-    return "INSERT INTO sm_transactions (id, uuid, tran_type, tran_date, symbol, quantity, "
-        + "single_price, broker_fee, earnings) VALUES (?, ?, 'sale', ?, ?, ?, ?, ?, ?)";
+    return "INSERT INTO sm_transactions (uuid, tran_type, tran_date, symbol, quantity, single_price"
+        + ", broker_fee, earnings) VALUES (?, 'sale', ?, ?, ?, ?, ?, ?);" + getLastInsertQuery();
   }
 
   protected String getPlayerTransactionsQuery() {
@@ -32,9 +34,5 @@ public abstract class StorageStatements {
 
   protected String getMarkSoldQuery() {
     return "UPDATE sm_transactions SET sold = true WHERE id = ?";
-  }
-
-  protected String getMaxIdQuery() {
-    return "SELECT MAX(id) FROM sm_transactions";
   }
 }

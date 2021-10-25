@@ -38,6 +38,11 @@ public class SQLite extends Storage {
   }
 
   @Override
+  protected String getLastInsertQuery() {
+    return "SELECT last_insert_rowid();";
+  }
+
+  @Override
   protected Transaction buildTransaction(ResultSet resultSet)
       throws SQLException {
     BigDecimal earnings = null;

@@ -40,10 +40,15 @@ public class MySQL extends Storage {
 
   @Override
   protected String getCreateTableQuery() {
-    return "CREATE TABLE IF NOT EXISTS sm_transactions(id INTEGER PRIMARY KEY, uuid CHAR(36),"
-        + "tran_type ENUM('purchase', 'sale'), tran_date DATETIME, symbol VARCHAR(12), "
-        + "quantity INTEGER, single_price DECIMAL(19, 2), broker_fee DECIMAL(19, 2), "
-        + "earnings DECIMAL(19, 2), sold BOOLEAN)";
+    return "CREATE TABLE IF NOT EXISTS sm_transactions(id INTEGER PRIMARY KEY AUTO_INCREMENT, "
+        + "uuid CHAR(36), tran_type ENUM('purchase', 'sale'), tran_date DATETIME, "
+        + "symbol VARCHAR(12), quantity INTEGER, single_price DECIMAL(19, 2), "
+        + "broker_fee DECIMAL(19, 2), earnings DECIMAL(19, 2), sold BOOLEAN)";
+  }
+
+  @Override
+  protected String getLastInsertQuery() {
+    return "SELECT LAST_INSERT_ID();";
   }
 
   @Override
