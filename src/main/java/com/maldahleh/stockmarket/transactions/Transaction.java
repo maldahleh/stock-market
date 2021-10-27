@@ -59,4 +59,40 @@ public class Transaction {
   public void markSold() {
     this.sold = true;
   }
+
+  public static Transaction buildPurchase(UUID uuid, String symbol, int quantity, BigDecimal price,
+      BigDecimal brokerFees, BigDecimal grandTotal) {
+    return new Transaction(
+        null,
+        uuid,
+        TransactionType.PURCHASE,
+        Instant.now(),
+        symbol,
+        quantity,
+        price,
+        brokerFees,
+        null,
+        null,
+        grandTotal,
+        false
+    );
+  }
+
+  public static Transaction buildSale(UUID uuid, String symbol, int quantity, BigDecimal price,
+      BigDecimal brokerFees, BigDecimal net, BigDecimal grandTotal) {
+    return new Transaction(
+        null,
+        uuid,
+        TransactionType.SALE,
+        Instant.now(),
+        symbol,
+        quantity,
+        price,
+        brokerFees,
+        net,
+        null,
+        grandTotal,
+        false
+    );
+  }
 }

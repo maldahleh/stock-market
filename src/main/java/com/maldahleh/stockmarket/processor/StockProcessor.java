@@ -61,20 +61,14 @@ public record StockProcessor(
                 return;
               }
 
-              Transaction transaction =
-                  new Transaction(
-                      null,
+              Transaction transaction = Transaction.buildPurchase(
                       player.getUniqueId(),
-                      TransactionType.PURCHASE,
-                      Instant.now(),
                       stock.getSymbol(),
                       quantity,
                       price,
                       brokerFees,
-                      null,
-                      null,
-                      grandTotal,
-                      false);
+                      grandTotal
+              );
               Bukkit.getScheduler()
                   .runTask(
                       stockMarket,
@@ -167,20 +161,15 @@ public record StockProcessor(
                 grandTotal = grandTotal.subtract(brokerFees);
               }
 
-              Transaction transaction =
-                  new Transaction(
-                      null,
+              Transaction transaction = Transaction.buildSale(
                       player.getUniqueId(),
-                      TransactionType.SALE,
-                      Instant.now(),
                       stock.getSymbol(),
                       quantity,
                       price,
                       brokerFees,
                       net,
-                      null,
-                      grandTotal,
-                      false);
+                      grandTotal
+              );
               BigDecimal finalSoldValue = soldValue;
               Bukkit.getScheduler()
                   .runTask(
