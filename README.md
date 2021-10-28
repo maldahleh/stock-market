@@ -115,9 +115,9 @@ stock
 
 ### Events
 
-**StockPurchaseEvent** - Called when a player buys stocks
+**StockPurchaseEvent** - Called when a purchase transaction occurs
 
-**StockSaleEvent** - Called when a player sells stocks
+**StockSaleEvent** - Called when a sale transaction occurs
 
 ## Special Thanks
 
