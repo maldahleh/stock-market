@@ -13,9 +13,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
-
     <surefire.version>3.0.0-M5</surefire.version>
     <junit.version>5.8.1</junit.version>
     <mockitto.version>4.0.0</mockitto.version>
