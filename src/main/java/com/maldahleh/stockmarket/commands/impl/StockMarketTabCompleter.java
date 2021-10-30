@@ -12,6 +12,8 @@ import org.bukkit.entity.Player;
 
 public record StockMarketTabCompleter(CommandManager commandManager) implements TabCompleter {
 
+  private static final int COMMAND_INDEX = 0;
+
   @Override
   @SuppressWarnings("java:S1168")
   public List<String> onTabComplete(
@@ -31,15 +33,16 @@ public record StockMarketTabCompleter(CommandManager commandManager) implements 
       return new ArrayList<>();
     }
 
+    String commandName = strings[COMMAND_INDEX];
     if (strings.length == 2) {
-      if (shouldReturnPlayerList(strings[0], player)) {
+      if (shouldReturnPlayerList(commandName, player)) {
         return null;
       }
 
       return new ArrayList<>();
     }
 
-    return findPossibleMatches(player, strings[0]);
+    return findPossibleMatches(player, commandName);
   }
 
   private boolean shouldReturnPlayerList(String firstArg, Player player) {
