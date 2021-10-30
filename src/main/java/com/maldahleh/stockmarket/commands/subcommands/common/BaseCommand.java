@@ -25,4 +25,9 @@ public abstract class BaseCommand implements Subcommand {
   public List<String> commandHelpKeys(Player player) {
     return List.of(commandName());
   }
+
+  @Override
+  public boolean canPlayerExecute(Player player) {
+    return requiredPerm() == null || player.hasPermission(requiredPerm());
+  }
 }

@@ -16,4 +16,6 @@ public interface Subcommand {
   String requiredPerm();
 
   List<String> commandHelpKeys(Player player);
+
+  boolean canPlayerExecute(Player player);
 }

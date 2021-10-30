@@ -57,7 +57,7 @@ public record StockMarketTabCompleter(CommandManager commandManager) implements 
 
   private List<String> findPossibleMatches(Player player, String arg) {
     return commandManager.getRegisteredSubcommands().stream()
-        .filter(subcommand -> hasPermission(player, subcommand))
+        .filter(subcommand -> subcommand.canPlayerExecute(player))
         .map(Subcommand::commandName)
         .filter(subcommand -> startsWith(subcommand, arg))
         .sorted()
@@ -67,9 +67,5 @@ public record StockMarketTabCompleter(CommandManager commandManager) implements 
   private boolean startsWith(String command, String prefix) {
     return command.length() >= prefix.length() && command.regionMatches(true, 0, prefix, 0,
         prefix.length());
-  }
-
-  private boolean hasPermission(Player player, Subcommand subcommand) {
-    return player.hasPermission(subcommand.requiredPerm());
   }
 }
