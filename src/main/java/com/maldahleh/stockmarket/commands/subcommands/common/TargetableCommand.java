@@ -39,7 +39,7 @@ public abstract class TargetableCommand extends BaseCommand {
 
   @Override
   public List<String> commandHelpKeys(Player player) {
-    List<String> keys = new ArrayList<>(List.of(commandName()));
+    List<String> keys = new ArrayList<>(super.commandHelpKeys(player));
     if (player.hasPermission(CommandUtils.buildOtherPermission(requiredPerm()))) {
       keys.add(commandName() + "-other");
     }
