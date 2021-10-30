@@ -2,7 +2,7 @@
 
 ![CI](https://github.com/maldahleh/stock-market/workflows/CI/badge.svg)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/3176d5c3c5764d85a3036d78b7518fc8)](https://www.codacy.com/gh/maldahleh/stock-market/dashboard)
-[![codecov](https://codecov.io/gh/maldahleh/stock-market/branch/main/graph/badge.svg?token=uJi0uupg8u)](https://codecov.io/gh/maldahleh/stock-market)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/3176d5c3c5764d85a3036d78b7518fc8)](https://www.codacy.com/gh/maldahleh/stock-market/dashboard)
 
 StockMarket is a Minecraft plugin that allows players to buy or sell real stocks using in-game
 currency. This provides players a way to make or lose money based on the performance of the stocks
