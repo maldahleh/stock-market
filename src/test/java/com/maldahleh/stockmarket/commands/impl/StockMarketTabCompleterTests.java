@@ -34,7 +34,7 @@ class StockMarketTabCompleterTests {
   void consoleSender() {
     // GIVEN
     ConsoleCommandSender commandSender = mock(ConsoleCommandSender.class);
-    String[] args = new String[] {};
+    String[] args = new String[]{};
 
     // WHEN
     List<String> completed =
@@ -49,7 +49,7 @@ class StockMarketTabCompleterTests {
   void noArgs() {
     // GIVEN
     Player player = mock(Player.class);
-    String[] args = new String[] {};
+    String[] args = new String[]{};
 
     // WHEN
     List<String> completed =
@@ -64,7 +64,7 @@ class StockMarketTabCompleterTests {
   void tooManyArgs() {
     // GIVEN
     Player player = mock(Player.class);
-    String[] args = new String[] {"test1", "test2", "test3"};
+    String[] args = new String[]{"test1", "test2", "test3"};
 
     // WHEN
     List<String> completed =
@@ -79,7 +79,7 @@ class StockMarketTabCompleterTests {
   void noBasePerm() {
     // GIVEN
     Player player = mock(Player.class);
-    String[] args = new String[] {"test1"};
+    String[] args = new String[]{"test1"};
 
     when(player.hasPermission("stockmarket.use")).thenReturn(false);
 
@@ -95,11 +95,12 @@ class StockMarketTabCompleterTests {
   @Nested
   @DisplayName("returnPlayerList")
   class ReturnPlayerList {
+
     @Test
     void portfolio() {
       // GIVEN
       Player player = mock(Player.class);
-      String[] args = new String[] {"portfolio", "a"};
+      String[] args = new String[]{"portfolio", "a"};
 
       when(player.hasPermission("stockmarket.use")).thenReturn(true);
 
@@ -117,7 +118,7 @@ class StockMarketTabCompleterTests {
     void transactions() {
       // GIVEN
       Player player = mock(Player.class);
-      String[] args = new String[] {"transactions", "a"};
+      String[] args = new String[]{"transactions", "a"};
 
       when(player.hasPermission("stockmarket.use")).thenReturn(true);
 
@@ -135,7 +136,7 @@ class StockMarketTabCompleterTests {
     void noPermission() {
       // GIVEN
       Player player = mock(Player.class);
-      String[] args = new String[] {"portfolio", "a"};
+      String[] args = new String[]{"portfolio", "a"};
 
       when(player.hasPermission("stockmarket.use")).thenReturn(true);
 
