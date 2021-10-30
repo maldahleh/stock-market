@@ -64,12 +64,7 @@ public record StockMarketCommand(
       return true;
     }
 
-    String requiredPerm = subcommand.requiredPerm();
-    if (requiredPerm == null) {
-      return false;
-    }
-
-    return !player.hasPermission(requiredPerm);
+    return !subcommand.canPlayerExecute(player);
   }
 
   private boolean isInvalidSyntax(Subcommand subcommand, String[] args) {

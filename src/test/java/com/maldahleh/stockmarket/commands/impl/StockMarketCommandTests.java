@@ -1,6 +1,7 @@
 package com.maldahleh.stockmarket.commands.impl;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -8,6 +9,7 @@ import static org.mockito.Mockito.when;
 import com.maldahleh.stockmarket.brokers.BrokerManager;
 import com.maldahleh.stockmarket.commands.CommandManager;
 import com.maldahleh.stockmarket.commands.subcommands.Subcommand;
+import com.maldahleh.stockmarket.commands.subcommands.common.BaseCommand;
 import com.maldahleh.stockmarket.config.Messages;
 import org.bukkit.command.Command;
 import org.bukkit.command.ConsoleCommandSender;
@@ -83,16 +85,27 @@ class StockMarketCommandTests {
 
     @BeforeEach
     void beforeEach() {
-      subcommand = mock(Subcommand.class);
+      subcommand = spy(new BaseCommand() {
+        @Override
+        public void onCommand(Player player, String[] args) {
+          
+        }
 
-      when(subcommand.requiredPerm())
-          .thenReturn(SUBCOMMAND_PERM);
+        @Override
+        public int maxArgs() {
+          return 2;
+        }
 
-      when(subcommand.minArgs())
-          .thenReturn(1);
+        @Override
+        public String requiredPerm() {
+          return SUBCOMMAND_PERM;
+        }
 
-      when(subcommand.maxArgs())
-          .thenReturn(2);
+        @Override
+        public String commandName() {
+          return null;
+        }
+      });
     }
 
     @Test

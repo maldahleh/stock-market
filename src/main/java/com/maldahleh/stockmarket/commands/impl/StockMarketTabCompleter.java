@@ -3,16 +3,16 @@ package com.maldahleh.stockmarket.commands.impl;
 import com.maldahleh.stockmarket.commands.CommandManager;
 import com.maldahleh.stockmarket.commands.subcommands.Subcommand;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import lombok.NonNull;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import org.bukkit.util.StringUtil;
 
 public record StockMarketTabCompleter(CommandManager commandManager) implements TabCompleter {
+
+  private static final int COMMAND_INDEX = 0;
 
   @Override
   @SuppressWarnings("java:S1168")
@@ -33,21 +33,16 @@ public record StockMarketTabCompleter(CommandManager commandManager) implements 
       return new ArrayList<>();
     }
 
+    String commandName = strings[COMMAND_INDEX];
     if (strings.length == 2) {
-      if (shouldReturnPlayerList(strings[0], player)) {
+      if (shouldReturnPlayerList(commandName, player)) {
         return null;
       }
 
       return new ArrayList<>();
     }
 
-    List<String> possibleMatches = buildPossibleMatchesList(player);
-
-    List<String> completions = new ArrayList<>();
-    StringUtil.copyPartialMatches(strings[0], possibleMatches, completions);
-    Collections.sort(completions);
-
-    return completions;
+    return findPossibleMatches(player, commandName);
   }
 
   private boolean shouldReturnPlayerList(String firstArg, Player player) {
@@ -60,14 +55,17 @@ public record StockMarketTabCompleter(CommandManager commandManager) implements 
         && player.hasPermission("stockmarket.transactions.other");
   }
 
-  private List<String> buildPossibleMatchesList(Player player) {
+  private List<String> findPossibleMatches(Player player, String arg) {
     return commandManager.getRegisteredSubcommands().stream()
-        .filter(subcommand -> hasPermission(player, subcommand))
+        .filter(subcommand -> subcommand.canPlayerExecute(player))
         .map(Subcommand::commandName)
+        .filter(subcommand -> startsWith(subcommand, arg))
+        .sorted()
         .toList();
   }
 
-  private boolean hasPermission(Player player, Subcommand subcommand) {
-    return player.hasPermission(subcommand.requiredPerm());
+  private boolean startsWith(String command, String prefix) {
+    return command.length() >= prefix.length() && command.regionMatches(true, 0, prefix, 0,
+        prefix.length());
   }
 }
