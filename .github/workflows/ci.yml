@@ -16,6 +16,8 @@ jobs:
           java-version: '17'
       - name: Cache mvn dependencies
         uses: actions/cache@v2
+        env:
+          cache-name: mvn-deps
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -24,32 +26,13 @@ jobs:
         uses: github/codeql-action/init@v1
         with:
           languages: 'java'
-      - name: Build with mvn
-        run: mvn -B package --file pom.xml
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v1
-  tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 1.17
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-      - name: Cache mvn dependencies
-        uses: actions/cache@v2
-        env:
-          cache-name: mvn-deps
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
       - name: Test with mvn
         run: mvn -B compile test --file pom.xml
-      - name: Upload to Codecov
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1
+      - name: Run codacy-coverage-reporter
         if: github.ref == 'refs/heads/main'
-        uses: codecov/codecov-action@v1
+        uses: codacy/codacy-coverage-reporter-action@v1
         with:
-          file: ./target/site/jacoco/jacoco.xml
-          flags: unittests
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: ./target/site/jacoco/jacoco.xml
