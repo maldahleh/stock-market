@@ -59,14 +59,15 @@ public class CommandManager {
         new HistoryCommand(inventoryManager, messages),
         new BuyCommand(stockProcessor, messages),
         new SellCommand(stockProcessor, messages),
-        new SpawnSimpleBrokerCommand(brokerManager));
+        new SpawnSimpleBrokerCommand(brokerManager)
+    );
 
     pluginCommand.setExecutor(new StockMarketCommand(this, brokerManager, messages));
     pluginCommand.setTabCompleter(new StockMarketTabCompleter(this));
   }
 
-  public static boolean hasBaseCommandPermission(Player player) {
-    return player.hasPermission(DEFAULT_PERM);
+  public static boolean doesNotHaveBasePermission(Player player) {
+    return !player.hasPermission(DEFAULT_PERM);
   }
 
   public Collection<Subcommand> getRegisteredSubcommands() {

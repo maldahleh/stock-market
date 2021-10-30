@@ -132,7 +132,7 @@ public record Messages(StockMarket stockMarket, ConfigurationSection section, Se
   }
 
   private void sendCommandInfo(Player player) {
-    if (!CommandManager.hasBaseCommandPermission(player)) {
+    if (CommandManager.doesNotHaveBasePermission(player)) {
       return;
     }
 

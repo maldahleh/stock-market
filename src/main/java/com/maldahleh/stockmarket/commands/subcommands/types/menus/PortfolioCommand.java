@@ -29,9 +29,4 @@ public class PortfolioCommand extends TargetableCommand {
   public String commandName() {
     return "portfolio";
   }
-
-  @Override
-  public String requiredPerm() {
-    return "stockmarket.portfolio";
-  }
 }
