@@ -14,6 +14,7 @@ import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.storage.types.MySQL;
 import com.maldahleh.stockmarket.storage.types.SQLite;
 import com.maldahleh.stockmarket.utils.Logger;
+import kr.entree.spigradle.annotations.SpigotPlugin;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -21,6 +22,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
+@SpigotPlugin
 public class StockMarket extends JavaPlugin {
 
   private StockMarketAPI api;
