@@ -1,8 +1,8 @@
-name: ${project.name}
-version: ${project.version}
+name: StockMarket
+version: 2.1.0
 description: Buy and sell stocks in the stock market!
 author: maldahleh
-main: ${project.groupId}.${project.artifactId}.${project.name}
+main: com.maldahleh.stockmarket.StockMarket
 depend: [Vault]
 softdepend: [Citizens, PlaceholderAPI]
 
