@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'jacoco'
     id "io.freefair.lombok" version "6.2.0"
+    id 'kr.entree.spigradle' version '2.2.4'
     id "com.github.johnrengelman.shadow" version "7.1.0"
 }
 
