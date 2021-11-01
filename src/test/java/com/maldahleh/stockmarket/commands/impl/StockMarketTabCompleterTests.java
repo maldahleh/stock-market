@@ -232,12 +232,45 @@ class StockMarketTabCompleterTests {
       assertEquals("test3", completed.get(2));
     }
 
+    @Test
+    void onlyMatching_ordered() {
+      // GIVEN
+      Player player = mock(Player.class);
+      String[] args = new String[]{"a"};
+
+      when(player.hasPermission("stockmarket.use"))
+          .thenReturn(true);
+
+      when(player.hasPermission("test2.perm"))
+          .thenReturn(true);
+
+      when(player.hasPermission("test3.perm"))
+          .thenReturn(true);
+
+      when(player.hasPermission("activate1.perm"))
+          .thenReturn(true);
+
+      when(player.hasPermission("activate1.perm.other"))
+          .thenReturn(true);
+
+      // WHEN
+      List<String> completed =
+          stockMarketTabCompleter.onTabComplete(player, command, EMPTY_STRING, args);
+
+      // THEN
+      assertNotNull(completed);
+      assertEquals(2, completed.size());
+      assertEquals("aactivate1", completed.get(0));
+      assertEquals("activate1", completed.get(1));
+    }
+
     private Collection<Subcommand> buildSubcommandCollection() {
       Collection<Subcommand> subcommandCollection = new ArrayList<>();
       subcommandCollection.add(buildSubcommand("test1", null));
       subcommandCollection.add(buildSubcommand("test2", "test2.perm"));
       subcommandCollection.add(buildSubcommand("test3", "test3.perm"));
       subcommandCollection.add(buildSubcommand("activate1", "activate1.perm"));
+      subcommandCollection.add(buildSubcommand("aactivate1", "activate1.perm.other"));
 
       return subcommandCollection;
     }
