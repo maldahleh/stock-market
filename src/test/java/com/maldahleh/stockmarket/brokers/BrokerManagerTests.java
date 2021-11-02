@@ -4,13 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.maldahleh.stockmarket.commands.CommandManager;
+import com.maldahleh.stockmarket.config.common.ConfigSection;
+import com.maldahleh.stockmarket.config.models.BrokerSettings;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.GoalController;
@@ -20,7 +21,6 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -35,7 +35,7 @@ class BrokerManagerTests {
 
   private Plugin plugin;
   private PluginManager pluginManager;
-  private ConfigurationSection configurationSection;
+  private ConfigSection configurationSection;
   private InventoryManager inventoryManager;
 
   private BrokerManager brokerManager;
@@ -44,7 +44,7 @@ class BrokerManagerTests {
   void setUpMocks() {
     plugin = mock(Plugin.class);
     pluginManager = mock(PluginManager.class);
-    configurationSection = mock(ConfigurationSection.class);
+    configurationSection = mock(ConfigSection.class);
     inventoryManager = mock(InventoryManager.class);
 
     Server server = mock(Server.class);
@@ -68,7 +68,8 @@ class BrokerManagerTests {
       when(pluginManager.isPluginEnabled("Citizens"))
           .thenReturn(true);
 
-      brokerManager = new BrokerManager(plugin, configurationSection, inventoryManager);
+      BrokerSettings brokerSettings = new BrokerSettings(configurationSection);
+      brokerManager = new BrokerManager(plugin, brokerSettings, inventoryManager);
     }
   }
 
@@ -84,18 +85,13 @@ class BrokerManagerTests {
       when(pluginManager.isPluginEnabled("Citizens"))
           .thenReturn(false);
 
+      BrokerSettings brokerSettings = new BrokerSettings(configurationSection);
+
       // WHEN
-      BrokerManager brokerManager = new BrokerManager(plugin, configurationSection,
-          inventoryManager);
+      BrokerManager brokerManager = new BrokerManager(plugin, brokerSettings, inventoryManager);
 
       // THEN
       assertFalse(brokerManager.isEnabled());
-
-      verify(configurationSection, never())
-          .getString("names.simple");
-
-      verify(configurationSection, never())
-          .getBoolean("settings.disable-commands");
     }
   }
 

@@ -1,16 +1,14 @@
 package com.maldahleh.stockmarket.config.models;
 
 import com.maldahleh.stockmarket.config.common.ConfigSection;
-import lombok.Getter;
 
-@Getter
-public class BrokerSettings {
+public record BrokerSettings(ConfigSection configSection) {
 
-  private final String simpleBrokerName;
-  private final boolean commandsDisabled;
+  public String getSimpleBrokerName() {
+    return configSection.getString("names.simple");
+  }
 
-  public BrokerSettings(ConfigSection configSection) {
-    this.simpleBrokerName = configSection.getString("names.simple");
-    this.commandsDisabled = configSection.getBoolean("settings.disable-commands");
+  public boolean isCommandsDisabled() {
+    return configSection.getBoolean("settings.disable-commands");
   }
 }
