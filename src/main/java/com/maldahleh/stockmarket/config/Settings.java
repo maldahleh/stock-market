@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.Set;
 import lombok.Getter;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
@@ -64,10 +63,12 @@ public class Settings {
   }
 
   public boolean isAllowedCurrency(String symbol) {
-    return allowedCurrencies.contains(symbol.toUpperCase());
+    return allowedCurrencies.stream()
+        .anyMatch(allowedCurrency -> allowedCurrency.equalsIgnoreCase(symbol));
   }
 
   public boolean isAllowedExchange(String exchange) {
-    return allowedExchanges.contains(exchange.toUpperCase());
+    return allowedExchanges.stream()
+        .anyMatch(allowedExchange -> allowedExchange.equalsIgnoreCase(exchange));
   }
 }
