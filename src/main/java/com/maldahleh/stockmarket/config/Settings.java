@@ -1,6 +1,7 @@
 package com.maldahleh.stockmarket.config;
 
 import com.maldahleh.stockmarket.config.common.ConfigSection;
+import com.maldahleh.stockmarket.config.models.BrokerSettings;
 import com.maldahleh.stockmarket.config.models.SqlSettings;
 import java.math.BigDecimal;
 import java.util.Locale;
@@ -13,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Settings {
 
   private final Locale locale;
+  private final BrokerSettings brokerSettings;
   private final SqlSettings sqlSettings;
 
   private final boolean brokerOnSale;
@@ -32,6 +34,7 @@ public class Settings {
     ConfigSection configFile = new ConfigSection(javaPlugin);
 
     this.locale = configFile.getLocale("locale");
+    this.brokerSettings = new BrokerSettings(configFile.getConfigSection("brokers"));
     this.sqlSettings = new SqlSettings(configFile.getConfigSection("storage.mysql"));
 
     this.brokerOnSale = configFile.getBoolean("broker.charge-fees-on-sale");

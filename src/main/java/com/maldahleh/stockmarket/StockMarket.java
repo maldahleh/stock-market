@@ -5,6 +5,7 @@ import com.maldahleh.stockmarket.brokers.BrokerManager;
 import com.maldahleh.stockmarket.commands.CommandManager;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
+import com.maldahleh.stockmarket.config.common.ConfigSection;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
 import com.maldahleh.stockmarket.placeholder.StocksPlaceholder;
 import com.maldahleh.stockmarket.players.PlayerManager;
@@ -55,7 +56,7 @@ public class StockMarket extends JavaPlugin {
             storage,
             settings);
     BrokerManager brokerManager =
-        new BrokerManager(this, getConfig().getConfigurationSection("brokers"), inventoryManager);
+        new BrokerManager(this, settings.getBrokerSettings(), inventoryManager);
 
     this.commandManager =
         new CommandManager(this, brokerManager, inventoryManager, stockProcessor, messages);
