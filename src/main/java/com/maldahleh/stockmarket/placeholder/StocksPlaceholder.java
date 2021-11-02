@@ -3,7 +3,7 @@ package com.maldahleh.stockmarket.placeholder;
 import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.players.player.StockPlayer;
 import com.maldahleh.stockmarket.stocks.StockManager;
-import com.maldahleh.stockmarket.stocks.wrapper.PlaceholderStock;
+import com.maldahleh.stockmarket.placeholder.model.PlaceholderStock;
 import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

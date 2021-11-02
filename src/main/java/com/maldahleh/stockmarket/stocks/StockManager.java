@@ -4,7 +4,7 @@ import com.google.common.cache.Cache;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.stocks.utils.StockUtils;
-import com.maldahleh.stockmarket.stocks.wrapper.PlaceholderStock;
+import com.maldahleh.stockmarket.placeholder.model.PlaceholderStock;
 import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import java.math.BigDecimal;
 import java.util.Map;

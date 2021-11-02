@@ -69,7 +69,8 @@ public record StockHistoryProvider(StockMarket stockMarket, Storage storage, Set
             .put("<earnings>", CurrencyUtils.format(key.getEarnings(), settings))
             .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
             .put("<sold>", String.valueOf(key.isSold()))
-            .build());
+            .build()
+    );
   }
 
   @Override
