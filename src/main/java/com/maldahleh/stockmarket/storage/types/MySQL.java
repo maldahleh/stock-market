@@ -8,7 +8,6 @@ import com.zaxxer.hikari.HikariConfig;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
-import org.bukkit.configuration.ConfigurationSection;
 
 public class MySQL extends Storage {
 
