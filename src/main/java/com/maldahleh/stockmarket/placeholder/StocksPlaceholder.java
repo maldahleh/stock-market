@@ -20,7 +20,9 @@ public class StocksPlaceholder extends PlaceholderExpansion {
   private static final String VOLUME_DATA_POINT = "vol";
   private static final String PORTFOLIO_VALUE_POINT = "portfolio-value";
 
-  /** Prefix for stock data placeholders Example: sd-ba-vol (display the volume for BA - Boeing) */
+  /**
+   * Prefix for stock data placeholders Example: sd-ba-vol (display the volume for BA - Boeing)
+   */
   private static final String STOCK_DATA_PREFIX = "sd";
   /**
    * The minimum number of args required for a stock data placeholder Arg 1 (index 0) - sd Arg 2
@@ -89,7 +91,7 @@ public class StocksPlaceholder extends PlaceholderExpansion {
       return ZERO_VALUE;
     }
 
-    return CurrencyUtils.sigFigNumber(player.getPortfolioValue().doubleValue());
+    return CurrencyUtils.sigFigNumber(player.getPortfolioValue());
   }
 
   private String[] getStockDataParams(String params) {
@@ -114,7 +116,7 @@ public class StocksPlaceholder extends PlaceholderExpansion {
     return switch (dataPoint) {
       case NAME_DATA_POINT -> placeholderStock.getStock().getName();
       case MARKET_CAP_DATA_POINT -> CurrencyUtils.sigFigNumber(
-          placeholderStock.getStock().getStats().getMarketCap().doubleValue());
+          placeholderStock.getStock().getStats().getMarketCap());
       case SERVER_PRICE_DATA_POINT -> placeholderStock.getServerPrice();
       case VOLUME_DATA_POINT -> CurrencyUtils.sigFigNumber(
           placeholderStock.getStock().getQuote().getVolume());

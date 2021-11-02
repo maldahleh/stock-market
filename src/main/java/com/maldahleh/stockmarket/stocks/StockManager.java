@@ -44,14 +44,10 @@ public class StockManager {
             () -> {
               for (Entry<String, PlaceholderStock> entry : placeholderMap.entrySet()) {
                 Stock stock = getStock(entry.getKey());
-                entry.getValue().setStock(stock);
-                entry
-                    .getValue()
-                    .setServerPrice(
-                        CurrencyUtils.format(
-                            getServerPrice(stock),
-                            settings.getUnknownData(),
-                            settings.getLocale()));
+
+                PlaceholderStock placeholder = entry.getValue();
+                placeholder.setStock(stock);
+                placeholder.setServerPrice(CurrencyUtils.format(getServerPrice(stock), settings));
               }
             },
             20L,
@@ -100,10 +96,8 @@ public class StockManager {
               Stock stock = getStock(uppercaseSymbol);
               placeholderMap.put(
                   uppercaseSymbol,
-                  new PlaceholderStock(
-                      stock,
-                      CurrencyUtils.format(
-                          getServerPrice(stock), settings.getUnknownData(), settings.getLocale())));
+                  new PlaceholderStock(stock, CurrencyUtils.format(getServerPrice(stock), settings))
+              );
               pendingOperations.remove(uppercaseSymbol);
             });
 

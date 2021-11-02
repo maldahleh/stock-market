@@ -123,10 +123,8 @@ public class Messages {
         .map(
             line ->
                 getFormattedTransactionLine(line, company, transaction)
-                    .replace(
-                        "<net>",
-                        CurrencyUtils.formatCurrency(
-                            transaction.getEarnings().doubleValue(), settings.getLocale())))
+                    .replace("<net>",
+                        CurrencyUtils.formatCurrency(transaction.getEarnings(), settings)))
         .forEach(player::sendMessage);
   }
 
@@ -159,17 +157,11 @@ public class Messages {
         .replace("<company>", company)
         .replace("<symbol>", transaction.getSymbol())
         .replace("<quantity>", String.valueOf(transaction.getQuantity()))
-        .replace(
-            "<stock-value>",
-            CurrencyUtils.formatCurrency(
-                transaction.getSinglePrice().doubleValue(), settings.getLocale()))
-        .replace(
-            "<broker-fees>",
-            CurrencyUtils.formatCurrency(
-                transaction.getBrokerFee().doubleValue(), settings.getLocale()))
-        .replace(
-            "<total>",
-            CurrencyUtils.formatCurrency(
-                transaction.getGrandTotal().doubleValue(), settings.getLocale()));
+        .replace("<stock-value>",
+            CurrencyUtils.formatCurrency(transaction.getSinglePrice(), settings))
+        .replace("<broker-fees>",
+            CurrencyUtils.formatCurrency(transaction.getBrokerFee(), settings))
+        .replace("<total>",
+            CurrencyUtils.formatCurrency(transaction.getGrandTotal(), settings));
   }
 }
