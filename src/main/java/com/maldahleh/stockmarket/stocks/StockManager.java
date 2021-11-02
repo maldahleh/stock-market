@@ -20,6 +20,8 @@ import yahoofinance.quotes.fx.FxQuote;
 
 public class StockManager {
 
+  private static final String USD = "USD";
+
   private final Cache<String, Stock> stockCache;
   private final Cache<String, Boolean> marketOpenCache;
   private final Cache<String, FxQuote> fxCache;
@@ -105,7 +107,7 @@ public class StockManager {
   }
 
   private BigDecimal getFxRate(String fxSymbol) {
-    String fxQuote = fxSymbol.toUpperCase() + "USD=X";
+    String fxQuote = fxSymbol.toUpperCase() + USD + "=X";
     FxQuote quote = fxCache.getIfPresent(fxQuote);
     if (quote != null) {
       return quote.getPrice();
@@ -143,16 +145,16 @@ public class StockManager {
 
   public BigDecimal getServerPrice(Stock stock) {
     BigDecimal price = stock.getQuote().getPrice().multiply(settings.getPriceMultiplier());
-    if (!stock.getCurrency().equalsIgnoreCase("USD")) {
-      BigDecimal conversionFactor = getFxRate(stock.getCurrency());
-      if (conversionFactor == null) {
-        return null;
-      }
-
-      price = price.multiply(conversionFactor);
+    if (stock.getCurrency().equalsIgnoreCase(USD)) {
+      return price;
     }
 
-    return price;
+    BigDecimal conversionFactor = getFxRate(stock.getCurrency());
+    if (conversionFactor == null) {
+      return null;
+    }
+
+    return price.multiply(conversionFactor);
   }
 
   public boolean canNotUseStock(Player player, Stock stock, Settings settings, Messages messages) {
