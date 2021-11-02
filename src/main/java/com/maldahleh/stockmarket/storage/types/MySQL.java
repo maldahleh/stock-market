@@ -1,5 +1,6 @@
 package com.maldahleh.stockmarket.storage.types;
 
+import com.maldahleh.stockmarket.config.models.SqlSettings;
 import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
 import com.maldahleh.stockmarket.transactions.types.TransactionType;
@@ -11,25 +12,25 @@ import org.bukkit.configuration.ConfigurationSection;
 
 public class MySQL extends Storage {
 
-  public MySQL(ConfigurationSection section) {
-    super(section);
+  public MySQL(SqlSettings settings) {
+    super(settings);
   }
 
   @Override
-  protected HikariConfig buildHikariConfig(ConfigurationSection section) {
+  protected HikariConfig buildHikariConfig(SqlSettings settings) {
     HikariConfig config = new HikariConfig();
     config.setDriverClassName("com.mysql.jdbc.Driver");
     config.setJdbcUrl(
         "jdbc:mysql://"
-            + section.getString("ip")
+            + settings.getIp()
             + ":"
-            + section.getInt("port")
+            + settings.getPort()
             + "/"
-            + section.getString("database"));
-    config.setUsername(section.getString("username"));
-    config.setPassword(section.getString("password"));
+            + settings.getDatabase());
+    config.setUsername(settings.getUsername());
+    config.setPassword(settings.getPassword());
 
-    config.setMaximumPoolSize(section.getInt("max-pool-size", 100));
+    config.setMaximumPoolSize(settings.getMaxPoolSize());
     config.addDataSourceProperty("cachePrepStmts", "true");
     config.addDataSourceProperty("prepStmtCacheSize", "400");
     config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");

@@ -1,5 +1,6 @@
 package com.maldahleh.stockmarket.storage.types;
 
+import com.maldahleh.stockmarket.config.models.SqlSettings;
 import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
 import com.maldahleh.stockmarket.transactions.types.TransactionType;
@@ -8,16 +9,15 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
-import org.bukkit.configuration.ConfigurationSection;
 
 public class SQLite extends Storage {
 
-  public SQLite(ConfigurationSection section) {
-    super(section);
+  public SQLite(SqlSettings settings) {
+    super(settings);
   }
 
   @Override
-  protected HikariConfig buildHikariConfig(ConfigurationSection section) {
+  protected HikariConfig buildHikariConfig(SqlSettings settings) {
     HikariConfig config = new HikariConfig();
     config.setPoolName("StockMarketPool");
     config.setDriverClassName("org.sqlite.JDBC");

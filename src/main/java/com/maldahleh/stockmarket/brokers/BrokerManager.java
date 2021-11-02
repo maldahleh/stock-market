@@ -2,6 +2,7 @@ package com.maldahleh.stockmarket.brokers;
 
 import com.maldahleh.stockmarket.brokers.listeners.BrokerListener;
 import com.maldahleh.stockmarket.commands.CommandManager;
+import com.maldahleh.stockmarket.config.models.BrokerSettings;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
 import com.maldahleh.stockmarket.utils.Utils;
 import lombok.Getter;
@@ -18,17 +19,14 @@ import org.bukkit.plugin.Plugin;
 public class BrokerManager {
 
   @Getter private final boolean enabled;
+  private final BrokerSettings settings;
 
-  private ConfigurationSection section;
-
-  public BrokerManager(
-      Plugin plugin, ConfigurationSection section, InventoryManager inventoryManager) {
+  public BrokerManager(Plugin plugin, BrokerSettings settings, InventoryManager inventoryManager) {
     this.enabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
+    this.settings = settings;
     if (!enabled) {
       return;
     }
-
-    this.section = section;
 
     plugin
         .getServer()
@@ -56,10 +54,10 @@ public class BrokerManager {
       return false;
     }
 
-    return section.getBoolean("settings.disable-commands");
+    return settings.isCommandsDisabled();
   }
 
   private String getSimpleBrokerName() {
-    return Utils.color(section.getString("names.simple"));
+    return settings.getSimpleBrokerName();
   }
 }

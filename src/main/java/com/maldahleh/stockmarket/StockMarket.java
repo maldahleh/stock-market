@@ -11,8 +11,6 @@ import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.processor.StockProcessor;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.storage.Storage;
-import com.maldahleh.stockmarket.storage.types.MySQL;
-import com.maldahleh.stockmarket.storage.types.SQLite;
 import com.maldahleh.stockmarket.utils.Logger;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
@@ -37,18 +35,9 @@ public class StockMarket extends JavaPlugin {
       return;
     }
 
-    saveDefaultConfig();
-
-    Storage storage;
-    if (getConfig().getBoolean("storage.mysql.enabled", false)) {
-      storage = new MySQL(getConfig().getConfigurationSection("storage.mysql"));
-    } else {
-      storage = new SQLite(null);
-    }
-
-    Settings settings = new Settings(getConfig().getConfigurationSection("settings"));
-    Messages messages =
-        new Messages(this, getConfig().getConfigurationSection("messages"), settings);
+    Settings settings = new Settings(this);
+    Storage storage = Storage.buildStorage(settings);
+    Messages messages = new Messages(this, settings);
     this.stockManager =
         new StockManager(this, getConfig().getConfigurationSection("stocks"), settings);
     this.playerManager = new PlayerManager(this, stockManager, storage, settings);
