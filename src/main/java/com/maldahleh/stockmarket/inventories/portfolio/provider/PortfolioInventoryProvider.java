@@ -82,15 +82,12 @@ public record PortfolioInventoryProvider(
             .put("<symbol>", key.getSymbol().toUpperCase())
             .put("<name>", key.getName())
             .put("<quantity>", value.getQuantity())
-            .put(
-                "<current-value>",
-                CurrencyUtils.formatCurrency(currentPrice.doubleValue(), settings.getLocale()))
-            .put(
-                "<purchase-value>",
-                CurrencyUtils.formatCurrency(value.getValue().doubleValue(), settings.getLocale()))
-            .put("<net>", CurrencyUtils.formatCurrency(net.doubleValue(), settings.getLocale()))
+            .put("<current-value>", CurrencyUtils.formatCurrency(currentPrice, settings))
+            .put("<purchase-value>", CurrencyUtils.formatCurrency(value.getValue(), settings))
+            .put("<net>", CurrencyUtils.formatCurrency(net, settings))
             .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
-            .build());
+            .build()
+    );
   }
 
   @Override
@@ -100,15 +97,13 @@ public record PortfolioInventoryProvider(
         Map.of(
             "<purchase-value>",
                 CurrencyUtils.formatCurrency(
-                    ((BigDecimal) extraData.get("purchase_value")).doubleValue(),
-                    settings.getLocale()),
+                    ((BigDecimal) extraData.get("purchase_value")), settings),
             "<current-value>",
                 CurrencyUtils.formatCurrency(
-                    ((BigDecimal) extraData.get("current_value")).doubleValue(),
-                    settings.getLocale()),
+                    ((BigDecimal) extraData.get("current_value")), settings),
             "<net-value>",
                 CurrencyUtils.formatCurrency(
-                    ((BigDecimal) extraData.get("net_value")).doubleValue(), settings.getLocale()),
+                    ((BigDecimal) extraData.get("net_value")), settings),
             "<server-currency>", stockMarket.getEcon().currencyNamePlural()));
   }
 

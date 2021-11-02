@@ -1,0 +1,529 @@
+name: "&6Stocks &8- &eList"
+size: 36
+items:
+  0:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lAmazon"
+    symbol: "AMZN"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  1:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lApple"
+    symbol: "AAPL"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  2:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lAT&T"
+    symbol: "T"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  3:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lBoeing"
+    symbol: "BA"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  4:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lCedar Fair"
+    symbol: "FUN"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  5:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lChipotle"
+    symbol: "CMG"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  6:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lCoca-Cola"
+    symbol: "KO"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  7:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lCostco"
+    symbol: "COST"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  8:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lFacebook"
+    symbol: "FB"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  9:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lFedEx"
+    symbol: "FDX"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  10:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lFord"
+    symbol: "F"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  11:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lGeneral Motors"
+    symbol: "GM"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  12:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lGoogle"
+    symbol: "GOOG"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  13:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lHome Depot"
+    symbol: "HD"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  14:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lKellogg's"
+    symbol: "K"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  15:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lLowe's"
+    symbol: "LOW"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  16:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lMastercard"
+    symbol: "MA"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  17:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lMcDonald's"
+    symbol: "MCD"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  18:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lMicrosoft"
+    symbol: "MSFT"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  19:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lNetflix"
+    symbol: "NFLX"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  20:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lNvidia"
+    symbol: "NVDA"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  21:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lStarbucks"
+    symbol: "SBUX"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  22:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lSnapchat"
+    symbol: "SNAP"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  23:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lUber"
+    symbol: "UBER"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  24:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lUnited"
+    symbol: "UAL"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  25:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lVisa"
+    symbol: "V"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  26:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lTime Warner"
+    symbol: "TWX"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  30:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lTwitter"
+    symbol: "TWTR"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  31:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lWalmart"
+    symbol: "WMT"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  32:
+    material: "BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lWalt Disney Company"
+    symbol: "DIS"
+    lore:
+      - "&6Shift-Left Click:"
+      - "&eBuy 5"
+      - "&6Left Click:"
+      - "&eBuy 1"
+      - "&6Middle Click:"
+      - "&eLookup Stock"
+      - "&6Right Click:"
+      - "&eSell 1"
+      - "&6Shift-Right Click:"
+      - "&eSell 5"
+  27:
+    material: "ENCHANTED_BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lThousands more at:"
+    symbol: ""
+    lore:
+      - "&ehttps://finance.yahoo.com/"
+  35:
+    material: "ENCHANTED_BOOK"
+    amount: 1
+    durability: 0
+    name: "&6&lThousands more at:"
+    symbol: ""
+    lore:
+      - "&ehttps://finance.yahoo.com/"

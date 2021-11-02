@@ -1,4 +1,4 @@
-package com.maldahleh.stockmarket.stocks.wrapper;
+package com.maldahleh.stockmarket.placeholder.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

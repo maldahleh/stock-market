@@ -114,39 +114,21 @@ public class LookupInventory extends StockDataInventory {
                                 Utils.updateItemStack(
                                     historicalStack.clone(),
                                     ImmutableMap.<String, Object>builder()
-                                        .put(
-                                            "<date>",
+                                        .put("<date>",
                                             TimeUtils.formatDate(
                                                 quote.getDate().getTime(), settings.getLocale()))
                                         .put("<market-currency>", stock.getCurrency())
-                                        .put(
-                                            "<day-open>",
-                                            CurrencyUtils.format(
-                                                quote.getOpen(),
-                                                settings.getUnknownData(),
-                                                settings.getLocale()))
-                                        .put(
-                                            "<day-close>",
-                                            CurrencyUtils.format(
-                                                quote.getClose(),
-                                                settings.getUnknownData(),
-                                                settings.getLocale()))
-                                        .put(
-                                            "<volume>",
+                                        .put("<day-open>",
+                                            CurrencyUtils.format(quote.getOpen(), settings))
+                                        .put("<day-close>",
+                                            CurrencyUtils.format(quote.getClose(), settings))
+                                        .put("<volume>",
                                             CurrencyUtils.formatSigFig(
                                                 quote.getVolume(), settings.getUnknownData()))
-                                        .put(
-                                            "<day-high>",
-                                            CurrencyUtils.format(
-                                                quote.getHigh(),
-                                                settings.getUnknownData(),
-                                                settings.getLocale()))
-                                        .put(
-                                            "<day-low>",
-                                            CurrencyUtils.format(
-                                                quote.getLow(),
-                                                settings.getUnknownData(),
-                                                settings.getLocale()))
+                                        .put("<day-high>",
+                                            CurrencyUtils.format(quote.getHigh(), settings))
+                                        .put("<day-low>",
+                                            CurrencyUtils.format(quote.getLow(), settings))
                                         .build()));
                           } catch (IndexOutOfBoundsException | IOException e) {
                             inventory.setItem(slot, noHistoricalStack);

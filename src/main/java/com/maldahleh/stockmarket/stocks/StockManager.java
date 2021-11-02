@@ -4,7 +4,7 @@ import com.google.common.cache.Cache;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.stocks.utils.StockUtils;
-import com.maldahleh.stockmarket.stocks.wrapper.PlaceholderStock;
+import com.maldahleh.stockmarket.placeholder.model.PlaceholderStock;
 import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import java.math.BigDecimal;
 import java.util.Map;
@@ -19,6 +19,8 @@ import yahoofinance.Stock;
 import yahoofinance.quotes.fx.FxQuote;
 
 public class StockManager {
+
+  private static final String USD = "USD";
 
   private final Cache<String, Stock> stockCache;
   private final Cache<String, Boolean> marketOpenCache;
@@ -44,14 +46,10 @@ public class StockManager {
             () -> {
               for (Entry<String, PlaceholderStock> entry : placeholderMap.entrySet()) {
                 Stock stock = getStock(entry.getKey());
-                entry.getValue().setStock(stock);
-                entry
-                    .getValue()
-                    .setServerPrice(
-                        CurrencyUtils.format(
-                            getServerPrice(stock),
-                            settings.getUnknownData(),
-                            settings.getLocale()));
+
+                PlaceholderStock placeholder = entry.getValue();
+                placeholder.setStock(stock);
+                placeholder.setServerPrice(CurrencyUtils.format(getServerPrice(stock), settings));
               }
             },
             20L,
@@ -100,10 +98,8 @@ public class StockManager {
               Stock stock = getStock(uppercaseSymbol);
               placeholderMap.put(
                   uppercaseSymbol,
-                  new PlaceholderStock(
-                      stock,
-                      CurrencyUtils.format(
-                          getServerPrice(stock), settings.getUnknownData(), settings.getLocale())));
+                  new PlaceholderStock(stock, CurrencyUtils.format(getServerPrice(stock), settings))
+              );
               pendingOperations.remove(uppercaseSymbol);
             });
 
@@ -111,7 +107,7 @@ public class StockManager {
   }
 
   private BigDecimal getFxRate(String fxSymbol) {
-    String fxQuote = fxSymbol.toUpperCase() + "USD=X";
+    String fxQuote = fxSymbol.toUpperCase() + USD + "=X";
     FxQuote quote = fxCache.getIfPresent(fxQuote);
     if (quote != null) {
       return quote.getPrice();
@@ -149,16 +145,16 @@ public class StockManager {
 
   public BigDecimal getServerPrice(Stock stock) {
     BigDecimal price = stock.getQuote().getPrice().multiply(settings.getPriceMultiplier());
-    if (!stock.getCurrency().equalsIgnoreCase("USD")) {
-      BigDecimal conversionFactor = getFxRate(stock.getCurrency());
-      if (conversionFactor == null) {
-        return null;
-      }
-
-      price = price.multiply(conversionFactor);
+    if (stock.getCurrency().equalsIgnoreCase(USD)) {
+      return price;
     }
 
-    return price;
+    BigDecimal conversionFactor = getFxRate(stock.getCurrency());
+    if (conversionFactor == null) {
+      return null;
+    }
+
+    return price.multiply(conversionFactor);
   }
 
   public boolean canNotUseStock(Player player, Stock stock, Settings settings, Messages messages) {

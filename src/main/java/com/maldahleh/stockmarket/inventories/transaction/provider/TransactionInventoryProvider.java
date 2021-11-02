@@ -58,20 +58,16 @@ public record TransactionInventoryProvider(
             .put("<quantity>", value.getQuantity())
             .put(
                 "<stock-value>",
-                CurrencyUtils.formatCurrency(
-                    value.getStockValue().doubleValue(), settings.getLocale()))
+                CurrencyUtils.formatCurrency(value.getStockValue(), settings))
             .put(
                 "<broker-fees>",
-                CurrencyUtils.formatCurrency(
-                    value.getBrokerFee().doubleValue(), settings.getLocale()))
+                CurrencyUtils.formatCurrency(value.getBrokerFee(), settings))
             .put(
                 "<grand-total>",
-                CurrencyUtils.formatCurrency(
-                    value.getGrandTotal().doubleValue(), settings.getLocale()))
+                CurrencyUtils.formatCurrency(value.getGrandTotal(), settings))
             .put(
                 "<earnings>",
-                CurrencyUtils.format(
-                    value.getEarnings(), settings.getUnknownData(), settings.getLocale()))
+                CurrencyUtils.format(value.getEarnings(), settings))
             .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
             .put("<sold>", String.valueOf(value.isSold()))
             .build());

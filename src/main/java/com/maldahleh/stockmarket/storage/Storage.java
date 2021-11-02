@@ -1,5 +1,9 @@
 package com.maldahleh.stockmarket.storage;
 
+import com.maldahleh.stockmarket.config.Settings;
+import com.maldahleh.stockmarket.config.models.SqlSettings;
+import com.maldahleh.stockmarket.storage.types.MySQL;
+import com.maldahleh.stockmarket.storage.types.SQLite;
 import com.maldahleh.stockmarket.transactions.Transaction;
 import com.maldahleh.stockmarket.transactions.types.TransactionType;
 import com.zaxxer.hikari.HikariConfig;
@@ -12,19 +16,18 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import org.bukkit.configuration.ConfigurationSection;
 
 @SuppressWarnings("java:S2095") // use prepared statement in try/finally
 public abstract class Storage extends StorageStatements {
 
   private final HikariDataSource pool;
 
-  protected abstract HikariConfig buildHikariConfig(ConfigurationSection section);
+  protected abstract HikariConfig buildHikariConfig(SqlSettings settings);
 
   protected abstract Transaction buildTransaction(ResultSet resultSet) throws SQLException;
 
-  protected Storage(ConfigurationSection section) {
-    pool = new HikariDataSource(buildHikariConfig(section));
+  protected Storage(SqlSettings settings) {
+    pool = new HikariDataSource(buildHikariConfig(settings));
     createTable();
   }
 
@@ -152,5 +155,14 @@ public abstract class Storage extends StorageStatements {
     statement.setInt(1, transaction.getId());
 
     return statement;
+  }
+
+  public static Storage buildStorage(Settings settings) {
+    SqlSettings sqlSettings = settings.getSqlSettings();
+    if (sqlSettings.isEnabled()) {
+      return new MySQL(sqlSettings);
+    }
+
+    return new SQLite(sqlSettings);
   }
 }

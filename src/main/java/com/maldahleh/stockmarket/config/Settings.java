@@ -1,47 +1,61 @@
 package com.maldahleh.stockmarket.config;
 
+import com.maldahleh.stockmarket.config.common.ConfigSection;
+import com.maldahleh.stockmarket.config.models.BrokerSettings;
+import com.maldahleh.stockmarket.config.models.SqlSettings;
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 import lombok.Getter;
-import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
 public class Settings {
 
   private final Locale locale;
+  private final BrokerSettings brokerSettings;
+  private final SqlSettings sqlSettings;
+
+  private final boolean brokerOnSale;
+  private final BigDecimal brokerFlat;
+  private final BigDecimal brokerPercentRate;
+
   private final String unknownData;
   private final boolean blockTransactionsWhenClosed;
-  private final boolean brokerOnSale;
   private final int transactionCooldownSeconds;
   private final int minutesBetweenSale;
   private final BigDecimal minimumPrice;
   private final BigDecimal priceMultiplier;
-  private final BigDecimal brokerFlat;
-  private final String brokerFlatString;
-  private final BigDecimal brokerPercent;
-  private final BigDecimal brokerPercentRate;
-  private final String brokerPercentString;
   private final Set<String> allowedCurrencies;
   private final Set<String> allowedExchanges;
 
-  public Settings(ConfigurationSection section) {
-    this.locale = Locale.forLanguageTag(section.getString("locale"));
-    this.unknownData = section.getString("unknown-data");
-    this.blockTransactionsWhenClosed = section.getBoolean("block-transactions-when-market-closed");
-    this.brokerOnSale = section.getBoolean("broker-on-sale");
-    this.transactionCooldownSeconds = section.getInt("transaction-cooldown-seconds");
-    this.minutesBetweenSale = section.getInt("minutes-between-sale");
-    this.minimumPrice = BigDecimal.valueOf(section.getDouble("minimum-price"));
-    this.priceMultiplier = BigDecimal.valueOf(section.getInt("price-multiplier"));
-    this.brokerFlat = BigDecimal.valueOf(section.getDouble("broker-flat"));
-    this.brokerFlatString = brokerFlat.toPlainString();
-    this.brokerPercentRate = BigDecimal.valueOf(section.getDouble("broker-percent"));
-    this.brokerPercent = brokerPercentRate.add(BigDecimal.ONE);
-    this.brokerPercentString = brokerPercentRate.multiply(BigDecimal.valueOf(100)).toPlainString();
-    this.allowedCurrencies = new HashSet<>(section.getStringList("allowed-currencies"));
-    this.allowedExchanges = new HashSet<>(section.getStringList("allowed-exchanges"));
+  public Settings(JavaPlugin javaPlugin) {
+    ConfigSection configFile = new ConfigSection(javaPlugin);
+
+    this.locale = configFile.getLocale("locale");
+    this.brokerSettings = new BrokerSettings(configFile.getConfigSection("brokers"));
+    this.sqlSettings = new SqlSettings(configFile.getConfigSection("storage.mysql"));
+
+    this.brokerOnSale = configFile.getBoolean("broker.charge-fees-on-sale");
+    this.brokerFlat = configFile.getBigDecimal("broker.flat-fee");
+    this.brokerPercentRate = configFile.getBigDecimal("broker.percent-fee");
+
+    this.unknownData = configFile.getString("unknown-data");
+    this.blockTransactionsWhenClosed = configFile.getBoolean("block-transactions-when-market-closed");
+    this.transactionCooldownSeconds = configFile.getInt("transaction-cooldown-seconds");
+    this.minutesBetweenSale = configFile.getInt("minutes-between-sale");
+    this.minimumPrice = configFile.getBigDecimal("minimum-price");
+    this.priceMultiplier = configFile.getBigDecimal("price-multiplier");
+    this.allowedCurrencies = configFile.getStringSet("allowed-currencies");
+    this.allowedExchanges = configFile.getStringSet("allowed-exchanges");
+  }
+
+  public String getBrokerPercentString() {
+    return brokerPercentRate.multiply(BigDecimal.valueOf(100)).toPlainString();
+  }
+
+  public String getBrokerFlatString() {
+    return brokerFlat.toPlainString();
   }
 
   public boolean isAboveMinimumPrice(BigDecimal price) {
@@ -49,10 +63,12 @@ public class Settings {
   }
 
   public boolean isAllowedCurrency(String symbol) {
-    return allowedCurrencies.isEmpty() || allowedCurrencies.contains(symbol.toUpperCase());
+    return allowedCurrencies.stream()
+        .anyMatch(allowedCurrency -> allowedCurrency.equalsIgnoreCase(symbol));
   }
 
   public boolean isAllowedExchange(String exchange) {
-    return allowedExchanges.isEmpty() || allowedExchanges.contains(exchange.toUpperCase());
+    return allowedExchanges.stream()
+        .anyMatch(allowedExchange -> allowedExchange.equalsIgnoreCase(exchange));
   }
 }
