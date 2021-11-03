@@ -20,8 +20,8 @@ public class StockDataUtils {
         .put("<market-currency>", stock.getCurrency())
         .put("<server-price>", CurrencyUtils.format(serverPrice, settings))
         .put("<server-currency>", currencyName)
-        .put("<broker-flat>", settings.getBrokerFlatString())
-        .put("<broker-percent>", settings.getBrokerPercentString())
+        .put("<broker-flat>", settings.getBrokerSettings().getBrokerFlatString())
+        .put("<broker-percent>", settings.getBrokerSettings().getBrokerPercentString())
         .put("<change-close>", CurrencyUtils.format(stock.getQuote().getChange(), settings))
         .put("<change-year-high>",
             CurrencyUtils.format(stock.getQuote().getChangeFromYearHigh(), settings))

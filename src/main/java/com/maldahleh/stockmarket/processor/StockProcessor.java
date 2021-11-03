@@ -51,8 +51,8 @@ public record StockProcessor(
               BigDecimal quantityPrice = price.multiply(BigDecimal.valueOf(quantity));
               BigDecimal brokerFees =
                   quantityPrice
-                      .multiply(settings.getBrokerPercentRate())
-                      .add(settings.getBrokerFlat());
+                      .multiply(settings.getBrokerSettings().getBrokerPercent())
+                      .add(settings.getBrokerSettings().getBrokerFlat());
               BigDecimal grandTotal = quantityPrice.add(brokerFees);
 
               if (!stockMarket.getEcon().has(player, grandTotal.doubleValue())) {
@@ -152,11 +152,11 @@ public record StockProcessor(
               BigDecimal grandTotal = quantityPrice;
               BigDecimal net = quantityPrice.subtract(soldValue);
 
-              if (settings.isBrokerOnSale()) {
+              if (settings.getBrokerSettings().isBrokerOnSale()) {
                 brokerFees =
                     quantityPrice
-                        .multiply(settings.getBrokerPercentRate())
-                        .add(settings.getBrokerFlat());
+                        .multiply(settings.getBrokerSettings().getBrokerPercent())
+                        .add(settings.getBrokerSettings().getBrokerFlat());
                 grandTotal = grandTotal.subtract(brokerFees);
               }
 
