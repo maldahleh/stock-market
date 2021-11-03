@@ -18,7 +18,12 @@ public class ForexProvider extends CacheableProvider<FxQuote> {
   public BigDecimal getFxRate(String targetCurrency) {
     String fxQuote = targetCurrency + USD + "=X";
 
-    return get(fxQuote).getPrice();
+    FxQuote quote = get(fxQuote);
+    if (quote == null) {
+      return null;
+    }
+
+    return quote.getPrice();
   }
 
   @Override
