@@ -107,11 +107,11 @@ stock
 
 ### API
 
-*getPortfolioValue(UUID uuid)* - Get the portfolio value of the specified player
+_getPortfolioValue(UUID uuid)_ - Get the portfolio value of the specified player
 
-*getProfitMargin(UUID uuid)* - Get the profit margin of the specified player
+_getProfitMargin(UUID uuid)_ - Get the profit margin of the specified player
 
-*getPlayerStocks(UUID uuid)* - Get the specified player's stocks
+_getPlayerStocks(UUID uuid)_ - Get the specified player's stocks
 
 ### Events
 

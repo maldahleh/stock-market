@@ -49,7 +49,7 @@ class PortfolioCommandTests {
     }
 
     @Test
-    void hasRightProperties_playerHasOtherPerm() {
+    void hasRightPropertiesPlayerHasOtherPerm() {
         // GIVEN
         Player player = mock(Player.class);
 
