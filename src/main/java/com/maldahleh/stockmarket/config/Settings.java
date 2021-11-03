@@ -34,10 +34,6 @@ public class Settings {
     return configFile.getString("unknown-data");
   }
 
-  public boolean isBlockTransactionsWhenClosed() {
-    return configFile.getBoolean("block-transactions-when-market-closed");
-  }
-
   public int getTransactionCooldownSeconds() {
     return configFile.getInt("transaction-cooldown-seconds");
   }

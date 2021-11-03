@@ -3,7 +3,6 @@ package com.maldahleh.stockmarket.stocks;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.stocks.provider.ForexProvider;
-import com.maldahleh.stockmarket.stocks.provider.MarketStatusProvider;
 import com.maldahleh.stockmarket.stocks.provider.StockProvider;
 import java.math.BigDecimal;
 import org.bukkit.entity.Player;
@@ -13,13 +12,11 @@ public class StockManager {
 
   private final Settings settings;
   private final ForexProvider forexProvider;
-  private final MarketStatusProvider marketStatusProvider;
   private final StockProvider stockProvider;
 
   public StockManager(Settings settings) {
     this.settings = settings;
     this.forexProvider = new ForexProvider(settings);
-    this.marketStatusProvider = new MarketStatusProvider(settings);
     this.stockProvider = new StockProvider(settings);
   }
 
@@ -68,12 +65,6 @@ public class StockManager {
 
     if (!settings.isAboveMinimumPrice(stock.getQuote().getPrice())) {
       messages.sendLowPriceStock(player);
-      return true;
-    }
-
-    if (settings.isBlockTransactionsWhenClosed()
-        && !marketStatusProvider.get(stock.getSymbol())) {
-      messages.sendMarketClosed(player);
       return true;
     }
 

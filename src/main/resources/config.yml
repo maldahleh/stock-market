@@ -17,7 +17,6 @@ broker:
 cache:
   expire-minutes: 5
 unknown-data: "N/A"
-block-transactions-when-market-closed: true
 transaction-cooldown-seconds: 2
 minutes-between-sale: 5
 minimum-price: 5.0
