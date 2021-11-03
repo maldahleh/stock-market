@@ -10,7 +10,6 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.configuration.ConfigurationSection;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
-import yahoofinance.quotes.fx.FxQuote;
 
 @UtilityClass
 public class StockUtils {
@@ -35,14 +34,6 @@ public class StockUtils {
       return YahooFinance.get(symbols);
     } catch (IOException e) {
       return new HashMap<>();
-    }
-  }
-
-  public FxQuote fetchFxQuote(String fxQuote) {
-    try {
-      return YahooFinance.getFx(fxQuote);
-    } catch (IOException e) {
-      return null;
     }
   }
 

@@ -3,6 +3,8 @@ package com.maldahleh.stockmarket.stocks;
 import com.google.common.cache.Cache;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
+import com.maldahleh.stockmarket.stocks.provider.ForexProvider;
+import com.maldahleh.stockmarket.stocks.provider.MarketStatusProvider;
 import com.maldahleh.stockmarket.stocks.utils.StockUtils;
 import com.maldahleh.stockmarket.placeholder.model.PlaceholderStock;
 import com.maldahleh.stockmarket.utils.CurrencyUtils;
@@ -16,17 +18,14 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import yahoofinance.Stock;
-import yahoofinance.quotes.fx.FxQuote;
 
 public class StockManager {
 
-  private static final String USD = "USD";
-
   private final Cache<String, Stock> stockCache;
-  private final Cache<String, FxQuote> fxCache;
 
   private final Plugin plugin;
   private final Settings settings;
+  private final ForexProvider forexProvider;
   private final MarketStatusProvider marketStatusProvider;
 
   private final Map<String, PlaceholderStock> placeholderMap = new ConcurrentHashMap<>();
@@ -34,10 +33,10 @@ public class StockManager {
 
   public StockManager(Plugin plugin, ConfigurationSection section, Settings settings) {
     this.stockCache = StockUtils.buildCache(section);
-    this.fxCache = StockUtils.buildCache(section);
 
     this.plugin = plugin;
     this.settings = settings;
+    this.forexProvider = new ForexProvider(settings);
     this.marketStatusProvider = new MarketStatusProvider(settings);
 
     Bukkit.getScheduler()
@@ -106,22 +105,6 @@ public class StockManager {
     return null;
   }
 
-  private BigDecimal getFxRate(String fxSymbol) {
-    String fxQuote = fxSymbol.toUpperCase() + USD + "=X";
-    FxQuote quote = fxCache.getIfPresent(fxQuote);
-    if (quote != null) {
-      return quote.getPrice();
-    }
-
-    FxQuote fetchedQuote = StockUtils.fetchFxQuote(fxQuote);
-    if (fetchedQuote == null) {
-      return null;
-    }
-
-    fxCache.put(fxQuote, fetchedQuote);
-    return fetchedQuote.getPrice();
-  }
-
   public BigDecimal getServerPrice(String symbol) {
     Stock stock = getStock(symbol);
     if (stock == null) {
@@ -133,11 +116,11 @@ public class StockManager {
 
   public BigDecimal getServerPrice(Stock stock) {
     BigDecimal price = stock.getQuote().getPrice().multiply(settings.getPriceMultiplier());
-    if (stock.getCurrency().equalsIgnoreCase(USD)) {
+    if (stock.getCurrency().equalsIgnoreCase(ForexProvider.USD)) {
       return price;
     }
 
-    BigDecimal conversionFactor = getFxRate(stock.getCurrency());
+    BigDecimal conversionFactor = forexProvider.getFxRate(stock.getCurrency());
     if (conversionFactor == null) {
       return null;
     }

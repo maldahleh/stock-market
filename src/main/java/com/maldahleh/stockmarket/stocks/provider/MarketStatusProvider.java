@@ -1,4 +1,4 @@
-package com.maldahleh.stockmarket.stocks;
+package com.maldahleh.stockmarket.stocks.provider;
 
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.stocks.common.CacheableProvider;

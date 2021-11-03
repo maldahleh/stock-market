@@ -22,6 +22,10 @@ public abstract class CacheableProvider<V> {
     }
 
     V fetchedResult = fetch(uppercaseKey);
+    if (fetchedResult == null) {
+      return null;
+    }
+
     cache.put(uppercaseKey, fetchedResult);
     return fetchedResult;
   }
