@@ -23,11 +23,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class StockMarket extends JavaPlugin {
 
   private StockMarketAPI api;
-  private Economy econ;
-
   private CommandManager commandManager;
-  private StockManager stockManager;
-  private PlayerManager playerManager;
+
+  private Economy econ;
 
   @Override
   public void onEnable() {
@@ -39,8 +37,8 @@ public class StockMarket extends JavaPlugin {
     Settings settings = new Settings(this);
     Storage storage = Storage.buildStorage(settings);
     Messages messages = new Messages(this, settings);
-    this.stockManager = new StockManager(settings);
-    this.playerManager = new PlayerManager(this, stockManager, storage, settings);
+    StockManager stockManager = new StockManager(settings);
+    PlayerManager playerManager = new PlayerManager(this, stockManager, storage, settings);
     this.api = new StockMarketAPI(playerManager);
     StockProcessor stockProcessor =
         new StockProcessor(this, stockManager, playerManager, storage, settings, messages);
