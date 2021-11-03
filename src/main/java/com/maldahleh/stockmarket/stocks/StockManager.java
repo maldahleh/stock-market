@@ -23,22 +23,22 @@ public class StockManager {
   private static final String USD = "USD";
 
   private final Cache<String, Stock> stockCache;
-  private final Cache<String, Boolean> marketOpenCache;
   private final Cache<String, FxQuote> fxCache;
 
   private final Plugin plugin;
   private final Settings settings;
+  private final MarketStatusProvider marketStatusProvider;
 
   private final Map<String, PlaceholderStock> placeholderMap = new ConcurrentHashMap<>();
   private final Set<String> pendingOperations = ConcurrentHashMap.newKeySet();
 
   public StockManager(Plugin plugin, ConfigurationSection section, Settings settings) {
     this.stockCache = StockUtils.buildCache(section);
-    this.marketOpenCache = StockUtils.buildCache(section);
     this.fxCache = StockUtils.buildCache(section);
 
     this.plugin = plugin;
     this.settings = settings;
+    this.marketStatusProvider = new MarketStatusProvider(settings);
 
     Bukkit.getScheduler()
         .runTaskTimerAsynchronously(
@@ -122,18 +122,6 @@ public class StockManager {
     return fetchedQuote.getPrice();
   }
 
-  private boolean isMarketOpen(String symbol) {
-    String uppercaseSymbol = symbol.toUpperCase();
-    Boolean result = marketOpenCache.getIfPresent(uppercaseSymbol);
-    if (result != null) {
-      return result;
-    }
-
-    boolean fetchedResult = StockUtils.isMarketOpen(uppercaseSymbol);
-    marketOpenCache.put(uppercaseSymbol, fetchedResult);
-    return fetchedResult;
-  }
-
   public BigDecimal getServerPrice(String symbol) {
     Stock stock = getStock(symbol);
     if (stock == null) {
@@ -174,7 +162,8 @@ public class StockManager {
       return true;
     }
 
-    if (settings.isBlockTransactionsWhenClosed() && !isMarketOpen(stock.getSymbol())) {
+    if (settings.isBlockTransactionsWhenClosed()
+        && !marketStatusProvider.isMarketOpen(stock.getSymbol())) {
       messages.sendMarketClosed(player);
       return true;
     }
