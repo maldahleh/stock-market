@@ -54,14 +54,11 @@ public class StockManager {
   }
 
   public void cacheStocks(String... symbols) {
-    Map<String, Stock> results = StockUtils.fetchStocks(symbols);
-    for (Map.Entry<String, Stock> e : results.entrySet()) {
-      stockCache.put(e.getKey().toUpperCase(), e.getValue());
-    }
+    stockProvider.get(symbols);
   }
 
   public Stock getStock(String symbol) {
-    return stockProvider.getStock(symbol);
+    return stockProvider.get(symbol);
   }
 
   public PlaceholderStock getPlaceholderStock(String symbol) {
