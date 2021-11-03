@@ -1,10 +1,10 @@
 package com.maldahleh.stockmarket.stocks;
 
-import com.google.common.cache.Cache;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.stocks.provider.ForexProvider;
 import com.maldahleh.stockmarket.stocks.provider.MarketStatusProvider;
+import com.maldahleh.stockmarket.stocks.provider.StockProvider;
 import com.maldahleh.stockmarket.stocks.utils.StockUtils;
 import com.maldahleh.stockmarket.placeholder.model.PlaceholderStock;
 import com.maldahleh.stockmarket.utils.CurrencyUtils;
@@ -21,23 +21,21 @@ import yahoofinance.Stock;
 
 public class StockManager {
 
-  private final Cache<String, Stock> stockCache;
-
   private final Plugin plugin;
   private final Settings settings;
   private final ForexProvider forexProvider;
   private final MarketStatusProvider marketStatusProvider;
+  private final StockProvider stockProvider;
 
   private final Map<String, PlaceholderStock> placeholderMap = new ConcurrentHashMap<>();
   private final Set<String> pendingOperations = ConcurrentHashMap.newKeySet();
 
   public StockManager(Plugin plugin, ConfigurationSection section, Settings settings) {
-    this.stockCache = StockUtils.buildCache(section);
-
     this.plugin = plugin;
     this.settings = settings;
     this.forexProvider = new ForexProvider(settings);
     this.marketStatusProvider = new MarketStatusProvider(settings);
+    this.stockProvider = new StockProvider(settings);
 
     Bukkit.getScheduler()
         .runTaskTimerAsynchronously(
@@ -63,19 +61,7 @@ public class StockManager {
   }
 
   public Stock getStock(String symbol) {
-    String upperSymbol = symbol.toUpperCase();
-    Stock stock = stockCache.getIfPresent(upperSymbol);
-    if (stock != null) {
-      return stock;
-    }
-
-    Stock fetchedStock = StockUtils.fetchStock(upperSymbol);
-    if (fetchedStock == null) {
-      return null;
-    }
-
-    stockCache.put(upperSymbol, fetchedStock);
-    return fetchedStock;
+    return stockProvider.getStock(symbol);
   }
 
   public PlaceholderStock getPlaceholderStock(String symbol) {

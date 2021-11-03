@@ -1,15 +1,19 @@
 package com.maldahleh.stockmarket.stocks.common;
 
 import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.maldahleh.stockmarket.config.Settings;
-import com.maldahleh.stockmarket.stocks.utils.StockUtils;
+import java.util.concurrent.TimeUnit;
 
 public abstract class CacheableProvider<V> {
 
   protected final Cache<String, V> cache;
 
   protected CacheableProvider(Settings settings) {
-    this.cache = StockUtils.buildCache(settings.getCacheMinutes());
+    this.cache = CacheBuilder.newBuilder()
+        .expireAfterWrite(settings.getCacheMinutes(), TimeUnit.MINUTES)
+        .maximumSize(500)
+        .build();
   }
 
   protected abstract V fetch(String key);
