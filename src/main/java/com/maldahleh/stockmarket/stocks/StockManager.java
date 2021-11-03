@@ -5,7 +5,6 @@ import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.stocks.provider.ForexProvider;
 import com.maldahleh.stockmarket.stocks.provider.MarketStatusProvider;
 import com.maldahleh.stockmarket.stocks.provider.StockProvider;
-import com.maldahleh.stockmarket.stocks.utils.StockUtils;
 import com.maldahleh.stockmarket.placeholder.model.PlaceholderStock;
 import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import java.math.BigDecimal;
@@ -129,7 +128,7 @@ public class StockManager {
     }
 
     if (settings.isBlockTransactionsWhenClosed()
-        && !marketStatusProvider.isMarketOpen(stock.getSymbol())) {
+        && !marketStatusProvider.get(stock.getSymbol())) {
       messages.sendMarketClosed(player);
       return true;
     }

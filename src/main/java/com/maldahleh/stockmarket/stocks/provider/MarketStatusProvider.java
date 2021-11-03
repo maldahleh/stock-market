@@ -13,10 +13,6 @@ public class MarketStatusProvider extends CacheableProvider<Boolean> {
     super(settings);
   }
 
-  public boolean isMarketOpen(String symbol) {
-    return get(symbol);
-  }
-
   @Override
   protected Boolean fetch(String key) {
     try {
