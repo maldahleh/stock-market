@@ -1,3 +1,20 @@
+locale: "en-US"
+broker:
+  charge-fees-on-sale: false
+  flat-fee: 10.50
+  percent-fee: 0.20
+cache:
+  expire-minutes: 5
+unknown-data: "N/A"
+block-transactions-when-market-closed: true
+transaction-cooldown-seconds: 2
+minutes-between-sale: 5
+minimum-price: 5.0
+price-multiplier: 20
+allowed-currencies:
+  - "USD"
+  - "CAD"
+allowed-exchanges: []
 storage:
   mysql:
     enabled: false
@@ -50,21 +67,3 @@ inventories:
         - 30
         - 31
         - 32
-settings:
-  locale: "en-US"
-  broker:
-    charge-fees-on-sale: false
-    flat-fee: 10.50
-    percent-fee: 0.20
-  cache:
-    expire-minutes: 5
-  unknown-data: "N/A"
-  block-transactions-when-market-closed: true
-  transaction-cooldown-seconds: 2
-  minutes-between-sale: 5
-  minimum-price: 5.0
-  price-multiplier: 20
-  allowed-currencies:
-    - "USD"
-    - "CAD"
-  allowed-exchanges: []
