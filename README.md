@@ -42,9 +42,9 @@ is loaded in.
 
 In the above examples, BA (Boeing) is used as the stock symbol.
 
-# Commands and Permissions
+## Commands and Permissions
 
-## Permissions
+### Permissions
 
 _stockmarket.use_ - This permission is required for any players who you would like to use any stock
 market command.
@@ -52,7 +52,7 @@ market command.
 _stockmarket.commandbypass_ - This permission is required for any player that you want to be able to
 bypass command restrictions when they are enabled that force players to use brokers.
 
-## Commands
+### Commands
 
 #### Help Commands
 
