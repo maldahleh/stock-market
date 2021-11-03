@@ -156,7 +156,7 @@ class BrokerManagerTests {
     }
 
     @Test
-    void playerNoPermission_commandsEnabled() {
+    void playerNoPermissionCommandsEnabled() {
       // GIVEN
       when(player.hasPermission(CommandManager.COMMAND_BYPASS_PERM))
           .thenReturn(false);
@@ -172,7 +172,7 @@ class BrokerManagerTests {
     }
 
     @Test
-    void playerHasPermission_commandsDisabled() {
+    void playerHasPermissionCommandsDisabled() {
       // GIVEN
       when(player.hasPermission(CommandManager.COMMAND_BYPASS_PERM))
           .thenReturn(true);

@@ -36,7 +36,7 @@ class StockMarketCommandTests {
       brokerManager, messages);
 
   @Test
-  void commandSender_notPlayer() {
+  void commandSenderNotPlayer() {
     // GIVEN
     ConsoleCommandSender commandSender = mock(ConsoleCommandSender.class);
 
@@ -65,7 +65,7 @@ class StockMarketCommandTests {
   }
 
   @Test
-  void noArgs_sendHelpMessage() {
+  void noArgsSendHelpMessage() {
     // GIVEN
     Player player = mock(Player.class);
 
@@ -88,7 +88,7 @@ class StockMarketCommandTests {
       subcommand = spy(new BaseCommand() {
         @Override
         public void onCommand(Player player, String[] args) {
-          
+          // implementation not tested
         }
 
         @Override
@@ -205,7 +205,7 @@ class StockMarketCommandTests {
     }
 
     @Test
-    void correctSyntax_noPermSubcommand() {
+    void correctSyntaxNoPermSubcommand() {
       // GIVEN
       Player player = mock(Player.class);
 

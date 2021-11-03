@@ -4,21 +4,20 @@ import com.maldahleh.stockmarket.brokers.listeners.BrokerListener;
 import com.maldahleh.stockmarket.commands.CommandManager;
 import com.maldahleh.stockmarket.config.models.BrokerSettings;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
-import com.maldahleh.stockmarket.utils.Utils;
 import lombok.Getter;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class BrokerManager {
 
-  @Getter private final boolean enabled;
+  @Getter
+  private final boolean enabled;
   private final BrokerSettings settings;
 
   public BrokerManager(Plugin plugin, BrokerSettings settings, InventoryManager inventoryManager) {

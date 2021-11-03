@@ -22,7 +22,7 @@ class BaseCommandTests {
     BaseCommand baseCommand = new BaseCommand() {
       @Override
       public void onCommand(Player player, String[] args) {
-
+        // implementation not tested
       }
 
       @Override
@@ -42,7 +42,7 @@ class BaseCommandTests {
 
   @Nested
   @DisplayName("canPlayerExecute")
-  class CanPLayerExecute {
+  class CanPlayerExecute {
 
     @Test
     void hasPermission() {
@@ -51,7 +51,7 @@ class BaseCommandTests {
       BaseCommand baseCommand = new BaseCommand() {
         @Override
         public void onCommand(Player player, String[] args) {
-
+          // implementation not tested
         }
 
         @Override
@@ -77,7 +77,7 @@ class BaseCommandTests {
       BaseCommand baseCommand = new BaseCommand() {
         @Override
         public void onCommand(Player player, String[] args) {
-
+          // implementation not tested
         }
 
         @Override

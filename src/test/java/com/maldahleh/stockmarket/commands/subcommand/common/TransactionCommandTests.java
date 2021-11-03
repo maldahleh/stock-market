@@ -28,7 +28,7 @@ class TransactionCommandTests {
     TransactionCommand transactionCommand = new TransactionCommand(processor, messages) {
       @Override
       public void processTransaction(Player player, String symbol, int quantity) {
-
+        // implementation not tested
       }
 
       @Override
@@ -61,7 +61,7 @@ class TransactionCommandTests {
     TransactionCommand transactionCommand = spy(new TransactionCommand(processor, messages) {
       @Override
       public void processTransaction(Player player, String symbol, int quantity) {
-
+        // implementation not tested
       }
 
       @Override

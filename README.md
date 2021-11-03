@@ -12,7 +12,7 @@ they pick, providing a risk-free way for players to learn about the stock market
 
 ## Dependencies
 
-**Vault and a Vault compatible economy plugin**
+**Vault and an economy plugin** - Used for transactions.
 
 **Citizens** - _Optional_ - Used for brokers.
 
@@ -42,9 +42,9 @@ is loaded in.
 
 In the above examples, BA (Boeing) is used as the stock symbol.
 
-# Commands and Permissions
+## Commands and Permissions
 
-## Permissions
+### Permissions
 
 _stockmarket.use_ - This permission is required for any players who you would like to use any stock
 market command.
@@ -52,7 +52,7 @@ market command.
 _stockmarket.commandbypass_ - This permission is required for any player that you want to be able to
 bypass command restrictions when they are enabled that force players to use brokers.
 
-## Commands
+### Commands
 
 #### Help Commands
 
@@ -107,11 +107,11 @@ stock
 
 ### API
 
-*getPortfolioValue(UUID uuid)* - Get the portfolio value of the specified player
+_getPortfolioValue(UUID uuid)_ - Get the portfolio value of the specified player
 
-*getProfitMargin(UUID uuid)* - Get the profit margin of the specified player
+_getProfitMargin(UUID uuid)_ - Get the profit margin of the specified player
 
-*getPlayerStocks(UUID uuid)* - Get the specified player's stocks
+_getPlayerStocks(UUID uuid)_ - Get the specified player's stocks
 
 ### Events
 
@@ -121,4 +121,4 @@ stock
 
 ## Special Thanks
 
-[<img src="https://www.ej-technologies.com/images/product_banners/jprofiler_large.png" alt="JProfiler logo">](https://www.ej-technologies.com/products/jprofiler/overview.html)
+![JProfiler](https://www.ej-technologies.com/images/product_banners/jprofiler_large.png)

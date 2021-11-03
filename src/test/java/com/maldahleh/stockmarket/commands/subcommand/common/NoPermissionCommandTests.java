@@ -19,7 +19,7 @@ class NoPermissionCommandTests {
     NoPermissionCommand noPermissionCommand = new NoPermissionCommand() {
       @Override
       public void onCommand(Player player, String[] args) {
-
+        // implementation not tested
       }
 
       @Override

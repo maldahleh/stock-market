@@ -233,7 +233,7 @@ class StockMarketTabCompleterTests {
     }
 
     @Test
-    void onlyMatching_ordered() {
+    void onlyMatchingOrdered() {
       // GIVEN
       Player player = mock(Player.class);
       String[] args = new String[]{"a"};
@@ -279,6 +279,7 @@ class StockMarketTabCompleterTests {
       return new BaseCommand() {
         @Override
         public void onCommand(Player player, String[] args) {
+          // implementation not tested
         }
 
         @Override
