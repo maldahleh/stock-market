@@ -1,8 +1,19 @@
 locale: "en-US"
+sql:
+  enabled: false
+  ip: "localhost"
+  port: 3306
+  database: "database"
+  username: "username"
+  password: "password"
+  max-pool-size: 100
 broker:
+  disable-commands: false
   charge-fees-on-sale: false
   flat-fee: 10.50
   percent-fee: 0.20
+  names:
+    simple: "&8&lStock Broker"
 cache:
   expire-minutes: 5
 unknown-data: "N/A"
@@ -15,20 +26,6 @@ allowed-currencies:
   - "USD"
   - "CAD"
 allowed-exchanges: []
-storage:
-  mysql:
-    enabled: false
-    ip: "localhost"
-    port: 3306
-    database: "database"
-    username: "username"
-    password: "password"
-    max-pool-size: 100
-brokers:
-  names:
-    simple: "&8&lStock Broker"
-  settings:
-    disable-commands: false
 inventories:
     historical:
       data:

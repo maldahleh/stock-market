@@ -5,74 +5,62 @@ import com.maldahleh.stockmarket.config.models.BrokerSettings;
 import com.maldahleh.stockmarket.config.models.SqlSettings;
 import java.math.BigDecimal;
 import java.util.Locale;
-import java.util.Set;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
-@Getter
 public class Settings {
 
-  private final Locale locale;
+  private final ConfigSection configFile;
+  @Getter
   private final BrokerSettings brokerSettings;
+  @Getter
   private final SqlSettings sqlSettings;
 
-  private final boolean brokerOnSale;
-  private final BigDecimal brokerFlat;
-  private final BigDecimal brokerPercentRate;
-
-  private final int cacheMinutes;
-
-  private final String unknownData;
-  private final boolean blockTransactionsWhenClosed;
-  private final int transactionCooldownSeconds;
-  private final int minutesBetweenSale;
-  private final BigDecimal minimumPrice;
-  private final BigDecimal priceMultiplier;
-  private final Set<String> allowedCurrencies;
-  private final Set<String> allowedExchanges;
-
   public Settings(JavaPlugin javaPlugin) {
-    ConfigSection configFile = new ConfigSection(javaPlugin);
-
-    this.locale = configFile.getLocale("locale");
-    this.brokerSettings = new BrokerSettings(configFile.getConfigSection("brokers"));
-    this.sqlSettings = new SqlSettings(configFile.getConfigSection("storage.mysql"));
-
-    this.brokerOnSale = configFile.getBoolean("broker.charge-fees-on-sale");
-    this.brokerFlat = configFile.getBigDecimal("broker.flat-fee");
-    this.brokerPercentRate = configFile.getBigDecimal("broker.percent-fee");
-
-    this.cacheMinutes = configFile.getInt("cache.expire-minutes");
-
-    this.unknownData = configFile.getString("unknown-data");
-    this.blockTransactionsWhenClosed = configFile.getBoolean("block-transactions-when-market-closed");
-    this.transactionCooldownSeconds = configFile.getInt("transaction-cooldown-seconds");
-    this.minutesBetweenSale = configFile.getInt("minutes-between-sale");
-    this.minimumPrice = configFile.getBigDecimal("minimum-price");
-    this.priceMultiplier = configFile.getBigDecimal("price-multiplier");
-    this.allowedCurrencies = configFile.getStringSet("allowed-currencies");
-    this.allowedExchanges = configFile.getStringSet("allowed-exchanges");
+    this.configFile = new ConfigSection(javaPlugin);
+    this.brokerSettings = new BrokerSettings(configFile.getConfigSection("broker"));
+    this.sqlSettings = new SqlSettings(configFile.getConfigSection("sql"));
   }
 
-  public String getBrokerPercentString() {
-    return brokerPercentRate.multiply(BigDecimal.valueOf(100)).toPlainString();
+  public Locale getLocale() {
+    return configFile.getLocale("locale");
   }
 
-  public String getBrokerFlatString() {
-    return brokerFlat.toPlainString();
+  public int getCacheMinutes() {
+    return configFile.getInt("cache.expire-minutes");
+  }
+
+  public String getUnknownData() {
+    return configFile.getString("unknown-data");
+  }
+
+  public boolean isBlockTransactionsWhenClosed() {
+    return configFile.getBoolean("block-transactions-when-market-closed");
+  }
+
+  public int getTransactionCooldownSeconds() {
+    return configFile.getInt("transaction-cooldown-seconds");
+  }
+
+  public int getMinutesBetweenSale() {
+    return configFile.getInt("minutes-between-sale");
+  }
+
+  public BigDecimal getPriceMultiplier() {
+    return configFile.getBigDecimal("price-multiplier");
   }
 
   public boolean isAboveMinimumPrice(BigDecimal price) {
-    return price.compareTo(minimumPrice) >= 0;
+    return price.compareTo(configFile.getBigDecimal("minimum-price")) >= 0;
   }
 
   public boolean isAllowedCurrency(String symbol) {
-    return allowedCurrencies.stream()
+    return configFile.getStringSet("allowed-currencies").stream()
         .anyMatch(allowedCurrency -> allowedCurrency.equalsIgnoreCase(symbol));
   }
 
   public boolean isAllowedExchange(String exchange) {
-    return allowedExchanges.stream()
+    return configFile.getStringSet("allowed-exchanges").stream()
         .anyMatch(allowedExchange -> allowedExchange.equalsIgnoreCase(exchange));
   }
 }
