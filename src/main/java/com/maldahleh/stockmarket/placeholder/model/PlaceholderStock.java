@@ -1,11 +1,11 @@
 package com.maldahleh.stockmarket.placeholder.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import yahoofinance.Stock;
 
 @Data
-@AllArgsConstructor
+@NoArgsConstructor
 public class PlaceholderStock {
 
   private Stock stock;

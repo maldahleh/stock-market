@@ -6,6 +6,7 @@ import com.maldahleh.stockmarket.commands.CommandManager;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
+import com.maldahleh.stockmarket.placeholder.StockPlaceholderManager;
 import com.maldahleh.stockmarket.placeholder.StocksPlaceholder;
 import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.processor.StockProcessor;
@@ -38,8 +39,7 @@ public class StockMarket extends JavaPlugin {
     Settings settings = new Settings(this);
     Storage storage = Storage.buildStorage(settings);
     Messages messages = new Messages(this, settings);
-    this.stockManager =
-        new StockManager(this, getConfig().getConfigurationSection("stocks"), settings);
+    this.stockManager = new StockManager(settings);
     this.playerManager = new PlayerManager(this, stockManager, storage, settings);
     this.api = new StockMarketAPI(playerManager);
     StockProcessor stockProcessor =
@@ -61,7 +61,9 @@ public class StockMarket extends JavaPlugin {
         new CommandManager(this, brokerManager, inventoryManager, stockProcessor, messages);
 
     if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-      new StocksPlaceholder(playerManager, stockManager).register();
+      StockPlaceholderManager stockPlaceholderManager = new StockPlaceholderManager(this,
+          stockManager, settings);
+      new StocksPlaceholder(playerManager, stockPlaceholderManager).register();
     }
   }
 

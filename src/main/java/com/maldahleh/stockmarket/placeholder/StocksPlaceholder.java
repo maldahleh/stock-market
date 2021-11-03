@@ -38,7 +38,7 @@ public class StocksPlaceholder extends PlaceholderExpansion {
   private static final String NOT_APPLICABLE = "N/A";
 
   private final PlayerManager playerManager;
-  private final StockManager stockManager;
+  private final StockPlaceholderManager stockManager;
 
   @NonNull
   @Override
