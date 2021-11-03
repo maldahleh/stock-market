@@ -12,7 +12,7 @@ they pick, providing a risk-free way for players to learn about the stock market
 
 ## Dependencies
 
-**Vault and a Vault compatible economy plugin**
+**Vault and an economy plugin** - Used for transactions.
 
 **Citizens** - _Optional_ - Used for brokers.
 
@@ -121,4 +121,4 @@ _getPlayerStocks(UUID uuid)_ - Get the specified player's stocks
 
 ## Special Thanks
 
-[<img src="https://www.ej-technologies.com/images/product_banners/jprofiler_large.png" alt="JProfiler logo">](https://www.ej-technologies.com/products/jprofiler/overview.html)
+![JProfiler](https://www.ej-technologies.com/images/product_banners/jprofiler_large.png)
