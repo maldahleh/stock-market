@@ -20,6 +20,8 @@ public class Settings {
   private final BigDecimal brokerFlat;
   private final BigDecimal brokerPercentRate;
 
+  private final int cacheMinutes;
+
   private final String unknownData;
   private final boolean blockTransactionsWhenClosed;
   private final int transactionCooldownSeconds;
@@ -39,6 +41,8 @@ public class Settings {
     this.brokerOnSale = configFile.getBoolean("broker.charge-fees-on-sale");
     this.brokerFlat = configFile.getBigDecimal("broker.flat-fee");
     this.brokerPercentRate = configFile.getBigDecimal("broker.percent-fee");
+
+    this.cacheMinutes = configFile.getInt("cache.expire-minutes");
 
     this.unknownData = configFile.getString("unknown-data");
     this.blockTransactionsWhenClosed = configFile.getBoolean("block-transactions-when-market-closed");

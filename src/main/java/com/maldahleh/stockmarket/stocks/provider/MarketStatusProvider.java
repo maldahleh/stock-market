@@ -1,63 +1,27 @@
-package com.maldahleh.stockmarket.stocks.utils;
+package com.maldahleh.stockmarket.stocks.provider;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import java.io.IOException;
+import com.maldahleh.stockmarket.config.Settings;
+import com.maldahleh.stockmarket.stocks.common.CacheableProvider;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import lombok.experimental.UtilityClass;
-import org.bukkit.configuration.ConfigurationSection;
-import yahoofinance.Stock;
-import yahoofinance.YahooFinance;
-import yahoofinance.quotes.fx.FxQuote;
 
-@UtilityClass
-public class StockUtils {
+public class MarketStatusProvider extends CacheableProvider<Boolean> {
 
-  public Stock fetchStock(String symbol) {
-    try {
-      return YahooFinance.get(symbol, true);
-    } catch (IOException e) {
-      return null;
-    }
+  public MarketStatusProvider(Settings settings) {
+    super(settings);
   }
 
-  public Map<String, Stock> fetchStocks(String... symbols) {
-    Map<String, Stock> stocks = lookupStocks(symbols);
-    stocks.entrySet().removeIf(e -> e.getKey() == null || e.getValue() == null);
-
-    return stocks;
-  }
-
-  private Map<String, Stock> lookupStocks(String... symbols) {
-    try {
-      return YahooFinance.get(symbols);
-    } catch (IOException e) {
-      return new HashMap<>();
-    }
-  }
-
-  public FxQuote fetchFxQuote(String fxQuote) {
-    try {
-      return YahooFinance.getFx(fxQuote);
-    } catch (IOException e) {
-      return null;
-    }
-  }
-
-  public boolean isMarketOpen(String symbol) {
+  @Override
+  protected Boolean fetch(String key) {
     try {
       String requestXml =
           "<?xml version='1.0' encoding='utf−8'?><request devtype='Apple_OSX' "
               + "deployver='APPLE_DASHBOARD_1_0' app='YGoAppleStocksWidget' appver='unknown' "
               + "api='finance' apiver='1.0.1' acknotification='0000'><query id='0' timestamp='`"
               + "date +%s000`' type='getquotes'><list><symbol>"
-              + symbol.toUpperCase()
+              + key.toUpperCase()
               + "</symbol>"
               + "</list></query></request>";
       URL url = new URL("https://wu-quotes.apple.com/dgw?imei=42&apptype=finance");
@@ -93,12 +57,5 @@ public class StockUtils {
     } catch (Exception e) {
       return false;
     }
-  }
-
-  public <T> Cache<String, T> buildCache(ConfigurationSection section) {
-    return CacheBuilder.newBuilder()
-        .expireAfterWrite(section.getInt("cache.expire-minutes"), TimeUnit.MINUTES)
-        .maximumSize(500)
-        .build();
   }
 }
