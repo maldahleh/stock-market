@@ -52,7 +52,7 @@ class BrokerManagerTests {
     when(configurationSection.getString("names.simple"))
         .thenReturn("broker");
 
-    when(configurationSection.getBoolean("settings.disable-commands"))
+    when(configurationSection.getBoolean("disable-commands"))
         .thenReturn(false);
 
     when(plugin.getServer())
@@ -145,7 +145,7 @@ class BrokerManagerTests {
       when(player.hasPermission(CommandManager.COMMAND_BYPASS_PERM))
           .thenReturn(false);
 
-      when(configurationSection.getBoolean("settings.disable-commands"))
+      when(configurationSection.getBoolean("disable-commands"))
           .thenReturn(true);
 
       // WHEN
@@ -161,7 +161,7 @@ class BrokerManagerTests {
       when(player.hasPermission(CommandManager.COMMAND_BYPASS_PERM))
           .thenReturn(false);
 
-      when(configurationSection.getBoolean("settings.disable-commands"))
+      when(configurationSection.getBoolean("disable-commands"))
           .thenReturn(false);
 
       // WHEN
@@ -177,7 +177,7 @@ class BrokerManagerTests {
       when(player.hasPermission(CommandManager.COMMAND_BYPASS_PERM))
           .thenReturn(true);
 
-      when(configurationSection.getBoolean("settings.disable-commands"))
+      when(configurationSection.getBoolean("disable-commands"))
           .thenReturn(true);
 
       // WHEN

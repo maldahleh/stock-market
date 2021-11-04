@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mockStatic;
 
-import com.maldahleh.stockmarket.stocks.utils.SettingsBuilder;
+import com.maldahleh.stockmarket.stocks.utils.SettingsUtils;
 import java.io.IOException;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ import yahoofinance.quotes.fx.FxQuote;
 
 class ForexProviderTests {
 
-  private final ForexProvider forexProvider = new ForexProvider(SettingsBuilder.buildSettings());
+  private final ForexProvider forexProvider = new ForexProvider(SettingsUtils.buildSettings());
 
   @Test
   void fetchForex() {

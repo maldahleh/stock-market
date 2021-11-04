@@ -4,14 +4,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.maldahleh.stockmarket.config.Settings;
+import lombok.experimental.UtilityClass;
 
-public class SettingsBuilder {
+@UtilityClass
+public class SettingsUtils {
 
-  public static Settings buildSettings() {
+  public Settings buildSettings() {
     return buildSettings(1);
   }
 
-  public static Settings buildSettings(int cacheMinutes) {
+  public Settings buildSettings(int cacheMinutes) {
     Settings settings = mock(Settings.class);
 
     when(settings.getCacheMinutes())

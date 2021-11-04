@@ -1,11 +1,12 @@
 package com.maldahleh.stockmarket.stocks.provider;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 
-import com.maldahleh.stockmarket.stocks.utils.SettingsBuilder;
+import com.maldahleh.stockmarket.stocks.utils.SettingsUtils;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -14,7 +15,7 @@ import yahoofinance.YahooFinance;
 
 class StockProviderTests {
 
-  private final StockProvider stockProvider = new StockProvider(SettingsBuilder.buildSettings());
+  private final StockProvider stockProvider = new StockProvider(SettingsUtils.buildSettings());
 
   @Test
   void fetchStock() {
@@ -43,10 +44,12 @@ class StockProviderTests {
           .thenReturn(new Stock("BA"));
 
       // WHEN
-      stockProvider.get(symbol);
-      stockProvider.get(symbol);
+      Stock stock = stockProvider.get(symbol);
+      Stock stockTwo = stockProvider.get(symbol);
 
       // THEN
+      assertEquals(stock, stockTwo);
+
       yahooFinance.verify(() -> YahooFinance.get("BA", true), times(1));
     }
   }
