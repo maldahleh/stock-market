@@ -8,6 +8,9 @@ import static org.mockito.Mockito.mockStatic;
 import com.maldahleh.stockmarket.stocks.utils.SettingsUtils;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Map;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import yahoofinance.YahooFinance;
@@ -17,38 +20,70 @@ class ForexProviderTests {
 
   private final ForexProvider forexProvider = new ForexProvider(SettingsUtils.buildSettings());
 
-  @Test
-  void fetchForex() {
-    // GIVEN
-    String targetCurrency = "cad";
+  @Nested
+  @DisplayName("fetchForex")
+  class FetchForex {
 
-    try (MockedStatic<YahooFinance> yahooFinance = mockStatic(YahooFinance.class)) {
-      yahooFinance.when(() -> YahooFinance.getFx("CADUSD=X"))
-              .thenReturn(new FxQuote("CADUSD=X", BigDecimal.ONE));
+    @Test
+    void success() {
+      // GIVEN
+      String targetCurrency = "cad";
 
-      // WHEN
-      BigDecimal price = forexProvider.getFxRate(targetCurrency);
+      try (MockedStatic<YahooFinance> yahooFinance = mockStatic(YahooFinance.class)) {
+        yahooFinance.when(() -> YahooFinance.getFx("CADUSD=X"))
+            .thenReturn(new FxQuote("CADUSD=X", BigDecimal.ONE));
 
-      // THEN
-      assertNotNull(price);
-      assertEquals(BigDecimal.ONE, price);
+        // WHEN
+        BigDecimal price = forexProvider.getFxRate(targetCurrency);
+
+        // THEN
+        assertNotNull(price);
+        assertEquals(BigDecimal.ONE, price);
+      }
+    }
+
+    @Test
+    void exception() {
+      // GIVEN
+      String targetCurrency = "cad";
+
+      try (MockedStatic<YahooFinance> yahooFinance = mockStatic(YahooFinance.class)) {
+        yahooFinance.when(() -> YahooFinance.getFx("CADUSD=X"))
+            .thenThrow(new IOException());
+
+        // WHEN
+        BigDecimal price = forexProvider.getFxRate(targetCurrency);
+
+        // THEN
+        assertNull(price);
+      }
     }
   }
 
-  @Test
-  void fetchForexException() {
-    // GIVEN
-    String targetCurrency = "cad";
+  @Nested
+  @DisplayName("fetchForexList")
+  class FetchForexList {
 
-    try (MockedStatic<YahooFinance> yahooFinance = mockStatic(YahooFinance.class)) {
-      yahooFinance.when(() -> YahooFinance.getFx("CADUSD=X"))
-          .thenThrow(new IOException());
+    @Test
+    void success() {
+      // GIVEN
+      String[] targetCurrency = {"cad", "eur"};
 
-      // WHEN
-      BigDecimal price = forexProvider.getFxRate(targetCurrency);
+      try (MockedStatic<YahooFinance> yahooFinance = mockStatic(YahooFinance.class)) {
+        yahooFinance.when(() -> YahooFinance.getFx("CAD"))
+            .thenReturn(new FxQuote("CAD", BigDecimal.ONE));
 
-      // THEN
-      assertNull(price);
+        yahooFinance.when(() -> YahooFinance.getFx("EUR"))
+            .thenReturn(new FxQuote("EUR", BigDecimal.TEN));
+
+        // WHEN
+        Map<String, FxQuote> quotes = forexProvider.get(targetCurrency);
+
+        // THEN
+        assertEquals(2, quotes.size());
+        assertEquals(BigDecimal.ONE, quotes.get("CAD").getPrice());
+        assertEquals(BigDecimal.TEN, quotes.get("EUR").getPrice());
+      }
     }
   }
 }

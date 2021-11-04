@@ -29,7 +29,7 @@ public class ForexProvider extends CacheableProvider<FxQuote> {
   @Override
   protected FxQuote fetch(String key) {
     try {
-      return YahooFinance.getFx(key.toUpperCase());
+      return YahooFinance.getFx(key);
     } catch (IOException e) {
       return null;
     }
