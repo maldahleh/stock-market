@@ -26,10 +26,6 @@ public class Messages {
     player.sendMessage(configFile.getString("commands-disabled"));
   }
 
-  public void sendMarketClosed(Player player) {
-    player.sendMessage(configFile.getString("market-closed"));
-  }
-
   public void sendLowPriceStock(Player player) {
     player.sendMessage(configFile.getString("low-price-stock"));
   }
