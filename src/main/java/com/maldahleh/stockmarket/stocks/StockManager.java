@@ -11,11 +11,15 @@ import yahoofinance.Stock;
 public class StockManager {
 
   private final Settings settings;
+  private final Messages messages;
+
   private final ForexProvider forexProvider;
   private final StockProvider stockProvider;
 
-  public StockManager(Settings settings) {
+  public StockManager(Settings settings, Messages messages) {
     this.settings = settings;
+    this.messages = messages;
+
     this.forexProvider = new ForexProvider(settings);
     this.stockProvider = new StockProvider(settings);
   }
@@ -51,7 +55,7 @@ public class StockManager {
     return price.multiply(conversionFactor);
   }
 
-  public boolean canNotUseStock(Player player, Stock stock, Settings settings, Messages messages) {
+  public boolean canNotUseStock(Player player, Stock stock) {
     if (stock == null || stock.getName().equalsIgnoreCase("N/A")) {
       messages.sendInvalidStock(player);
       return true;

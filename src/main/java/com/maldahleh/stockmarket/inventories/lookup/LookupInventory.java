@@ -76,7 +76,7 @@ public class LookupInventory extends StockDataInventory {
             stockMarket,
             () -> {
               Stock stock = stockManager.getStock(symbol);
-              if (stockManager.canNotUseStock(player, stock, settings, messages)) {
+              if (stockManager.canNotUseStock(player, stock)) {
                 return;
               }
 

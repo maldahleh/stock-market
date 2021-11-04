@@ -37,7 +37,7 @@ public class StockMarket extends JavaPlugin {
     Settings settings = new Settings(this);
     Storage storage = Storage.buildStorage(settings);
     Messages messages = new Messages(this, settings);
-    StockManager stockManager = new StockManager(settings);
+    StockManager stockManager = new StockManager(settings, messages);
     PlayerManager playerManager = new PlayerManager(this, stockManager, storage, settings);
     this.api = new StockMarketAPI(playerManager);
     StockProcessor stockProcessor =
