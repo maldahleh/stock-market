@@ -33,7 +33,7 @@ public record StockProcessor(
             stockMarket,
             () -> {
               Stock stock = stockManager.getStock(symbol);
-              if (stockManager.canNotUseStock(player, stock, settings, messages)) {
+              if (stockManager.canNotUseStock(player, stock)) {
                 return;
               }
 
@@ -107,7 +107,7 @@ public record StockProcessor(
               }
 
               Stock stock = stockManager.getStock(symbol);
-              if (stockManager.canNotUseStock(player, stock, settings, messages)) {
+              if (stockManager.canNotUseStock(player, stock)) {
                 return;
               }
 
