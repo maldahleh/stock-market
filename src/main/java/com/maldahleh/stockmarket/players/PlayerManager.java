@@ -111,12 +111,6 @@ public class PlayerManager {
   }
 
   private StockPlayer getOrCreateStockPlayer(UUID uuid) {
-    StockPlayer player = stockPlayerMap.get(uuid);
-    if (player == null) {
-      player = new StockPlayer();
-      stockPlayerMap.put(uuid, player);
-    }
-
-    return player;
+    return stockPlayerMap.putIfAbsent(uuid, new StockPlayer());
   }
 }
