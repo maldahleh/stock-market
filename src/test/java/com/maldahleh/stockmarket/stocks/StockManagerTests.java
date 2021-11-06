@@ -27,6 +27,8 @@ import yahoofinance.quotes.stock.StockQuote;
 
 class StockManagerTests {
 
+  private static final String SYMBOL = "BA";
+
   private Settings settings;
   private Messages messages;
 
@@ -47,16 +49,16 @@ class StockManagerTests {
       Stock stock = buildStock();
       stock.setCurrency("USD");
 
-      yahooFinance.when(() -> YahooFinance.get("BA", true))
+      yahooFinance.when(() -> YahooFinance.get(SYMBOL, true))
           .thenReturn(stock);
 
       when(settings.getPriceMultiplier())
           .thenReturn(BigDecimal.TEN);
 
       // WHEN
-      stockManager.cacheStocks("BA");
+      stockManager.cacheStocks(SYMBOL);
 
-      BigDecimal serverPrice = stockManager.getServerPrice("BA");
+      BigDecimal serverPrice = stockManager.getServerPrice(SYMBOL);
 
       // THEN
       assertEquals(BigDecimal.TEN, serverPrice);
@@ -248,7 +250,7 @@ class StockManagerTests {
   }
 
   private static Stock buildStock() {
-    return buildStock("BA");
+    return buildStock(SYMBOL);
   }
 
   private static Stock buildStock(String name) {
