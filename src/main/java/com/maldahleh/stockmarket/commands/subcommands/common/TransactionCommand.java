@@ -3,19 +3,16 @@ package com.maldahleh.stockmarket.commands.subcommands.common;
 import com.maldahleh.stockmarket.commands.util.CommandUtils;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.processor.StockProcessor;
-import com.maldahleh.stockmarket.processor.types.PurchaseProcessor;
-import com.maldahleh.stockmarket.processor.types.SaleProcessor;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
 public abstract class TransactionCommand extends NoPermissionCommand {
 
-  protected final PurchaseProcessor purchaseProcessor;
-  protected final SaleProcessor saleProcessor;
+  protected final StockProcessor stockProcessor;
   protected final Messages messages;
 
-  public abstract void processTransaction(Player player, String symbol, int quantity);
+  public abstract void sendTransactionMessage(Player player);
 
   @Override
   public void onCommand(Player player, String[] args) {
@@ -26,7 +23,8 @@ public abstract class TransactionCommand extends NoPermissionCommand {
     }
 
     String symbol = args[1];
-    processTransaction(player, symbol, quantity);
+    sendTransactionMessage(player);
+    stockProcessor.processTransaction(player, symbol, quantity);
   }
 
   @Override

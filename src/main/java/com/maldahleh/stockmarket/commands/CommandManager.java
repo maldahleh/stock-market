@@ -59,8 +59,8 @@ public class CommandManager {
         new PortfolioCommand(plugin, inventoryManager, messages),
         new TransactionsCommand(plugin, inventoryManager, messages),
         new HistoryCommand(inventoryManager, messages),
-        new BuyCommand(purchaseProcessor, saleProcessor, messages),
-        new SellCommand(purchaseProcessor, saleProcessor, messages),
+        new BuyCommand(purchaseProcessor, messages),
+        new SellCommand(saleProcessor, messages),
         new SpawnSimpleBrokerCommand(brokerManager)
     );
 
