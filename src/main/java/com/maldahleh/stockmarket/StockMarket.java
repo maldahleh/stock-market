@@ -9,7 +9,8 @@ import com.maldahleh.stockmarket.inventories.InventoryManager;
 import com.maldahleh.stockmarket.placeholder.StockPlaceholderManager;
 import com.maldahleh.stockmarket.placeholder.StockPlaceholder;
 import com.maldahleh.stockmarket.players.PlayerManager;
-import com.maldahleh.stockmarket.processor.StockProcessor;
+import com.maldahleh.stockmarket.processor.types.PurchaseProcessor;
+import com.maldahleh.stockmarket.processor.types.SaleProcessor;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.utils.Logger;
@@ -40,14 +41,17 @@ public class StockMarket extends JavaPlugin {
     StockManager stockManager = new StockManager(settings, messages);
     PlayerManager playerManager = new PlayerManager(this, stockManager, storage, settings);
     this.api = new StockMarketAPI(playerManager);
-    StockProcessor stockProcessor =
-        new StockProcessor(this, stockManager, playerManager, storage, settings, messages);
+    PurchaseProcessor purchaseProcessor =
+        new PurchaseProcessor(this, stockManager, playerManager, storage, settings, messages);
+    SaleProcessor saleProcessor =
+        new SaleProcessor(this, stockManager, playerManager, storage, settings, messages);
     InventoryManager inventoryManager =
         new InventoryManager(
             this,
             playerManager,
             stockManager,
-            stockProcessor,
+            purchaseProcessor,
+            saleProcessor,
             getConfig(),
             messages,
             storage,
@@ -56,7 +60,8 @@ public class StockMarket extends JavaPlugin {
         new BrokerManager(this, settings.getBrokerSettings(), inventoryManager);
 
     this.commandManager =
-        new CommandManager(this, brokerManager, inventoryManager, stockProcessor, messages);
+        new CommandManager(this, brokerManager, inventoryManager, purchaseProcessor, saleProcessor,
+            messages);
 
     if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
       StockPlaceholderManager stockPlaceholderManager = new StockPlaceholderManager(this,

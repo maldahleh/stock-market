@@ -3,13 +3,16 @@ package com.maldahleh.stockmarket.commands.subcommands.common;
 import com.maldahleh.stockmarket.commands.util.CommandUtils;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.processor.StockProcessor;
+import com.maldahleh.stockmarket.processor.types.PurchaseProcessor;
+import com.maldahleh.stockmarket.processor.types.SaleProcessor;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
 public abstract class TransactionCommand extends NoPermissionCommand {
 
-  protected final StockProcessor stockProcessor;
+  protected final PurchaseProcessor purchaseProcessor;
+  protected final SaleProcessor saleProcessor;
   protected final Messages messages;
 
   public abstract void processTransaction(Player player, String symbol, int quantity);

@@ -2,15 +2,17 @@ package com.maldahleh.stockmarket.inventories.list.listeners;
 
 import com.maldahleh.stockmarket.inventories.list.ListInventory;
 import com.maldahleh.stockmarket.inventories.lookup.LookupInventory;
-import com.maldahleh.stockmarket.processor.StockProcessor;
+import com.maldahleh.stockmarket.processor.types.PurchaseProcessor;
+import com.maldahleh.stockmarket.processor.types.SaleProcessor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-public record ListListener(
-    ListInventory inventory, LookupInventory lookupInventory, StockProcessor stockProcessor)
+public record ListListener(ListInventory inventory, LookupInventory lookupInventory,
+                           PurchaseProcessor purchaseProcessor,
+                           SaleProcessor saleProcessor)
     implements Listener {
 
   @EventHandler
@@ -30,11 +32,11 @@ public record ListListener(
 
   private void processClick(ClickType clickType, Player player, String symbol) {
     switch (clickType) {
-      case SHIFT_LEFT -> stockProcessor.buyStock(player, symbol, 5);
-      case LEFT -> stockProcessor.buyStock(player, symbol, 1);
+      case SHIFT_LEFT -> purchaseProcessor.processTransaction(player, symbol, 5);
+      case LEFT -> purchaseProcessor.processTransaction(player, symbol, 1);
       case MIDDLE -> lookupInventory.openInventory(player, symbol.toUpperCase());
-      case RIGHT -> stockProcessor.sellStock(player, symbol, 1);
-      case SHIFT_RIGHT -> stockProcessor.sellStock(player, symbol, 5);
+      case RIGHT -> saleProcessor.processTransaction(player, symbol, 1);
+      case SHIFT_RIGHT -> saleProcessor.processTransaction(player, symbol, 5);
       default -> {
         // other actions not supported
       }
