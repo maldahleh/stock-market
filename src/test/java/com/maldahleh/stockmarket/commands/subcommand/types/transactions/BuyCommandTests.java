@@ -2,7 +2,8 @@ package com.maldahleh.stockmarket.commands.subcommand.types.transactions;
 
 import com.maldahleh.stockmarket.commands.subcommands.types.transactions.BuyCommand;
 import com.maldahleh.stockmarket.config.Messages;
-import com.maldahleh.stockmarket.processor.StockProcessor;
+import com.maldahleh.stockmarket.processor.types.PurchaseProcessor;
+import com.maldahleh.stockmarket.processor.types.SaleProcessor;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,17 +14,19 @@ import static org.mockito.Mockito.*;
 
 class BuyCommandTests {
 
-    private StockProcessor stockProcessor;
+    private PurchaseProcessor purchaseProcessor;
     private Messages messages;
 
     private BuyCommand command;
 
     @BeforeEach
     void setup() {
-        stockProcessor = mock(StockProcessor.class);
+        SaleProcessor saleProcessor = mock(SaleProcessor.class);
+
+        purchaseProcessor = mock(PurchaseProcessor.class);
         messages = mock(Messages.class);
 
-        command = new BuyCommand(stockProcessor, messages);
+        command = new BuyCommand(purchaseProcessor, saleProcessor, messages);
     }
 
     @Test
@@ -55,7 +58,7 @@ class BuyCommandTests {
         verify(messages, times(1))
                 .sendPendingBuy(player);
 
-        verify(stockProcessor, times(1))
-                .buyStock(player, symbol, quantity);
+        verify(purchaseProcessor, times(1))
+                .processTransaction(player, symbol, quantity);
     }
 }

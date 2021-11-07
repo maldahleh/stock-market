@@ -17,7 +17,8 @@ import com.maldahleh.stockmarket.commands.subcommands.types.transactions.BuyComm
 import com.maldahleh.stockmarket.commands.subcommands.types.transactions.SellCommand;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
-import com.maldahleh.stockmarket.processor.StockProcessor;
+import com.maldahleh.stockmarket.processor.types.PurchaseProcessor;
+import com.maldahleh.stockmarket.processor.types.SaleProcessor;
 import com.maldahleh.stockmarket.utils.Logger;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -40,7 +41,8 @@ public class CommandManager {
       Plugin plugin,
       BrokerManager brokerManager,
       InventoryManager inventoryManager,
-      StockProcessor stockProcessor,
+      PurchaseProcessor purchaseProcessor,
+      SaleProcessor saleProcessor,
       Messages messages) {
     PluginCommand pluginCommand = Bukkit.getPluginCommand(ROOT_COMMAND);
     if (pluginCommand == null) {
@@ -57,8 +59,8 @@ public class CommandManager {
         new PortfolioCommand(plugin, inventoryManager, messages),
         new TransactionsCommand(plugin, inventoryManager, messages),
         new HistoryCommand(inventoryManager, messages),
-        new BuyCommand(stockProcessor, messages),
-        new SellCommand(stockProcessor, messages),
+        new BuyCommand(purchaseProcessor, saleProcessor, messages),
+        new SellCommand(purchaseProcessor, saleProcessor, messages),
         new SpawnSimpleBrokerCommand(brokerManager)
     );
 

@@ -4,7 +4,8 @@ import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.inventories.list.listeners.ListListener;
 import com.maldahleh.stockmarket.inventories.lookup.LookupInventory;
 import com.maldahleh.stockmarket.inventories.utils.common.StockInventory;
-import com.maldahleh.stockmarket.processor.StockProcessor;
+import com.maldahleh.stockmarket.processor.types.PurchaseProcessor;
+import com.maldahleh.stockmarket.processor.types.SaleProcessor;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +21,8 @@ public class ListInventory extends StockInventory {
 
   public ListInventory(
       StockMarket plugin,
-      StockProcessor processor,
+      PurchaseProcessor purchaseProcessor,
+      SaleProcessor saleProcessor,
       LookupInventory lookupInventory,
       ConfigurationSection section) {
     super(plugin);
@@ -45,7 +47,8 @@ public class ListInventory extends StockInventory {
 
     Bukkit.getServer()
         .getPluginManager()
-        .registerEvents(new ListListener(this, lookupInventory, processor), plugin);
+        .registerEvents(new ListListener(this, lookupInventory, purchaseProcessor, saleProcessor),
+            plugin);
   }
 
   public void openInventory(Player player) {

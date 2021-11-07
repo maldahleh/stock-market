@@ -11,7 +11,8 @@ import com.maldahleh.stockmarket.inventories.portfolio.PortfolioInventory;
 import com.maldahleh.stockmarket.inventories.transaction.TransactionInventory;
 import com.maldahleh.stockmarket.inventories.tutorial.TutorialInventory;
 import com.maldahleh.stockmarket.players.PlayerManager;
-import com.maldahleh.stockmarket.processor.StockProcessor;
+import com.maldahleh.stockmarket.processor.types.PurchaseProcessor;
+import com.maldahleh.stockmarket.processor.types.SaleProcessor;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.storage.Storage;
 import java.util.UUID;
@@ -32,7 +33,8 @@ public class InventoryManager {
       StockMarket stockMarket,
       PlayerManager playerManager,
       StockManager stockManager,
-      StockProcessor processor,
+      PurchaseProcessor purchaseProcessor,
+      SaleProcessor saleProcessor,
       FileConfiguration config,
       Messages messages,
       Storage storage,
@@ -56,7 +58,8 @@ public class InventoryManager {
     this.listInventory =
         new ListInventory(
             stockMarket,
-            processor,
+            purchaseProcessor,
+            saleProcessor,
             lookupInventory,
             config.getConfigurationSection("inventories.list"));
     this.portfolioInventory =

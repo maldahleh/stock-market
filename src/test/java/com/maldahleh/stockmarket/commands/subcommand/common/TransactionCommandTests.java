@@ -9,7 +9,8 @@ import static org.mockito.Mockito.verify;
 
 import com.maldahleh.stockmarket.commands.subcommands.common.TransactionCommand;
 import com.maldahleh.stockmarket.config.Messages;
-import com.maldahleh.stockmarket.processor.StockProcessor;
+import com.maldahleh.stockmarket.processor.types.PurchaseProcessor;
+import com.maldahleh.stockmarket.processor.types.SaleProcessor;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;
 
@@ -22,10 +23,12 @@ class TransactionCommandTests {
 
     Player player = mock(Player.class);
     Messages messages = mock(Messages.class);
-    StockProcessor processor = mock(StockProcessor.class);
+    PurchaseProcessor purchaseProcessor = mock(PurchaseProcessor.class);
+    SaleProcessor saleProcessor = mock(SaleProcessor.class);
 
     // WHEN
-    TransactionCommand transactionCommand = new TransactionCommand(processor, messages) {
+    TransactionCommand transactionCommand = new TransactionCommand(purchaseProcessor, saleProcessor,
+        messages) {
       @Override
       public void processTransaction(Player player, String symbol, int quantity) {
         // implementation not tested
@@ -55,20 +58,22 @@ class TransactionCommandTests {
 
     Player player = mock(Player.class);
     Messages messages = mock(Messages.class);
-    StockProcessor processor = mock(StockProcessor.class);
+    PurchaseProcessor purchaseProcessor = mock(PurchaseProcessor.class);
+    SaleProcessor saleProcessor = mock(SaleProcessor.class);
 
     // WHEN
-    TransactionCommand transactionCommand = spy(new TransactionCommand(processor, messages) {
-      @Override
-      public void processTransaction(Player player, String symbol, int quantity) {
-        // implementation not tested
-      }
+    TransactionCommand transactionCommand = spy(
+        new TransactionCommand(purchaseProcessor, saleProcessor, messages) {
+          @Override
+          public void processTransaction(Player player, String symbol, int quantity) {
+            // implementation not tested
+          }
 
-      @Override
-      public String commandName() {
-        return "transaction";
-      }
-    });
+          @Override
+          public String commandName() {
+            return "transaction";
+          }
+        });
 
     transactionCommand.onCommand(player, args);
 

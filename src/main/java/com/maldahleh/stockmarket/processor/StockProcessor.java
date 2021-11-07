@@ -3,196 +3,136 @@ package com.maldahleh.stockmarket.processor;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
-import com.maldahleh.stockmarket.events.StockPurchaseEvent;
-import com.maldahleh.stockmarket.events.StockSaleEvent;
 import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.players.player.StockPlayer;
+import com.maldahleh.stockmarket.processor.model.ProcessorContext;
+import com.maldahleh.stockmarket.processor.types.PurchaseProcessor;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
-import com.maldahleh.stockmarket.transactions.types.TransactionType;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import yahoofinance.Stock;
 
-public record StockProcessor(
-    StockMarket stockMarket,
-    StockManager stockManager,
-    PlayerManager playerManager,
-    Storage storage,
-    Settings settings,
-    Messages messages) {
+@RequiredArgsConstructor
+public abstract class StockProcessor {
 
-  public void buyStock(Player player, String symbol, int quantity) {
-    Bukkit.getScheduler()
-        .runTaskAsynchronously(
-            stockMarket,
-            () -> {
-              Stock stock = stockManager.getStock(symbol);
-              if (stockManager.canNotUseStock(player, stock)) {
-                return;
-              }
+  protected final StockMarket stockMarket;
+  protected final StockManager stockManager;
+  protected final PlayerManager playerManager;
+  protected final Storage storage;
+  protected final Settings settings;
+  protected final Messages messages;
 
-              if (playerManager.canNotPerformTransaction(player.getUniqueId())) {
-                messages.sendCooldownMessage(player);
-                return;
-              }
+  protected abstract boolean shouldBlockStockPlayer(ProcessorContext context);
 
-              BigDecimal price = stockManager.getServerPrice(stock);
-              if (price == null) {
-                messages.sendInvalidStock(player);
-                return;
-              }
+  protected abstract void calculateTotals(ProcessorContext context);
 
-              BigDecimal quantityPrice = price.multiply(BigDecimal.valueOf(quantity));
-              BigDecimal brokerFees =
-                  quantityPrice
-                      .multiply(settings.getBrokerSettings().getBrokerPercent())
-                      .add(settings.getBrokerSettings().getBrokerFlat());
-              BigDecimal grandTotal = quantityPrice.add(brokerFees);
+  protected abstract boolean hasInsufficientFunds(ProcessorContext context);
 
-              if (!stockMarket.getEcon().has(player, grandTotal.doubleValue())) {
-                messages.sendInsufficientFunds(player);
-                return;
-              }
+  protected abstract Transaction buildTransaction(ProcessorContext context);
 
-              Transaction transaction = Transaction.buildPurchase(
-                      player.getUniqueId(),
-                      stock.getSymbol(),
-                      quantity,
-                      price,
-                      brokerFees,
-                      grandTotal
-              );
-              Bukkit.getScheduler()
-                  .runTask(
-                      stockMarket,
-                      () -> {
-                        stockMarket.getEcon().withdrawPlayer(player, grandTotal.doubleValue());
-                        Bukkit.getPluginManager()
-                            .callEvent(
-                                new StockPurchaseEvent(
-                                    player, symbol, quantity, price, brokerFees, grandTotal));
-                        playerManager.registerTransaction(player.getUniqueId(), transaction);
-                        messages.sendBoughtStockMessage(player, stock.getName(), transaction);
-                      });
+  protected abstract Event buildEvent(ProcessorContext context);
 
-              storage.processTransaction(transaction);
-            });
+  protected abstract void processVault(ProcessorContext context);
+
+  protected abstract void sendMessage(ProcessorContext context);
+
+  public void processTransaction(Player player, String symbol, int quantity) {
+    ProcessorContext context = new ProcessorContext(player, symbol, quantity);
+    StockPlayer stockPlayer = getStockPlayer(context);
+    if (stockPlayer == null) {
+      return;
+    }
+
+    Bukkit.getScheduler().runTaskAsynchronously(stockMarket, () -> {
+      Stock stock = lookupStock(context);
+      if (stock == null) {
+        messages.sendInvalidStock(context.getPlayer());
+        return;
+      }
+
+      BigDecimal brokerFees = getBrokerFees(context);
+      context.setBrokerFees(brokerFees);
+
+      calculateTotals(context);
+
+      Bukkit.getScheduler().runTask(stockMarket, () -> {
+        if (!hasInsufficientFunds(context)) {
+          messages.sendInsufficientFunds(player);
+          return;
+        }
+
+        Transaction transaction = buildTransaction(context);
+        context.setTransaction(transaction);
+
+        processVault(context);
+        sendMessage(context);
+        Bukkit.getPluginManager().callEvent(buildEvent(context));
+        playerManager.registerTransaction(context.getPlayer().getUniqueId(), transaction);
+
+        Bukkit.getScheduler().runTaskAsynchronously(stockMarket,
+            () -> storage.processTransaction(transaction));
+      });
+    });
   }
 
-  public void sellStock(Player player, String symbol, int quantity) {
-    Bukkit.getScheduler()
-        .runTaskAsynchronously(
-            stockMarket,
-            () -> {
-              StockPlayer stockPlayer = playerManager.getStockPlayer(player.getUniqueId());
-              if (stockPlayer == null) {
-                return;
-              }
+  protected BigDecimal getBrokerFees(ProcessorContext context) {
+    if (!(this instanceof PurchaseProcessor) || !settings.getBrokerSettings().isBrokerOnSale()) {
+      return BigDecimal.ZERO;
+    }
 
-              if (playerManager.canNotPerformTransaction(player.getUniqueId())) {
-                messages.sendCooldownMessage(player);
-                return;
-              }
+    return context.getQuantityPrice()
+            .multiply(settings.getBrokerSettings().getBrokerPercent())
+            .add(settings.getBrokerSettings().getBrokerFlat());
+  }
 
-              Collection<Transaction> transactions = stockPlayer.getTransactions();
-              if (transactions == null || transactions.isEmpty()) {
-                messages.sendInvalidSale(player);
-                return;
-              }
+  private StockPlayer getStockPlayer(ProcessorContext context) {
+    if (playerManager.canNotPerformTransaction(context.getPlayer().getUniqueId())) {
+      messages.sendCooldownMessage(context.getPlayer());
+      return null;
+    }
 
-              Stock stock = stockManager.getStock(symbol);
-              if (stockManager.canNotUseStock(player, stock)) {
-                return;
-              }
+    StockPlayer stockPlayer = lookupStockPlayer(context);
+    if (stockPlayer == null) {
+      return null;
+    }
 
-              BigDecimal price = stockManager.getServerPrice(stock);
-              if (price == null) {
-                messages.sendInvalidStock(player);
-                return;
-              }
+    boolean shouldBlockTransaction = shouldBlockStockPlayer(context);
+    if (shouldBlockTransaction) {
+      messages.sendInvalidSale(context.getPlayer());
+      return null;
+    }
 
-              List<Transaction> transactionList = new ArrayList<>();
-              int soldQuantity = 0;
-              for (Transaction transaction : transactions) {
-                if (!transaction.getSymbol().equalsIgnoreCase(symbol)
-                    || transaction.isSold()
-                    || transaction.getTransactionType() == TransactionType.SALE
-                    || !transaction.hasElapsed(settings.getMinutesBetweenSale())
-                    || (soldQuantity + transaction.getQuantity()) > quantity) {
-                  continue;
-                }
+    return stockPlayer;
+  }
 
-                soldQuantity += transaction.getQuantity();
-                transactionList.add(transaction);
-                if (soldQuantity == quantity) {
-                  break;
-                }
-              }
+  private StockPlayer lookupStockPlayer(ProcessorContext context) {
+    StockPlayer stockPlayer = playerManager.getStockPlayer(context.getPlayer().getUniqueId());
+    if (stockPlayer == null) {
+      return null;
+    }
 
-              if (soldQuantity != quantity) {
-                messages.sendInvalidSale(player);
-                return;
-              }
+    context.setStockPlayer(stockPlayer);
+    return stockPlayer;
+  }
 
-              BigDecimal soldValue = BigDecimal.ZERO;
-              for (Transaction sold : transactionList) {
-                soldValue = soldValue.add(sold.getStockValue());
-                sold.markSold();
-                storage.markSold(sold);
-              }
+  private Stock lookupStock(ProcessorContext context) {
+    Stock stock = stockManager.getStock(context.getSymbol());
+    if (stockManager.canNotUseStock(context.getPlayer(), stock)) {
+      return null;
+    }
 
-              BigDecimal quantityPrice = price.multiply(BigDecimal.valueOf(quantity));
-              BigDecimal brokerFees = BigDecimal.ZERO;
-              BigDecimal grandTotal = quantityPrice;
-              BigDecimal net = quantityPrice.subtract(soldValue);
+    BigDecimal price = stockManager.getServerPrice(stock);
+    if (price == null) {
+      return null;
+    }
 
-              if (settings.getBrokerSettings().isBrokerOnSale()) {
-                brokerFees =
-                    quantityPrice
-                        .multiply(settings.getBrokerSettings().getBrokerPercent())
-                        .add(settings.getBrokerSettings().getBrokerFlat());
-                grandTotal = grandTotal.subtract(brokerFees);
-              }
-
-              Transaction transaction = Transaction.buildSale(
-                      player.getUniqueId(),
-                      stock.getSymbol(),
-                      quantity,
-                      price,
-                      brokerFees,
-                      net,
-                      grandTotal
-              );
-              BigDecimal finalSoldValue = soldValue;
-              Bukkit.getScheduler()
-                  .runTask(
-                      stockMarket,
-                      () -> {
-                        Bukkit.getPluginManager()
-                            .callEvent(
-                                new StockSaleEvent(
-                                    player,
-                                    symbol,
-                                    quantity,
-                                    price,
-                                    transaction.getBrokerFee(),
-                                    transaction.getGrandTotal(),
-                                    finalSoldValue,
-                                    net));
-                        stockMarket
-                            .getEcon()
-                            .depositPlayer(player, transaction.getGrandTotal().doubleValue());
-                        playerManager.registerTransaction(player.getUniqueId(), transaction);
-                        messages.sendSoldStockMessage(player, stock.getName(), transaction);
-                      });
-
-              storage.processTransaction(transaction);
-            });
+    context.setStock(stock);
+    context.setServerPrice(price);
+    return stock;
   }
 }
