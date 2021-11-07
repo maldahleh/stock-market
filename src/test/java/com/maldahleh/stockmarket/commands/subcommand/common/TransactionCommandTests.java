@@ -9,8 +9,7 @@ import static org.mockito.Mockito.verify;
 
 import com.maldahleh.stockmarket.commands.subcommands.common.TransactionCommand;
 import com.maldahleh.stockmarket.config.Messages;
-import com.maldahleh.stockmarket.processor.types.PurchaseProcessor;
-import com.maldahleh.stockmarket.processor.types.SaleProcessor;
+import com.maldahleh.stockmarket.processor.StockProcessor;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;
 
@@ -23,14 +22,12 @@ class TransactionCommandTests {
 
     Player player = mock(Player.class);
     Messages messages = mock(Messages.class);
-    PurchaseProcessor purchaseProcessor = mock(PurchaseProcessor.class);
-    SaleProcessor saleProcessor = mock(SaleProcessor.class);
+    StockProcessor stockProcessor = mock(StockProcessor.class);
 
     // WHEN
-    TransactionCommand transactionCommand = new TransactionCommand(purchaseProcessor, saleProcessor,
-        messages) {
+    TransactionCommand transactionCommand = new TransactionCommand(stockProcessor, messages) {
       @Override
-      public void processTransaction(Player player, String symbol, int quantity) {
+      public void sendTransactionMessage(Player player) {
         // implementation not tested
       }
 
@@ -58,14 +55,13 @@ class TransactionCommandTests {
 
     Player player = mock(Player.class);
     Messages messages = mock(Messages.class);
-    PurchaseProcessor purchaseProcessor = mock(PurchaseProcessor.class);
-    SaleProcessor saleProcessor = mock(SaleProcessor.class);
+    StockProcessor stockProcessor = mock(StockProcessor.class);
 
     // WHEN
     TransactionCommand transactionCommand = spy(
-        new TransactionCommand(purchaseProcessor, saleProcessor, messages) {
+        new TransactionCommand(stockProcessor, messages) {
           @Override
-          public void processTransaction(Player player, String symbol, int quantity) {
+          public void sendTransactionMessage(Player player) {
             // implementation not tested
           }
 
@@ -73,7 +69,8 @@ class TransactionCommandTests {
           public String commandName() {
             return "transaction";
           }
-        });
+        }
+    );
 
     transactionCommand.onCommand(player, args);
 
@@ -82,7 +79,10 @@ class TransactionCommandTests {
     assertEquals(3, transactionCommand.maxArgs());
     assertNull(transactionCommand.requiredPerm());
 
-    verify(transactionCommand, times(1))
+    verify(stockProcessor, times(1))
         .processTransaction(player, "BA", 5);
+
+    verify(transactionCommand, times(1))
+        .sendTransactionMessage(player);
   }
 }
