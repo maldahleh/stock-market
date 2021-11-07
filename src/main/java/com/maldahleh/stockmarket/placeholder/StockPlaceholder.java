@@ -10,7 +10,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 
 @RequiredArgsConstructor
-public class StocksPlaceholder extends PlaceholderExpansion {
+public class StockPlaceholder extends PlaceholderExpansion {
 
   private static final String STOCK_IDENTIFIER = "sm";
   private static final String NAME_DATA_POINT = "name";
