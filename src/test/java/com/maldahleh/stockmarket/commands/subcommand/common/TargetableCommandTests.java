@@ -1,7 +1,6 @@
 package com.maldahleh.stockmarket.commands.subcommand.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.spy;
@@ -12,6 +11,7 @@ import static org.mockito.Mockito.when;
 import com.maldahleh.stockmarket.commands.subcommands.common.TargetableCommand;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
+import com.maldahleh.stockmarket.utils.SchedulerUtils;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -21,7 +21,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 
 class TargetableCommandTests {
@@ -191,10 +190,7 @@ class TargetableCommandTests {
         // WHEN
         targetableCommand.onCommand(player, args);
 
-        ArgumentCaptor<Runnable> argument = ArgumentCaptor.forClass(Runnable.class);
-        verify(scheduler)
-            .runTaskAsynchronously(eq(plugin), argument.capture());
-        argument.getValue().run();
+        SchedulerUtils.interceptAsyncRun(plugin, scheduler);
 
         // THEN
         verify(targetableCommand, times(1))
