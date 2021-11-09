@@ -1,6 +1,7 @@
 package com.maldahleh.stockmarket.commands.subcommand.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.spy;
@@ -15,10 +16,12 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 
 class TargetableCommandTests {
@@ -151,6 +154,47 @@ class TargetableCommandTests {
 
         // WHEN
         targetableCommand.onCommand(player, args);
+
+        // THEN
+        verify(targetableCommand, times(1))
+            .targetAction(player, uuid);
+      }
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    void targetOffline() {
+      // GIVEN
+      Player player = mock(Player.class);
+      String[] args = new String[]{"test", "target"};
+
+      when(player.hasPermission("stockmarket.test.other"))
+          .thenReturn(true);
+
+      try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class)) {
+        Player target = mock(Player.class);
+        BukkitScheduler scheduler = mock(BukkitScheduler.class);
+
+        UUID uuid = UUID.randomUUID();
+        when(target.getUniqueId())
+            .thenReturn(uuid);
+
+        bukkit.when(() -> Bukkit.getPlayer("target"))
+            .thenReturn(null);
+
+        bukkit.when(() -> Bukkit.getOfflinePlayer("target"))
+            .thenReturn(target);
+
+        bukkit.when(Bukkit::getScheduler)
+            .thenReturn(scheduler);
+
+        // WHEN
+        targetableCommand.onCommand(player, args);
+
+        ArgumentCaptor<Runnable> argument = ArgumentCaptor.forClass(Runnable.class);
+        verify(scheduler)
+            .runTaskAsynchronously(eq(plugin), argument.capture());
+        argument.getValue().run();
 
         // THEN
         verify(targetableCommand, times(1))
