@@ -40,16 +40,21 @@ public abstract class TargetableCommand extends BaseCommand {
   @Override
   public List<String> commandHelpKeys(Player player) {
     List<String> keys = new ArrayList<>(super.commandHelpKeys(player));
-    if (player.hasPermission(CommandUtils.buildOtherPermission(requiredPerm()))) {
+    if (hasOtherPermission(player)) {
       keys.add(commandName() + "-other");
     }
 
     return keys;
   }
 
+  private boolean hasOtherPermission(Player player) {
+    String otherPermission = CommandUtils.buildOtherPermission(requiredPerm());
+    return player.hasPermission(otherPermission);
+  }
+
   @SuppressWarnings("deprecation")
   private void handleTargetedPlayer(Player executor, String target) {
-    if (!executor.hasPermission(CommandUtils.buildOtherPermission(requiredPerm()))) {
+    if (!hasOtherPermission(executor)) {
       messages.sendNoPermission(executor);
       return;
     }
