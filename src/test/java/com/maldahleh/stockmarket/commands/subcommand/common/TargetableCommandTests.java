@@ -26,14 +26,14 @@ import org.mockito.MockedStatic;
 class TargetableCommandTests {
 
   private Plugin plugin;
-  private InventoryManager inventoryManager;
   private Messages messages;
   private TargetableCommand targetableCommand;
 
   @BeforeEach
   void setup() {
+    InventoryManager inventoryManager = mock(InventoryManager.class);
+
     this.plugin = mock(Plugin.class);
-    this.inventoryManager = mock(InventoryManager.class);
     this.messages = mock(Messages.class);
     this.targetableCommand = spy(
         new TargetableCommand(plugin, inventoryManager, messages) {
