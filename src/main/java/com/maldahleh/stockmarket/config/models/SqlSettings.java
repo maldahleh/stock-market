@@ -7,7 +7,7 @@ import lombok.Getter;
 public class SqlSettings {
 
   private final boolean enabled;
-  private final int ip;
+  private final String ip;
   private final int port;
   private final String database;
   private final String username;
@@ -16,7 +16,7 @@ public class SqlSettings {
 
   public SqlSettings(ConfigSection configSection) {
     this.enabled = configSection.getBoolean("enabled");
-    this.ip = configSection.getInt("ip");
+    this.ip = configSection.getString("ip");
     this.port = configSection.getInt("port");
     this.database = configSection.getString("database");
     this.username = configSection.getString("username");
