@@ -1,2 +1,5 @@
-package com.maldahleh.stockmarket.config;public class MessagesTests {
+package com.maldahleh.stockmarket.config;
+
+public class MessagesTests {
+
 }
