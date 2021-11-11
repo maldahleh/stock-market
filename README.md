@@ -12,7 +12,7 @@ they pick, providing a risk-free way for players to learn about the stock market
 
 ## Dependencies
 
-**Vault and an economy plugin** - Used for transactions.
+**Vault + Economy Plugin** - Used for transactions.
 
 **Citizens** - _Optional_ - Used for brokers.
 
