@@ -1,10 +1,15 @@
 locale: "en-US"
 sql:
   enabled: true
+cache:
+  expire-minutes: 5
 unknown-data: "N/A"
 transaction-cooldown-seconds: 2
+minutes-between-sale: 5
 minimum-price: 5.0
+price-multiplier: 20
 allowed-currencies:
   - "USD"
   - "CAD"
   - "USD"
+allowed-exchanges: []
