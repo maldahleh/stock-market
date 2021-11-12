@@ -373,6 +373,9 @@ class MessagesTests {
         when(player.hasPermission("stockmarket.tutorial"))
             .thenReturn(true);
 
+        when(player.hasPermission("stockmarket.list"))
+            .thenReturn(true);
+
         when(player.hasPermission("stockmarket.lookup"))
             .thenReturn(true);
 
@@ -454,6 +457,9 @@ class MessagesTests {
         Player player = mock(Player.class);
 
         when(player.hasPermission("stockmarket.tutorial"))
+            .thenReturn(true);
+
+        when(player.hasPermission("stockmarket.list"))
             .thenReturn(true);
 
         when(player.hasPermission("stockmarket.lookup"))
