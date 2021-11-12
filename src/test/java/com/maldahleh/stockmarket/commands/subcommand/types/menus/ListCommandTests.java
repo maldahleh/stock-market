@@ -47,7 +47,7 @@ class ListCommandTests {
         command.onCommand(player, args);
 
         // THEN
-        verify(inventoryManager, times(1))
+        verify(inventoryManager)
                 .openListInventory(player);
     }
 }

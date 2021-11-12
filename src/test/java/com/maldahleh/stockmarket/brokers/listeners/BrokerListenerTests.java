@@ -3,7 +3,6 @@ package com.maldahleh.stockmarket.brokers.listeners;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -80,7 +79,7 @@ class BrokerListenerTests {
       brokerListener.onLeftClick(npcLeftClickEvent);
 
       // THEN
-      verify(inventoryManager, times(1))
+      verify(inventoryManager)
           .openListInventory(player);
     }
   }
@@ -129,7 +128,7 @@ class BrokerListenerTests {
       brokerListener.onRightClick(npcRightClickEvent);
 
       // THEN
-      verify(inventoryManager, times(1))
+      verify(inventoryManager)
           .openListInventory(player);
     }
   }

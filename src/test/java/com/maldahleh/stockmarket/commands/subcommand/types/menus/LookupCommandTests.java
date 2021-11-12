@@ -50,10 +50,10 @@ class LookupCommandTests {
         command.onCommand(player, args);
 
         // THEN
-        verify(messages, times(1))
+        verify(messages)
                 .sendPendingLookup(player);
 
-        verify(inventoryManager, times(1))
+        verify(inventoryManager)
                 .openLookupInventory(player, "BA");
     }
 }

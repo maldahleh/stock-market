@@ -54,10 +54,10 @@ class HistoryCommandTests {
         command.onCommand(player, args);
 
         // THEN
-        verify(messages, times(1))
+        verify(messages)
                 .sendPendingHistory(player);
 
-        verify(inventoryManager, times(1))
+        verify(inventoryManager)
                 .openStockHistoryInventory(player);
     }
 
@@ -71,10 +71,10 @@ class HistoryCommandTests {
         command.onCommand(player, args);
 
         // THEN
-        verify(messages, times(1))
+        verify(messages)
                 .sendPendingHistorySymbol(player);
 
-        verify(inventoryManager, times(1))
+        verify(inventoryManager)
                 .openStockHistoryInventory(player, "BA");
     }
 }

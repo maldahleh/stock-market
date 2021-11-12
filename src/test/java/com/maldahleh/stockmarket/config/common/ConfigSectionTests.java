@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -182,7 +181,7 @@ class ConfigSectionTests {
       new ConfigSection(javaPlugin, notFoundFileName);
 
       // THEN
-      verify(javaPlugin, times(1))
+      verify(javaPlugin)
           .saveResource(fullFileName, false);
 
       logger.verify(() -> Logger.severe("Failed to load " + fullFileName));

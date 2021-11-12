@@ -77,10 +77,10 @@ class TransactionsCommandTests {
         command.callerAction(player);
 
         // THEN
-        verify(messages, times(1))
+        verify(messages)
                 .sendPendingTransactions(player);
 
-        verify(inventoryManager, times(1))
+        verify(inventoryManager)
                 .openTransactionInventory(player);
     }
 
@@ -94,10 +94,10 @@ class TransactionsCommandTests {
         command.targetAction(player, targetUUID);
 
         // THEN
-        verify(messages, times(1))
+        verify(messages)
                 .sendPendingTransactionsOther(player);
 
-        verify(inventoryManager, times(1))
+        verify(inventoryManager)
                 .openTransactionInventory(player, targetUUID);
     }
 }

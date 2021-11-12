@@ -29,6 +29,11 @@ public record StockMarketCommand(
       return true;
     }
 
+    if (CommandManager.doesNotHaveBasePermission(player)) {
+      messages.sendNoPermission(player);
+      return true;
+    }
+
     if (brokerManager.areCommandsDisabled(player)) {
       messages.sendCommandsDisabled(player);
       return true;
@@ -45,7 +50,7 @@ public record StockMarketCommand(
       return true;
     }
 
-    if (doesPlayerHaveNoPermission(player, subcommand)) {
+    if (!subcommand.canPlayerExecute(player)) {
       messages.sendNoPermission(player);
       return true;
     }
@@ -57,14 +62,6 @@ public record StockMarketCommand(
 
     subcommand.onCommand(player, strings);
     return true;
-  }
-
-  private boolean doesPlayerHaveNoPermission(Player player, Subcommand subcommand) {
-    if (CommandManager.doesNotHaveBasePermission(player)) {
-      return true;
-    }
-
-    return !subcommand.canPlayerExecute(player);
   }
 
   private boolean isInvalidSyntax(Subcommand subcommand, String[] args) {

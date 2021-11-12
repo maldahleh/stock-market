@@ -49,7 +49,7 @@ class SpawnSimpleBrokerCommandTests {
         command.onCommand(player, new String[]{});
 
         // THEN
-        verify(player, times(1))
+        verify(player)
                 .sendMessage(ChatColor.RED + "Citizens is not enabled, and is required for brokers");
     }
 
@@ -69,7 +69,7 @@ class SpawnSimpleBrokerCommandTests {
         command.onCommand(player, new String[]{});
 
         // THEN
-        verify(brokerManager, times(1))
+        verify(brokerManager)
                 .spawnSimpleBroker(location);
     }
 }

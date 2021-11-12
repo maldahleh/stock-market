@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -106,7 +105,7 @@ class TargetableCommandTests {
       targetableCommand.onCommand(player, args);
 
       // THEN
-      verify(targetableCommand, times(1))
+      verify(targetableCommand)
           .callerAction(player);
     }
 
@@ -127,7 +126,7 @@ class TargetableCommandTests {
         targetableCommand.onCommand(player, args);
 
         // THEN
-        verify(messages, times(1))
+        verify(messages)
             .sendNoPermission(player);
       }
     }
@@ -155,7 +154,7 @@ class TargetableCommandTests {
         targetableCommand.onCommand(player, args);
 
         // THEN
-        verify(targetableCommand, times(1))
+        verify(targetableCommand)
             .targetAction(player, uuid);
       }
     }
@@ -193,7 +192,7 @@ class TargetableCommandTests {
         SchedulerUtils.interceptAsyncRun(plugin, scheduler);
 
         // THEN
-        verify(targetableCommand, times(1))
+        verify(targetableCommand)
             .targetAction(player, uuid);
       }
     }

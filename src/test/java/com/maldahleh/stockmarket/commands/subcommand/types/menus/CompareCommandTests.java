@@ -50,7 +50,7 @@ class CompareCommandTests {
         command.onCommand(player, args);
 
         // THEN
-        verify(messages, times(1))
+        verify(messages)
                 .sendInvalidSyntax(player);
     }
 
@@ -64,7 +64,7 @@ class CompareCommandTests {
         command.onCommand(player, args);
 
         // THEN
-        verify(messages, times(1))
+        verify(messages)
                 .sendCompareMax(player);
     }
 
@@ -78,9 +78,9 @@ class CompareCommandTests {
         command.onCommand(player, args);
 
         // THEN
-        verify(messages, times(1))
+        verify(messages)
                 .sendPendingCompare(player);
-        verify(inventoryManager, times(1))
+        verify(inventoryManager)
                 .openCompareInventory(player, "test", "test2", "test3");
     }
 }

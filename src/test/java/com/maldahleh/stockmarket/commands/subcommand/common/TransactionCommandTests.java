@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.maldahleh.stockmarket.commands.subcommands.common.TransactionCommand;
@@ -44,7 +43,7 @@ class TransactionCommandTests {
     assertEquals(3, transactionCommand.maxArgs());
     assertNull(transactionCommand.requiredPerm());
 
-    verify(messages, times(1))
+    verify(messages)
         .sendInvalidQuantity(player);
   }
 
@@ -79,10 +78,10 @@ class TransactionCommandTests {
     assertEquals(3, transactionCommand.maxArgs());
     assertNull(transactionCommand.requiredPerm());
 
-    verify(stockProcessor, times(1))
+    verify(stockProcessor)
         .processTransaction(player, "BA", 5);
 
-    verify(transactionCommand, times(1))
+    verify(transactionCommand)
         .sendTransactionMessage(player);
   }
 }

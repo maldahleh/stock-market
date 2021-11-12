@@ -1,13 +1,13 @@
 package com.maldahleh.stockmarket.config;
 
 import com.maldahleh.stockmarket.StockMarket;
-import com.maldahleh.stockmarket.commands.CommandManager;
 import com.maldahleh.stockmarket.config.common.ConfigSection;
 import com.maldahleh.stockmarket.transactions.Transaction;
 import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import com.maldahleh.stockmarket.utils.TimeUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.util.List;
+import java.util.stream.Stream;
 import org.bukkit.entity.Player;
 
 public class Messages {
@@ -107,21 +107,11 @@ public class Messages {
   }
 
   public void sendBoughtStockMessage(Player player, String company, Transaction transaction) {
-    configFile.getStringList("bought-stock").stream()
-        .map(Utils::color)
-        .map(line -> getFormattedTransactionLine(line, company, transaction))
-        .forEach(player::sendMessage);
+    sendTransactionMessage(player, "bought-stock", company, transaction);
   }
 
   public void sendSoldStockMessage(Player player, String company, Transaction transaction) {
-    configFile.getStringList("sold-stock").stream()
-        .map(Utils::color)
-        .map(
-            line ->
-                getFormattedTransactionLine(line, company, transaction)
-                    .replace("<net>",
-                        CurrencyUtils.formatCurrency(transaction.getEarnings(), settings)))
-        .forEach(player::sendMessage);
+    sendTransactionMessage(player, "sold-stock", company, transaction);
   }
 
   public void sendHelpMessage(Player player) {
@@ -135,13 +125,20 @@ public class Messages {
     }
   }
 
-  private void sendCommandInfo(Player player) {
-    if (CommandManager.doesNotHaveBasePermission(player)) {
-      return;
-    }
+  private void sendTransactionMessage(Player player, String path, String company, Transaction transaction) {
+    colorStream(path)
+        .map(line -> getFormattedTransactionLine(line, company, transaction))
+        .forEach(player::sendMessage);
+  }
 
+  private Stream<String> colorStream(String path) {
+    return configFile.getStringList(path).stream()
+        .map(Utils::color);
+  }
+
+  private void sendCommandInfo(Player player) {
     stockMarket.getCommandManager().getRegisteredSubcommands().stream()
-        .filter(command -> player.hasPermission(command.requiredPerm()))
+        .filter(command -> command.canPlayerExecute(player))
         .map(command -> command.commandHelpKeys(player))
         .flatMap(List::stream)
         .map(path -> configFile.getString("commands." + path))
@@ -158,6 +155,8 @@ public class Messages {
         .replace("<broker-fees>",
             CurrencyUtils.formatCurrency(transaction.getBrokerFee(), settings))
         .replace("<total>",
-            CurrencyUtils.formatCurrency(transaction.getGrandTotal(), settings));
+            CurrencyUtils.formatCurrency(transaction.getGrandTotal(), settings))
+        .replace("<net>",
+            CurrencyUtils.formatCurrency(transaction.getEarnings(), settings));
   }
 }

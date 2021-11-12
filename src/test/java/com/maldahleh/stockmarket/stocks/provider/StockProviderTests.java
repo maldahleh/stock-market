@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.times;
 
 import com.maldahleh.stockmarket.stocks.utils.SettingsUtils;
 import java.io.IOException;
@@ -60,7 +59,7 @@ class StockProviderTests {
         // THEN
         assertEquals(stock, stockTwo);
 
-        yahooFinance.verify(() -> YahooFinance.get("BA", true), times(1));
+        yahooFinance.verify(() -> YahooFinance.get("BA", true));
       }
     }
 

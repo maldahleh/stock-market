@@ -2,7 +2,6 @@ package com.maldahleh.stockmarket.commands.impl;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -44,7 +43,7 @@ class StockMarketCommandTests {
     stockMarketCommand.onCommand(commandSender, command, "", ARGS);
 
     // THEN
-    verify(commandSender, times(1))
+    verify(commandSender)
         .sendMessage("Stocks - You must be a player to use this command.");
   }
 
@@ -53,6 +52,9 @@ class StockMarketCommandTests {
     // GIVEN
     Player player = mock(Player.class);
 
+    when(player.hasPermission("stockmarket.use"))
+        .thenReturn(true);
+
     when(brokerManager.areCommandsDisabled(player))
         .thenReturn(true);
 
@@ -60,7 +62,7 @@ class StockMarketCommandTests {
     stockMarketCommand.onCommand(player, command, "", ARGS);
 
     // THEN
-    verify(messages, times(1))
+    verify(messages)
         .sendCommandsDisabled(player);
   }
 
@@ -69,11 +71,14 @@ class StockMarketCommandTests {
     // GIVEN
     Player player = mock(Player.class);
 
+    when(player.hasPermission("stockmarket.use"))
+        .thenReturn(true);
+
     // WHEN
     stockMarketCommand.onCommand(player, command, "", new String[0]);
 
     // THEN
-    verify(messages, times(1))
+    verify(messages)
         .sendHelpMessage(player);
   }
 
@@ -113,11 +118,14 @@ class StockMarketCommandTests {
       // GIVEN
       Player player = mock(Player.class);
 
+      when(player.hasPermission("stockmarket.use"))
+          .thenReturn(true);
+
       // WHEN
       stockMarketCommand.onCommand(player, command, "", ARGS);
 
       // THEN
-      verify(messages, times(1))
+      verify(messages)
           .sendInvalidSyntax(player);
     }
 
@@ -129,6 +137,9 @@ class StockMarketCommandTests {
       when(commandManager.findSubcommand(SUBCOMMAND_NAME))
           .thenReturn(subcommand);
 
+      when(player.hasPermission("stockmarket.use"))
+          .thenReturn(true);
+
       when(player.hasPermission(SUBCOMMAND_PERM))
           .thenReturn(false);
 
@@ -136,7 +147,7 @@ class StockMarketCommandTests {
       stockMarketCommand.onCommand(player, command, "", ARGS);
 
       // THEN
-      verify(messages, times(1))
+      verify(messages)
           .sendNoPermission(player);
     }
 
@@ -155,7 +166,7 @@ class StockMarketCommandTests {
       stockMarketCommand.onCommand(player, command, "", ARGS);
 
       // THEN
-      verify(messages, times(1))
+      verify(messages)
           .sendNoPermission(player);
     }
 
@@ -178,7 +189,7 @@ class StockMarketCommandTests {
       stockMarketCommand.onCommand(player, command, "", args);
 
       // THEN
-      verify(messages, times(1))
+      verify(messages)
           .sendInvalidSyntax(player);
     }
 
@@ -200,7 +211,7 @@ class StockMarketCommandTests {
       stockMarketCommand.onCommand(player, command, "", ARGS);
 
       // THEN
-      verify(subcommand, times(1))
+      verify(subcommand)
           .onCommand(player, ARGS);
     }
 
@@ -222,7 +233,7 @@ class StockMarketCommandTests {
       stockMarketCommand.onCommand(player, command, "", ARGS);
 
       // THEN
-      verify(subcommand, times(1))
+      verify(subcommand)
           .onCommand(player, ARGS);
     }
   }
