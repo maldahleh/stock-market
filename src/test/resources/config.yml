@@ -1,0 +1,10 @@
+locale: "en-US"
+sql:
+  enabled: true
+unknown-data: "N/A"
+transaction-cooldown-seconds: 2
+minimum-price: 5.0
+allowed-currencies:
+  - "USD"
+  - "CAD"
+  - "USD"

@@ -17,7 +17,7 @@ public class Settings {
   private final SqlSettings sqlSettings;
 
   public Settings(JavaPlugin javaPlugin) {
-    this.configFile = new ConfigSection(javaPlugin);
+    this.configFile = new ConfigSection(javaPlugin, "config");
     this.brokerSettings = new BrokerSettings(configFile.getConfigSection("broker"));
     this.sqlSettings = new SqlSettings(configFile.getConfigSection("sql"));
   }

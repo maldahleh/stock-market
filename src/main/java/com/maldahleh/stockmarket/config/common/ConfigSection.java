@@ -20,16 +20,16 @@ public class ConfigSection {
 
   private final ConfigurationSection config;
 
-  public ConfigSection(JavaPlugin javaPlugin) {
-    javaPlugin.saveDefaultConfig();
-    this.config = javaPlugin.getConfig();
-  }
-
   public ConfigSection(JavaPlugin plugin, String fileName) {
-    this.config = createCustomConfig(plugin, fileName);
+    this.config = loadFile(plugin, fileName);
   }
 
   public ConfigSection getConfigSection(String path) {
+    ConfigurationSection section = config.getConfigurationSection(path);
+    if (section == null) {
+      return null;
+    }
+
     return new ConfigSection(config.getConfigurationSection(path));
   }
 
@@ -65,7 +65,7 @@ public class ConfigSection {
     return Locale.forLanguageTag(value);
   }
 
-  private ConfigurationSection createCustomConfig(JavaPlugin plugin, String fileName) {
+  private ConfigurationSection loadFile(JavaPlugin plugin, String fileName) {
     String fullFileName = fileName + ".yml";
     File configFile = new File(plugin.getDataFolder(), fullFileName);
     if (!configFile.exists()) {
