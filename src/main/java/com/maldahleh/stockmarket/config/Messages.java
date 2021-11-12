@@ -8,6 +8,7 @@ import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import com.maldahleh.stockmarket.utils.TimeUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.util.List;
+import java.util.stream.Stream;
 import org.bukkit.entity.Player;
 
 public class Messages {
@@ -107,15 +108,13 @@ public class Messages {
   }
 
   public void sendBoughtStockMessage(Player player, String company, Transaction transaction) {
-    configFile.getStringList("bought-stock").stream()
-        .map(Utils::color)
+    colorStream("bought-stock")
         .map(line -> getFormattedTransactionLine(line, company, transaction))
         .forEach(player::sendMessage);
   }
 
   public void sendSoldStockMessage(Player player, String company, Transaction transaction) {
-    configFile.getStringList("sold-stock").stream()
-        .map(Utils::color)
+    colorStream("sold-stock")
         .map(
             line ->
                 getFormattedTransactionLine(line, company, transaction)
@@ -133,6 +132,11 @@ public class Messages {
 
       player.sendMessage(Utils.color(message));
     }
+  }
+
+  private Stream<String> colorStream(String path) {
+    return configFile.getStringList(path).stream()
+        .map(Utils::color);
   }
 
   private void sendCommandInfo(Player player) {
