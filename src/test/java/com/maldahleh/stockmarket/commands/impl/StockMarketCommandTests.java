@@ -53,6 +53,9 @@ class StockMarketCommandTests {
     // GIVEN
     Player player = mock(Player.class);
 
+    when(player.hasPermission("stockmarket.use"))
+        .thenReturn(true);
+
     when(brokerManager.areCommandsDisabled(player))
         .thenReturn(true);
 
@@ -68,6 +71,9 @@ class StockMarketCommandTests {
   void noArgsSendHelpMessage() {
     // GIVEN
     Player player = mock(Player.class);
+
+    when(player.hasPermission("stockmarket.use"))
+        .thenReturn(true);
 
     // WHEN
     stockMarketCommand.onCommand(player, command, "", new String[0]);
@@ -113,6 +119,9 @@ class StockMarketCommandTests {
       // GIVEN
       Player player = mock(Player.class);
 
+      when(player.hasPermission("stockmarket.use"))
+          .thenReturn(true);
+
       // WHEN
       stockMarketCommand.onCommand(player, command, "", ARGS);
 
@@ -128,6 +137,9 @@ class StockMarketCommandTests {
 
       when(commandManager.findSubcommand(SUBCOMMAND_NAME))
           .thenReturn(subcommand);
+
+      when(player.hasPermission("stockmarket.use"))
+          .thenReturn(true);
 
       when(player.hasPermission(SUBCOMMAND_PERM))
           .thenReturn(false);

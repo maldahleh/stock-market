@@ -1,7 +1,6 @@
 package com.maldahleh.stockmarket.config;
 
 import com.maldahleh.stockmarket.StockMarket;
-import com.maldahleh.stockmarket.commands.CommandManager;
 import com.maldahleh.stockmarket.config.common.ConfigSection;
 import com.maldahleh.stockmarket.transactions.Transaction;
 import com.maldahleh.stockmarket.utils.CurrencyUtils;
@@ -138,10 +137,6 @@ public class Messages {
   }
 
   private void sendCommandInfo(Player player) {
-    if (CommandManager.doesNotHaveBasePermission(player)) {
-      return;
-    }
-
     stockMarket.getCommandManager().getRegisteredSubcommands().stream()
         .filter(command -> player.hasPermission(command.requiredPerm()))
         .map(command -> command.commandHelpKeys(player))
