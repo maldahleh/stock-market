@@ -85,7 +85,7 @@ class MessagesTests {
     Player player = mock(Player.class);
 
     // WHEN
-    messages.sendCompareMax(player);
+    messages.sendCooldownMessage(player);
 
     // THEN
     verify(player)
