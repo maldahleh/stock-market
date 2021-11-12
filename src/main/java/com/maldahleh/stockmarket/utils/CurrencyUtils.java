@@ -58,6 +58,10 @@ public class CurrencyUtils {
   }
 
   public String formatCurrency(BigDecimal input, Settings settings) {
+    if (input == null) {
+      return "";
+    }
+
     return formatCurrency(input.doubleValue(), settings.getLocale());
   }
 

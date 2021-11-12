@@ -108,19 +108,11 @@ public class Messages {
   }
 
   public void sendBoughtStockMessage(Player player, String company, Transaction transaction) {
-    colorStream("bought-stock")
-        .map(line -> getFormattedTransactionLine(line, company, transaction))
-        .forEach(player::sendMessage);
+    sendTransactionMessage(player, "bought-stock", company, transaction);
   }
 
   public void sendSoldStockMessage(Player player, String company, Transaction transaction) {
-    colorStream("sold-stock")
-        .map(
-            line ->
-                getFormattedTransactionLine(line, company, transaction)
-                    .replace("<net>",
-                        CurrencyUtils.formatCurrency(transaction.getEarnings(), settings)))
-        .forEach(player::sendMessage);
+    sendTransactionMessage(player, "sold-stock", company, transaction);
   }
 
   public void sendHelpMessage(Player player) {
@@ -132,6 +124,12 @@ public class Messages {
 
       player.sendMessage(Utils.color(message));
     }
+  }
+
+  private void sendTransactionMessage(Player player, String path, String company, Transaction transaction) {
+    colorStream(path)
+        .map(line -> getFormattedTransactionLine(line, company, transaction))
+        .forEach(player::sendMessage);
   }
 
   private Stream<String> colorStream(String path) {
@@ -162,6 +160,8 @@ public class Messages {
         .replace("<broker-fees>",
             CurrencyUtils.formatCurrency(transaction.getBrokerFee(), settings))
         .replace("<total>",
-            CurrencyUtils.formatCurrency(transaction.getGrandTotal(), settings));
+            CurrencyUtils.formatCurrency(transaction.getGrandTotal(), settings))
+        .replace("<net>",
+            CurrencyUtils.formatCurrency(transaction.getEarnings(), settings));
   }
 }
