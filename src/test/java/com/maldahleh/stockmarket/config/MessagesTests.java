@@ -1,11 +1,16 @@
 package com.maldahleh.stockmarket.config;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.maldahleh.stockmarket.StockMarket;
+import com.maldahleh.stockmarket.transactions.Transaction;
 import java.io.File;
+import java.math.BigDecimal;
+import java.util.Locale;
+import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
@@ -297,6 +302,44 @@ class MessagesTests {
       // THEN
       verify(player)
           .sendMessage(color("&eProcessing sale..."));
+    }
+  }
+
+  @Nested
+  class MultiLine {
+
+    @BeforeEach
+    void setup() {
+      when(settings.getLocale())
+          .thenReturn(Locale.US);
+    }
+
+    @Test
+    void boughtStock() {
+      // GIVEN
+      Player player = mock(Player.class);
+      String company = "Boeing";
+      Transaction transaction = Transaction.buildPurchase(
+          UUID.randomUUID(),
+          "BA",
+          2,
+          BigDecimal.valueOf(5),
+          BigDecimal.TEN,
+          BigDecimal.valueOf(20)
+      );
+
+      // WHEN
+      messages.sendBoughtStockMessage(player, company, transaction);
+
+      // THEN
+      verify(player)
+          .sendMessage(color("&6You purchased &e2 &6of &eBoeing &6(&eBA&6)"));
+      verify(player)
+          .sendMessage(color("&6Stock Value: &e5.00 &6(&ex2&6)"));
+      verify(player)
+          .sendMessage(color("&6Broker Fees: &e10.00"));
+      verify(player)
+          .sendMessage(color("&6Grand Total: &e20.00"));
     }
   }
 
