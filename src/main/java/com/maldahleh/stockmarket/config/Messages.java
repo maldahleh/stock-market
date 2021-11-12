@@ -138,7 +138,7 @@ public class Messages {
 
   private void sendCommandInfo(Player player) {
     stockMarket.getCommandManager().getRegisteredSubcommands().stream()
-        .filter(command -> player.hasPermission(command.requiredPerm()))
+        .filter(command -> command.canPlayerExecute(player))
         .map(command -> command.commandHelpKeys(player))
         .flatMap(List::stream)
         .map(path -> configFile.getString("commands." + path))
