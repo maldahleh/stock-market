@@ -20,16 +20,16 @@ public class ConfigSection {
 
   private final ConfigurationSection config;
 
-  public ConfigSection(JavaPlugin javaPlugin) {
-    javaPlugin.saveDefaultConfig();
-    this.config = javaPlugin.getConfig();
-  }
-
   public ConfigSection(JavaPlugin plugin, String fileName) {
-    this.config = createCustomConfig(plugin, fileName);
+    this.config = loadFile(plugin, fileName);
   }
 
   public ConfigSection getConfigSection(String path) {
+    ConfigurationSection section = config.getConfigurationSection(path);
+    if (section == null) {
+      return null;
+    }
+
     return new ConfigSection(config.getConfigurationSection(path));
   }
 
