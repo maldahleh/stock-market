@@ -1,6 +1,5 @@
 package com.maldahleh.stockmarket.config;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -340,6 +339,37 @@ class MessagesTests {
           .sendMessage(color("&6Broker Fees: &e10.00"));
       verify(player)
           .sendMessage(color("&6Grand Total: &e20.00"));
+    }
+
+    @Test
+    void soldStock() {
+      // GIVEN
+      Player player = mock(Player.class);
+      String company = "Boeing";
+      Transaction transaction = Transaction.buildSale(
+          UUID.randomUUID(),
+          "BA",
+          2,
+          BigDecimal.valueOf(5),
+          BigDecimal.TEN,
+          BigDecimal.valueOf(100),
+          BigDecimal.valueOf(20)
+      );
+
+      // WHEN
+      messages.sendSoldStockMessage(player, company, transaction);
+
+      // THEN
+      verify(player)
+          .sendMessage(color("&6You sold &e2 &6of &eBoeing &6(&eBA&6)"));
+      verify(player)
+          .sendMessage(color("&6Stock Value: &e5.00 &6(&ex2&6)"));
+      verify(player)
+          .sendMessage(color("&6Broker Fees: &e10.00"));
+      verify(player)
+          .sendMessage(color("&6Grand Total: &e20.00"));
+      verify(player)
+          .sendMessage(color("&6Net: &e100.00"));
     }
   }
 
