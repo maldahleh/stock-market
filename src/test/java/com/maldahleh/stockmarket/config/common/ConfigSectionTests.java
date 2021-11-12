@@ -2,6 +2,8 @@ package com.maldahleh.stockmarket.config.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -142,6 +144,31 @@ class ConfigSectionTests {
 
     // THEN
     assertEquals(BigDecimal.valueOf(0.0), value);
+  }
+
+  @Test
+  void validConfigSection() {
+    // GIVEN
+    ConfigSection section = new ConfigSection(javaPlugin, DUMMY_CONFIG);
+
+    // WHEN
+    ConfigSection newSection = section.getConfigSection("sql");
+
+    // THEN
+    assertNotNull(newSection);
+    assertTrue(newSection.getBoolean("enabled"));
+  }
+
+  @Test
+  void invalidConfigSection() {
+    // GIVEN
+    ConfigSection section = new ConfigSection(javaPlugin, DUMMY_CONFIG);
+
+    // WHEN
+    ConfigSection newSection = section.getConfigSection("sql-invalid");
+
+    // THEN
+    assertNull(newSection);
   }
 
   @Test
