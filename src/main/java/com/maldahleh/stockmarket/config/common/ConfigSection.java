@@ -65,7 +65,7 @@ public class ConfigSection {
     return Locale.forLanguageTag(value);
   }
 
-  private ConfigurationSection createCustomConfig(JavaPlugin plugin, String fileName) {
+  private ConfigurationSection loadFile(JavaPlugin plugin, String fileName) {
     String fullFileName = fileName + ".yml";
     File configFile = new File(plugin.getDataFolder(), fullFileName);
     if (!configFile.exists()) {
