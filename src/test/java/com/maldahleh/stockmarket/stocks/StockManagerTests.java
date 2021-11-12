@@ -145,7 +145,7 @@ class StockManagerTests {
       // THEN
       assertTrue(canNotUse);
 
-      verify(messages, times(1))
+      verify(messages)
           .sendInvalidStock(player);
     }
 
@@ -160,7 +160,7 @@ class StockManagerTests {
       // THEN
       assertTrue(canNotUse);
 
-      verify(messages, times(1))
+      verify(messages)
           .sendInvalidStock(player);
     }
 
@@ -178,7 +178,7 @@ class StockManagerTests {
       // THEN
       assertTrue(canNotUse);
 
-      verify(messages, times(1))
+      verify(messages)
           .sendDisabledStock(player);
     }
 
@@ -199,7 +199,7 @@ class StockManagerTests {
       // THEN
       assertTrue(canNotUse);
 
-      verify(messages, times(1))
+      verify(messages)
           .sendDisabledStock(player);
     }
 
@@ -223,7 +223,7 @@ class StockManagerTests {
       // THEN
       assertTrue(canNotUse);
 
-      verify(messages, times(1))
+      verify(messages)
           .sendLowPriceStock(player);
     }
 

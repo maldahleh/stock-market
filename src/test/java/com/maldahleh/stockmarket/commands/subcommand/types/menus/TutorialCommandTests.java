@@ -47,7 +47,7 @@ class TutorialCommandTests {
         command.onCommand(player, args);
 
         // THEN
-        verify(inventoryManager, times(1))
+        verify(inventoryManager)
                 .openTutorialInventory(player);
     }
 }

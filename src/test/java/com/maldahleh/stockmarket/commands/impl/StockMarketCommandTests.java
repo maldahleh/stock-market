@@ -44,7 +44,7 @@ class StockMarketCommandTests {
     stockMarketCommand.onCommand(commandSender, command, "", ARGS);
 
     // THEN
-    verify(commandSender, times(1))
+    verify(commandSender)
         .sendMessage("Stocks - You must be a player to use this command.");
   }
 
@@ -60,7 +60,7 @@ class StockMarketCommandTests {
     stockMarketCommand.onCommand(player, command, "", ARGS);
 
     // THEN
-    verify(messages, times(1))
+    verify(messages)
         .sendCommandsDisabled(player);
   }
 
@@ -73,7 +73,7 @@ class StockMarketCommandTests {
     stockMarketCommand.onCommand(player, command, "", new String[0]);
 
     // THEN
-    verify(messages, times(1))
+    verify(messages)
         .sendHelpMessage(player);
   }
 
@@ -117,7 +117,7 @@ class StockMarketCommandTests {
       stockMarketCommand.onCommand(player, command, "", ARGS);
 
       // THEN
-      verify(messages, times(1))
+      verify(messages)
           .sendInvalidSyntax(player);
     }
 
@@ -136,7 +136,7 @@ class StockMarketCommandTests {
       stockMarketCommand.onCommand(player, command, "", ARGS);
 
       // THEN
-      verify(messages, times(1))
+      verify(messages)
           .sendNoPermission(player);
     }
 
@@ -155,7 +155,7 @@ class StockMarketCommandTests {
       stockMarketCommand.onCommand(player, command, "", ARGS);
 
       // THEN
-      verify(messages, times(1))
+      verify(messages)
           .sendNoPermission(player);
     }
 
@@ -178,7 +178,7 @@ class StockMarketCommandTests {
       stockMarketCommand.onCommand(player, command, "", args);
 
       // THEN
-      verify(messages, times(1))
+      verify(messages)
           .sendInvalidSyntax(player);
     }
 
@@ -200,7 +200,7 @@ class StockMarketCommandTests {
       stockMarketCommand.onCommand(player, command, "", ARGS);
 
       // THEN
-      verify(subcommand, times(1))
+      verify(subcommand)
           .onCommand(player, ARGS);
     }
 
@@ -222,7 +222,7 @@ class StockMarketCommandTests {
       stockMarketCommand.onCommand(player, command, "", ARGS);
 
       // THEN
-      verify(subcommand, times(1))
+      verify(subcommand)
           .onCommand(player, ARGS);
     }
   }

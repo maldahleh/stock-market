@@ -117,13 +117,13 @@ class BrokerManagerTests {
       brokerManager.spawnSimpleBroker(location);
 
       // THEN
-      verify(npc, times(1))
+      verify(npc)
           .setProtected(true);
 
-      verify(npc, times(1))
+      verify(npc)
           .spawn(location, SpawnReason.CREATE);
 
-      verify(goalController, times(1))
+      verify(goalController)
           .clear();
     }
   }

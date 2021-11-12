@@ -106,7 +106,7 @@ class TargetableCommandTests {
       targetableCommand.onCommand(player, args);
 
       // THEN
-      verify(targetableCommand, times(1))
+      verify(targetableCommand)
           .callerAction(player);
     }
 
@@ -127,7 +127,7 @@ class TargetableCommandTests {
         targetableCommand.onCommand(player, args);
 
         // THEN
-        verify(messages, times(1))
+        verify(messages)
             .sendNoPermission(player);
       }
     }
@@ -155,7 +155,7 @@ class TargetableCommandTests {
         targetableCommand.onCommand(player, args);
 
         // THEN
-        verify(targetableCommand, times(1))
+        verify(targetableCommand)
             .targetAction(player, uuid);
       }
     }
@@ -193,7 +193,7 @@ class TargetableCommandTests {
         SchedulerUtils.interceptAsyncRun(plugin, scheduler);
 
         // THEN
-        verify(targetableCommand, times(1))
+        verify(targetableCommand)
             .targetAction(player, uuid);
       }
     }

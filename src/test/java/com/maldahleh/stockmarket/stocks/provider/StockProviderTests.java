@@ -60,7 +60,7 @@ class StockProviderTests {
         // THEN
         assertEquals(stock, stockTwo);
 
-        yahooFinance.verify(() -> YahooFinance.get("BA", true), times(1));
+        yahooFinance.verify(() -> YahooFinance.get("BA", true));
       }
     }
 

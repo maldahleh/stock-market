@@ -80,7 +80,7 @@ class BrokerListenerTests {
       brokerListener.onLeftClick(npcLeftClickEvent);
 
       // THEN
-      verify(inventoryManager, times(1))
+      verify(inventoryManager)
           .openListInventory(player);
     }
   }
@@ -129,7 +129,7 @@ class BrokerListenerTests {
       brokerListener.onRightClick(npcRightClickEvent);
 
       // THEN
-      verify(inventoryManager, times(1))
+      verify(inventoryManager)
           .openListInventory(player);
     }
   }

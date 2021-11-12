@@ -47,7 +47,7 @@ class HelpCommandTests {
         command.onCommand(player, new String[]{});
 
         // THEN
-        verify(messages, times(1))
+        verify(messages)
                 .sendHelpMessage(player);
     }
 }

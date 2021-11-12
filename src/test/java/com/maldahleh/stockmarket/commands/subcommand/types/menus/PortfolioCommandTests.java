@@ -77,10 +77,10 @@ class PortfolioCommandTests {
         command.callerAction(player);
 
         // THEN
-        verify(messages, times(1))
+        verify(messages)
                 .sendPendingPortfolio(player);
 
-        verify(inventoryManager, times(1))
+        verify(inventoryManager)
                 .openPortfolioInventory(player);
     }
 
@@ -94,10 +94,10 @@ class PortfolioCommandTests {
         command.targetAction(player, targetUUID);
 
         // THEN
-        verify(messages, times(1))
+        verify(messages)
                 .sendPendingPortfolioOther(player);
 
-        verify(inventoryManager, times(1))
+        verify(inventoryManager)
                 .openPortfolioInventory(player, targetUUID);
     }
 }

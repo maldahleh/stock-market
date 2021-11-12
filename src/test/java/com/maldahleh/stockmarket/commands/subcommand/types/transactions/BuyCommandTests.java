@@ -49,7 +49,7 @@ class BuyCommandTests {
         command.sendTransactionMessage(player);
 
         // THEN
-        verify(messages, times(1))
+        verify(messages)
                 .sendPendingBuy(player);
     }
 }

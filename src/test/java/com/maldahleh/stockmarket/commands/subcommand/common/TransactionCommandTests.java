@@ -44,7 +44,7 @@ class TransactionCommandTests {
     assertEquals(3, transactionCommand.maxArgs());
     assertNull(transactionCommand.requiredPerm());
 
-    verify(messages, times(1))
+    verify(messages)
         .sendInvalidQuantity(player);
   }
 
@@ -79,10 +79,10 @@ class TransactionCommandTests {
     assertEquals(3, transactionCommand.maxArgs());
     assertNull(transactionCommand.requiredPerm());
 
-    verify(stockProcessor, times(1))
+    verify(stockProcessor)
         .processTransaction(player, "BA", 5);
 
-    verify(transactionCommand, times(1))
+    verify(transactionCommand)
         .sendTransactionMessage(player);
   }
 }

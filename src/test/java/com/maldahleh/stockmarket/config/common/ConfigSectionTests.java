@@ -182,7 +182,7 @@ class ConfigSectionTests {
       new ConfigSection(javaPlugin, notFoundFileName);
 
       // THEN
-      verify(javaPlugin, times(1))
+      verify(javaPlugin)
           .saveResource(fullFileName, false);
 
       logger.verify(() -> Logger.severe("Failed to load " + fullFileName));
