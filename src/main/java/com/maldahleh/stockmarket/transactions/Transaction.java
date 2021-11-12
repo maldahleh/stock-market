@@ -6,10 +6,12 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
+@Builder
 @AllArgsConstructor
 public class Transaction {
 
@@ -60,37 +62,32 @@ public class Transaction {
 
   public static Transaction buildPurchase(UUID uuid, String symbol, int quantity, BigDecimal price,
       BigDecimal brokerFees, BigDecimal grandTotal) {
-    return new Transaction(
-        null,
-        uuid,
-        TransactionType.PURCHASE,
-        Instant.now(),
-        symbol,
-        quantity,
-        price,
-        brokerFees,
-        null,
-        null,
-        grandTotal,
-        false
-    );
+    return Transaction.builder()
+        .uuid(uuid)
+        .transactionType(TransactionType.PURCHASE)
+        .transactionDate(Instant.now())
+        .symbol(symbol)
+        .quantity(quantity)
+        .singlePrice(price)
+        .brokerFee(brokerFees)
+        .grandTotal(grandTotal)
+        .sold(false)
+        .build();
   }
 
   public static Transaction buildSale(UUID uuid, String symbol, int quantity, BigDecimal price,
       BigDecimal brokerFees, BigDecimal net, BigDecimal grandTotal) {
-    return new Transaction(
-        null,
-        uuid,
-        TransactionType.SALE,
-        Instant.now(),
-        symbol,
-        quantity,
-        price,
-        brokerFees,
-        net,
-        null,
-        grandTotal,
-        false
-    );
+    return Transaction.builder()
+        .uuid(uuid)
+        .transactionType(TransactionType.SALE)
+        .transactionDate(Instant.now())
+        .symbol(symbol)
+        .quantity(quantity)
+        .singlePrice(price)
+        .brokerFee(brokerFees)
+        .grandTotal(grandTotal)
+        .earnings(net)
+        .sold(false)
+        .build();
   }
 }
