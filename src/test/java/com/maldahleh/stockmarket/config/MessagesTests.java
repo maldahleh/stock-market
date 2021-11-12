@@ -32,7 +32,11 @@ class MessagesTests {
 
     // THEN
     verify(player)
-        .sendMessage(ChatColor.translateAlternateColorCodes('&', "&cCommands are disabled, please use the stock brokers."));
+        .sendMessage(color("&cCommands are disabled, please use the stock brokers."));
+  }
+
+  private String color(String message) {
+    return ChatColor.translateAlternateColorCodes('&', message);
   }
 
   private StockMarket mockedStockMarket() {
