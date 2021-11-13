@@ -37,8 +37,7 @@ public class CommandManager {
 
   private final Map<String, Subcommand> subcommandMap = new LinkedHashMap<>();
 
-  public CommandManager(
-      Plugin plugin,
+  public CommandManager(Plugin plugin,
       BrokerManager brokerManager,
       InventoryManager inventoryManager,
       PurchaseProcessor purchaseProcessor,
