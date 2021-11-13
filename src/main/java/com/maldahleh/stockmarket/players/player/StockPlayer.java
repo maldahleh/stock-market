@@ -33,6 +33,10 @@ public class StockPlayer {
     stockMap.put(symbol, data);
   }
 
+  public BigDecimal getProfitMargin(BigDecimal currentValue) {
+    return currentValue.subtract(portfolioValue);
+  }
+
   public Collection<Transaction> getTransactions() {
     return transactionMap.values();
   }

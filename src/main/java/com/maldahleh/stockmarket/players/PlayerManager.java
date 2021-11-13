@@ -66,10 +66,6 @@ public class PlayerManager {
     return currentValue;
   }
 
-  public BigDecimal getProfitMargin(StockPlayer stockPlayer, BigDecimal currentValue) {
-    return currentValue.subtract(stockPlayer.getPortfolioValue());
-  }
-
   public void registerTransaction(UUID uuid, Transaction transaction) {
     StockPlayer player = getOrCreateStockPlayer(uuid);
     player.addTransaction(transaction);

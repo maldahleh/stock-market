@@ -7,7 +7,6 @@ import com.maldahleh.stockmarket.players.utils.TransactionUtils;
 import com.maldahleh.stockmarket.transactions.Transaction;
 import com.maldahleh.stockmarket.transactions.types.TransactionType;
 import java.math.BigDecimal;
-import java.time.Instant;
 import org.junit.jupiter.api.Test;
 
 class StockPlayerTests {
@@ -20,13 +19,17 @@ class StockPlayerTests {
     Transaction sale = TransactionUtils.buildTransaction(TransactionType.SALE, 2, BigDecimal.ONE);
 
     StockPlayer stockPlayer = new StockPlayer();
+    BigDecimal currentValue = BigDecimal.TEN;
 
     // WHEN
     stockPlayer.addTransaction(purchase);
     stockPlayer.addTransaction(sale);
 
+    BigDecimal profitMargin = stockPlayer.getProfitMargin(currentValue);
+
     // THEN
     assertEquals(BigDecimal.valueOf(9), stockPlayer.getPortfolioValue());
+    assertEquals(BigDecimal.valueOf(1), profitMargin);
 
     assertEquals(2, stockPlayer.getTransactions().size());
     assertTrue(stockPlayer.getTransactions().contains(purchase));
