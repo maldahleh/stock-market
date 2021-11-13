@@ -63,7 +63,7 @@ public record PortfolioInventoryProvider(
     BigDecimal currentValue = playerManager.getCurrentValue(stockPlayer);
     dataMap.put("purchase_value", stockPlayer.getPortfolioValue());
     dataMap.put("current_value", currentValue);
-    dataMap.put("net_value", playerManager.getProfitMargin(stockPlayer, currentValue));
+    dataMap.put("net_value", stockPlayer.getProfitMargin(currentValue));
     return dataMap;
   }
 

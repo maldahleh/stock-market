@@ -87,7 +87,7 @@ public class StockMarketAPITests {
       when(playerManager.getCurrentValue(stockPlayer))
           .thenReturn(BigDecimal.ONE);
 
-      when(playerManager.getProfitMargin(stockPlayer, BigDecimal.ONE))
+      when(stockPlayer.getProfitMargin(BigDecimal.ONE))
           .thenReturn(BigDecimal.valueOf(11));
 
       when(playerManager.forceGetStockPlayer(uuid))

@@ -40,7 +40,7 @@ public record StockMarketAPI(PlayerManager playerManager) {
       return NOT_FOUND;
     }
 
-    return playerManager.getProfitMargin(stockPlayer, playerManager.getCurrentValue(stockPlayer));
+    return stockPlayer.getProfitMargin(playerManager.getCurrentValue(stockPlayer));
   }
 
   /**
