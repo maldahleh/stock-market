@@ -111,6 +111,6 @@ public class PlayerManager {
   }
 
   private StockPlayer getOrCreateStockPlayer(UUID uuid) {
-    return stockPlayerMap.putIfAbsent(uuid, new StockPlayer());
+    return stockPlayerMap.computeIfAbsent(uuid, k -> new StockPlayer());
   }
 }
