@@ -5,7 +5,7 @@ import org.bukkit.Bukkit;
 
 @UtilityClass
 public class Logger {
-  private final String PREFIX = "StockMarket - ";
+  private final String PREFIX = "StockMarket -";
 
   public void severe(String message) {
     String logMessage = buildLogMessage(message);
