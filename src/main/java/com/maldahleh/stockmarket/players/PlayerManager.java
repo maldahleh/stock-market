@@ -1,6 +1,5 @@
 package com.maldahleh.stockmarket.players;
 
-import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.players.listeners.PlayerListener;
 import com.maldahleh.stockmarket.players.player.StockPlayer;
@@ -14,29 +13,30 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
 public class PlayerManager {
 
   private final Map<UUID, Instant> lastActionMap = new ConcurrentHashMap<>();
   private final Map<UUID, StockPlayer> stockPlayerMap = new ConcurrentHashMap<>();
 
-  private final StockMarket stockMarket;
+  private final Plugin plugin;
   private final StockManager stockManager;
   private final Storage storage;
   private final Settings settings;
 
-  public PlayerManager(StockMarket stockMarket, StockManager stockManager, Storage storage,
+  public PlayerManager(Plugin plugin, StockManager stockManager, Storage storage,
       Settings settings) {
-    this.stockMarket = stockMarket;
+    this.plugin = plugin;
     this.stockManager = stockManager;
     this.storage = storage;
     this.settings = settings;
 
-    Bukkit.getPluginManager().registerEvents(new PlayerListener(this), stockMarket);
+    Bukkit.getPluginManager().registerEvents(new PlayerListener(this), plugin);
   }
 
   public void cachePlayer(UUID uuid) {
-    Bukkit.getScheduler().runTaskAsynchronously(stockMarket, () -> loadPlayerTransactions(uuid));
+    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> loadPlayerTransactions(uuid));
   }
 
   public StockPlayer getStockPlayer(UUID uuid) {
