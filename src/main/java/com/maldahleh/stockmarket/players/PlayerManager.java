@@ -25,8 +25,8 @@ public class PlayerManager {
   private final Storage storage;
   private final Settings settings;
 
-  public PlayerManager(
-      StockMarket stockMarket, StockManager stockManager, Storage storage, Settings settings) {
+  public PlayerManager(StockMarket stockMarket, StockManager stockManager, Storage storage,
+      Settings settings) {
     this.stockMarket = stockMarket;
     this.stockManager = stockManager;
     this.storage = storage;
