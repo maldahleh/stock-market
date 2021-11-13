@@ -49,9 +49,7 @@ public class PlayerManager {
       return cachedPlayer;
     }
 
-    storage
-        .getPlayerTransactions(uuid)
-        .forEach(transaction -> registerTransaction(uuid, transaction));
+    loadPlayerTransactions(uuid);
     return getAndRemoveStockPlayer(uuid);
   }
 
