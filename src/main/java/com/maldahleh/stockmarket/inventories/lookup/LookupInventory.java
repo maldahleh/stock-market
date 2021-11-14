@@ -1,7 +1,5 @@
 package com.maldahleh.stockmarket.inventories.lookup;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Messages;
@@ -15,10 +13,9 @@ import com.maldahleh.stockmarket.utils.Utils;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import yahoofinance.Stock;
@@ -31,9 +28,6 @@ public class LookupInventory extends StockDataInventory {
   private final ItemStack historicalStack;
   private final ItemStack noHistoricalStack;
   private final List<Integer> historicalSlots;
-
-  private final boolean useCache;
-  private final Cache<String, Inventory> inventoryCache;
 
   public LookupInventory(
       StockMarket stockMarket,
@@ -50,98 +44,68 @@ public class LookupInventory extends StockDataInventory {
     this.noHistoricalStack =
         Utils.createItemStack(section.getConfigurationSection("historical." + "no-data"));
     this.historicalSlots = section.getIntegerList("historical.slots");
-
-    this.useCache = section.getBoolean("cache.use-cache");
-    if (useCache) {
-      this.inventoryCache =
-          CacheBuilder.newBuilder()
-              .maximumSize(500)
-              .expireAfterWrite(section.getInt("cache.cache-minutes"), TimeUnit.MINUTES)
-              .build();
-    } else {
-      this.inventoryCache = CacheBuilder.newBuilder().build();
-    }
   }
 
-  public void openInventory(Player player, String symbol) {
-    Inventory cachedInventory = inventoryCache.getIfPresent(symbol.toUpperCase());
-    if (cachedInventory != null) {
-      player.openInventory(cachedInventory);
-      addViewer(player);
-      return;
+  @Override
+  protected Inventory buildInventory(List<Entry<Stock, BigDecimal>> stocks) {
+    Stock stock = stocks.get(0).getKey();
+    BigDecimal price = stocks.get(0).getValue();
+
+    Inventory inventory =
+        Bukkit.createInventory(
+            null,
+            inventorySize,
+            inventoryName.replace("<symbol>", stock.getSymbol().toUpperCase()));
+
+    for (String key : section.getConfigurationSection("items").getKeys(false)) {
+      inventory.setItem(
+          Integer.parseInt(key),
+          Utils.createItemStack(
+              section.getConfigurationSection("items." + key),
+              StockDataUtils.buildStockDataMap(stock, price,
+                  stockMarket.getEcon().currencyNamePlural(), settings)));
     }
 
-    Bukkit.getScheduler()
-        .runTaskAsynchronously(
-            stockMarket,
-            () -> {
-              Stock stock = stockManager.getStock(symbol);
-              if (stockManager.canNotUseStock(player, stock)) {
-                return;
-              }
+    for (int index = 0; index < historicalSlots.size(); index++) {
+      Integer slot = historicalSlots.get(index);
 
-              BigDecimal price = stockManager.getServerPrice(stock);
-              if (price == null) {
-                messages.sendInvalidStock(player);
-                return;
-              }
+      HistoricalQuote quote = getHistorical(index, stock);
+      if (quote == null) {
+        inventory.setItem(slot, noHistoricalStack);
+        continue;
+      }
 
-              Bukkit.getScheduler()
-                  .runTask(
-                      stockMarket,
-                      () -> {
-                        Inventory inventory =
-                            Bukkit.createInventory(
-                                null,
-                                inventorySize,
-                                inventoryName.replace("<symbol>", stock.getSymbol().toUpperCase()));
+        inventory.setItem(
+            slot,
+            Utils.updateItemStack(
+                historicalStack.clone(),
+                ImmutableMap.<String, Object>builder()
+                    .put("<date>",
+                        TimeUtils.formatDate(
+                            quote.getDate().getTime(), settings.getLocale()))
+                    .put("<market-currency>", stock.getCurrency())
+                    .put("<day-open>",
+                        CurrencyUtils.format(quote.getOpen(), settings))
+                    .put("<day-close>",
+                        CurrencyUtils.format(quote.getClose(), settings))
+                    .put("<volume>",
+                        CurrencyUtils.formatSigFig(
+                            quote.getVolume(), settings.getUnknownData()))
+                    .put("<day-high>",
+                        CurrencyUtils.format(quote.getHigh(), settings))
+                    .put("<day-low>",
+                        CurrencyUtils.format(quote.getLow(), settings))
+                    .build()));
+    }
 
-                        for (String key : section.getConfigurationSection("items").getKeys(false)) {
-                          inventory.setItem(
-                              Integer.parseInt(key),
-                              Utils.createItemStack(
-                                  section.getConfigurationSection("items." + key),
-                                  StockDataUtils.buildStockDataMap(stock, price,
-                                      stockMarket.getEcon().currencyNamePlural(), settings)));
-                        }
+    return inventory;
+  }
 
-                        for (int index = 0; index < historicalSlots.size(); index++) {
-                          Integer slot = historicalSlots.get(index);
-                          try {
-                            HistoricalQuote quote = stock.getHistory().get(index);
-                            inventory.setItem(
-                                slot,
-                                Utils.updateItemStack(
-                                    historicalStack.clone(),
-                                    ImmutableMap.<String, Object>builder()
-                                        .put("<date>",
-                                            TimeUtils.formatDate(
-                                                quote.getDate().getTime(), settings.getLocale()))
-                                        .put("<market-currency>", stock.getCurrency())
-                                        .put("<day-open>",
-                                            CurrencyUtils.format(quote.getOpen(), settings))
-                                        .put("<day-close>",
-                                            CurrencyUtils.format(quote.getClose(), settings))
-                                        .put("<volume>",
-                                            CurrencyUtils.formatSigFig(
-                                                quote.getVolume(), settings.getUnknownData()))
-                                        .put("<day-high>",
-                                            CurrencyUtils.format(quote.getHigh(), settings))
-                                        .put("<day-low>",
-                                            CurrencyUtils.format(quote.getLow(), settings))
-                                        .build()));
-                          } catch (IndexOutOfBoundsException | IOException e) {
-                            inventory.setItem(slot, noHistoricalStack);
-                          }
-                        }
-
-                        player.openInventory(inventory);
-                        addViewer(player);
-
-                        if (useCache) {
-                          inventoryCache.put(symbol.toUpperCase(), inventory);
-                        }
-                      });
-            });
+  private HistoricalQuote getHistorical(int index, Stock stock) {
+    try {
+      return stock.getHistory().get(index);
+    } catch (IndexOutOfBoundsException | IOException e) {
+      return null;
+    }
   }
 }
