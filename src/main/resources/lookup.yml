@@ -1,7 +1,5 @@
 name: "&6Stocks &8- &e<symbol>"
 size: 36
-cache:
-  cache-minutes: 5
 items:
   0:
     material: "BOOK"

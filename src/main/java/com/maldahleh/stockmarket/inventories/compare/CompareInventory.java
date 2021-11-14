@@ -8,14 +8,10 @@ import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.utils.StockDataUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import yahoofinance.Stock;
 
@@ -34,57 +30,29 @@ public class CompareInventory extends StockDataInventory {
     this.perStock = section.getInt("inventory.per-stock");
   }
 
-  public void openInventory(Player player, String... symbols) {
-    Bukkit.getScheduler()
-        .runTaskAsynchronously(
-            stockMarket,
-            () -> {
-              Map<Stock, BigDecimal> stockMap = new LinkedHashMap<>();
-              for (String symbol : symbols) {
-                Stock stock = stockManager.getStock(symbol);
-                if (stockManager.canNotUseStock(player, stock)) {
-                  return;
-                }
+  @Override
+  protected Inventory buildInventory(List<Entry<Stock, BigDecimal>> stocks) {
+    Inventory inventory = Bukkit.createInventory(null, perStock * stocks.size(),
+        inventoryName);
 
-                BigDecimal price = stockManager.getServerPrice(stock);
-                if (price == null) {
-                  messages.sendInvalidStock(player);
-                  return;
-                }
+    for (int index = 0; index < stocks.size(); index++) {
+      for (String key : section.getConfigurationSection("items").getKeys(false)) {
+        int slot = Integer.parseInt(key) + (perStock * index);
+        inventory.setItem(
+            slot,
+            Utils.createItemStack(
+                section.getConfigurationSection("items." + key),
+                StockDataUtils.buildStockDataMap(
+                    stocks.get(index).getKey(),
+                    stocks.get(index).getValue(),
+                    stockMarket.getEcon().currencyNamePlural(),
+                    settings
+                )
+            )
+        );
+      }
+    }
 
-                stockMap.put(stock, price);
-              }
-
-              List<Entry<Stock, BigDecimal>> stocks = new ArrayList<>(stockMap.entrySet());
-              Bukkit.getScheduler()
-                  .runTask(
-                      stockMarket,
-                      () -> {
-                        Inventory inventory =
-                            Bukkit.createInventory(null, perStock * stocks.size(), inventoryName);
-
-                        for (int index = 0; index < stocks.size(); index++) {
-                          Map.Entry<Stock, BigDecimal> entry = stocks.get(index);
-                          if (entry == null) {
-                            continue;
-                          }
-
-                          Stock stock = entry.getKey();
-                          for (String key :
-                              section.getConfigurationSection("items").getKeys(false)) {
-                            int slot = Integer.parseInt(key) + (perStock * index);
-                            inventory.setItem(
-                                slot,
-                                Utils.createItemStack(
-                                    section.getConfigurationSection("items." + key),
-                                    StockDataUtils.buildStockDataMap(stock, entry.getValue(),
-                                        stockMarket.getEcon().currencyNamePlural(), settings)));
-                          }
-                        }
-
-                        player.openInventory(inventory);
-                        addViewer(player);
-                      });
-            });
+    return inventory;
   }
 }
