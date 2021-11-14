@@ -64,18 +64,21 @@ public class StockPlaceholderManager {
     return null;
   }
 
-  private PlaceholderStock buildPlaceholderStock(PlaceholderStock existingPlaceholder,
-      String symbol) {
-    PlaceholderStock newPlaceholder = existingPlaceholder;
-    if (existingPlaceholder == null) {
-      existingPlaceholder = new PlaceholderStock();
+  private PlaceholderStock buildPlaceholderStock(PlaceholderStock existing, String symbol) {
+    Stock stock = stockManager.getStock(symbol);
+
+    PlaceholderStock placeholder = determinePlaceholderStock(existing);
+    placeholder.setStock(stock);
+    placeholder.setServerPrice(CurrencyUtils.format(stockManager.getServerPrice(stock), settings));
+
+    return placeholder;
+  }
+
+  private PlaceholderStock determinePlaceholderStock(PlaceholderStock existing) {
+    if (existing != null) {
+      return existing;
     }
 
-    Stock stock = stockManager.getStock(symbol.toUpperCase());
-    existingPlaceholder.setStock(stock);
-    existingPlaceholder.setServerPrice(
-        CurrencyUtils.format(stockManager.getServerPrice(stock), settings));
-
-    return newPlaceholder;
+    return new PlaceholderStock();
   }
 }
