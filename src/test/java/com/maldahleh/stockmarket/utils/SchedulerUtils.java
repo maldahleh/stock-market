@@ -1,5 +1,6 @@
 package com.maldahleh.stockmarket.utils;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
@@ -16,6 +17,15 @@ public class SchedulerUtils {
 
     verify(scheduler)
         .runTaskAsynchronously(eq(plugin), argument.capture());
+
+    argument.getValue().run();
+  }
+
+  public void interceptAsyncTimer(Plugin plugin, BukkitScheduler scheduler) {
+    ArgumentCaptor<Runnable> argument = ArgumentCaptor.forClass(Runnable.class);
+
+    verify(scheduler)
+        .runTaskTimerAsynchronously(eq(plugin), argument.capture(), anyLong(), anyLong());
 
     argument.getValue().run();
   }
