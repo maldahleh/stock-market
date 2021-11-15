@@ -23,24 +23,26 @@ public class CurrencyUtils {
     return formatCurrency(input.doubleValue(), locale);
   }
 
+  public String formatCurrency(BigDecimal input, Settings settings) {
+    if (input == null) {
+      return "";
+    }
+
+    return formatCurrency(input.doubleValue(), settings.getLocale());
+  }
+
+  private String formatCurrency(double input, Locale locale) {
+    NumberFormat decimalFormat =
+        new DecimalFormat("#,##0.00", DecimalFormatSymbols.getInstance(locale));
+    return decimalFormat.format(input);
+  }
+
   public String formatSigFig(Long input, String unknown) {
     if (input == null) {
       return unknown;
     }
 
     return sigFigNumber(input);
-  }
-
-  public String formatSingle(BigDecimal input, Settings settings) {
-    return formatSingle(input, settings.getUnknownData(), settings.getLocale());
-  }
-
-  private String formatSingle(BigDecimal input, String unknown, Locale locale) {
-    if (input == null) {
-      return unknown;
-    }
-
-    return singleDecimal(input.doubleValue(), locale);
   }
 
   public String sigFigNumber(BigDecimal input) {
@@ -57,18 +59,16 @@ public class CurrencyUtils {
     return String.format("%.1f%c", input / Math.pow(1000, exponent), suffixes.charAt(exponent - 1));
   }
 
-  public String formatCurrency(BigDecimal input, Settings settings) {
-    if (input == null) {
-      return "";
-    }
-
-    return formatCurrency(input.doubleValue(), settings.getLocale());
+  public String formatSingle(BigDecimal input, Settings settings) {
+    return formatSingle(input, settings.getUnknownData(), settings.getLocale());
   }
 
-  private String formatCurrency(double input, Locale locale) {
-    NumberFormat decimalFormat =
-        new DecimalFormat("#,##0.00", DecimalFormatSymbols.getInstance(locale));
-    return decimalFormat.format(input);
+  private String formatSingle(BigDecimal input, String unknown, Locale locale) {
+    if (input == null) {
+      return unknown;
+    }
+
+    return singleDecimal(input.doubleValue(), locale);
   }
 
   private String singleDecimal(double input, Locale locale) {
