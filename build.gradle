@@ -13,6 +13,7 @@ repositories {
     maven { url 'https://repo.citizensnpcs.co/' }
     maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url 'https://repo.phoenix616.dev/' }
 }
 
 dependencies {
