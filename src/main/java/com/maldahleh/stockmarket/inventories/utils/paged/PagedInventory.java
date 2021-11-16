@@ -19,9 +19,9 @@ import org.bukkit.plugin.Plugin;
 public class PagedInventory<L, K, V, T, TV> {
 
   private final Plugin plugin;
-
   private final ContentProvider<L, K, V, T, TV> contentProvider;
-  private final Map<UUID, PaginatedPlayer> playerMap;
+
+  private final Map<UUID, PaginatedPlayer> playerMap = new HashMap<>();
 
   private final String name;
   private final int size;
@@ -38,16 +38,14 @@ public class PagedInventory<L, K, V, T, TV> {
   private final List<Integer> contentSlots;
   private final int contentPerPage;
 
-  private final Map<Integer, ItemStack> extraItems;
+  private final Map<Integer, ItemStack> extraItems = new HashMap<>();
 
   private final String noContentMessage;
 
   public PagedInventory(Plugin plugin, ContentProvider<L, K, V, T, TV> provider,
       ConfigSection section) {
     this.plugin = plugin;
-
     this.contentProvider = provider;
-    this.playerMap = new HashMap<>();
 
     this.name = section.getString("name");
     this.size = section.getInt("size");
@@ -63,8 +61,6 @@ public class PagedInventory<L, K, V, T, TV> {
 
     this.contentSlots = section.getIntegerList("content-slots");
     this.contentPerPage = contentSlots.size();
-
-    this.extraItems = new HashMap<>();
 
     ConfigSection extraSection = section.getSection("extra-items");
     if (extraSection != null) {
