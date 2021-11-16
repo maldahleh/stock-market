@@ -6,7 +6,6 @@ import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.inventories.utils.common.StockDataInventory;
 import com.maldahleh.stockmarket.stocks.StockManager;
-import com.maldahleh.stockmarket.utils.StockDataUtils;
 import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.io.IOException;
@@ -66,8 +65,9 @@ public class LookupInventory extends StockDataInventory {
           Integer.parseInt(key),
           Utils.createItemStack(
               section.getConfigurationSection("items." + key),
-              StockDataUtils.buildStockDataMap(stock, price,
-                  stockMarket.getEcon().currencyNamePlural(), settings)));
+              buildStockDataMap(stock, price)
+          )
+      );
     }
 
     for (int index = 0; index < historicalSlots.size(); index++) {
