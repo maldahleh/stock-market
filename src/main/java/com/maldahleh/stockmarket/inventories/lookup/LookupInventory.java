@@ -7,11 +7,13 @@ import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.inventories.utils.common.StockDataInventory;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.utils.StockDataUtils;
-import com.maldahleh.stockmarket.utils.TimeUtils;
 import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 import org.bukkit.Bukkit;
@@ -80,9 +82,7 @@ public class LookupInventory extends StockDataInventory {
             Utils.updateItemStack(
                 historicalStack.clone(),
                 ImmutableMap.<String, Object>builder()
-                    .put("<date>",
-                        TimeUtils.formatDate(
-                            quote.getDate().getTime(), settings.getLocale()))
+                    .put("<date>", formatDate(quote.getDate().getTime()))
                     .put("<market-currency>", stock.getCurrency())
                     .put("<day-open>",
                         CurrencyUtils.format(quote.getOpen(), settings))
@@ -99,6 +99,11 @@ public class LookupInventory extends StockDataInventory {
     }
 
     return inventory;
+  }
+
+  private String formatDate(Date date) {
+    DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy", settings.getLocale());
+    return dateFormat.format(date);
   }
 
   private HistoricalQuote getHistorical(int index, Stock stock) {
