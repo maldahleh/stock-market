@@ -23,13 +23,6 @@ public class TimeUtils {
     return durationSince(timestamp).toMinutes();
   }
 
-  public String getCurrentTime() {
-    SimpleDateFormat dateFormat = new SimpleDateFormat();
-    dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-    return dateFormat.format(new Date());
-  }
-
   public String formatDate(Date date, Locale locale) {
     DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy", locale);
     return dateFormat.format(date);

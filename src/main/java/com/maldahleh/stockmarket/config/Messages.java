@@ -4,9 +4,11 @@ import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.common.ConfigSection;
 import com.maldahleh.stockmarket.transactions.Transaction;
 import com.maldahleh.stockmarket.utils.CurrencyUtils;
-import com.maldahleh.stockmarket.utils.TimeUtils;
 import com.maldahleh.stockmarket.utils.Utils;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.stream.Stream;
 import org.bukkit.entity.Player;
 
@@ -146,7 +148,7 @@ public class Messages {
   }
 
   private String getFormattedTransactionLine(String line, String company, Transaction transaction) {
-    return line.replace("<date>", TimeUtils.getCurrentTime())
+    return line.replace("<date>", getCurrentTime())
         .replace("<company>", company)
         .replace("<symbol>", transaction.getSymbol())
         .replace("<quantity>", String.valueOf(transaction.getQuantity()))
@@ -158,5 +160,12 @@ public class Messages {
             CurrencyUtils.formatCurrency(transaction.getGrandTotal(), settings))
         .replace("<net>",
             CurrencyUtils.formatCurrency(transaction.getEarnings(), settings));
+  }
+
+  private String getCurrentTime() {
+    SimpleDateFormat dateFormat = new SimpleDateFormat();
+    dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+    return dateFormat.format(new Date());
   }
 }
