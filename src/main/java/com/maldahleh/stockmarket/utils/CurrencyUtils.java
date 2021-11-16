@@ -11,20 +11,6 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class CurrencyUtils {
 
-  public String formatCurrency(BigDecimal input, Settings settings) {
-    if (input == null) {
-      return "";
-    }
-
-    return formatCurrency(input.doubleValue(), settings.getLocale());
-  }
-
-  private String formatCurrency(double input, Locale locale) {
-    NumberFormat decimalFormat =
-        new DecimalFormat("#,##0.00", DecimalFormatSymbols.getInstance(locale));
-    return decimalFormat.format(input);
-  }
-
   public String formatSigFig(Long input, String unknown) {
     if (input == null) {
       return unknown;

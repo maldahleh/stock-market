@@ -8,7 +8,6 @@ import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.players.player.StockPlayer;
 import com.maldahleh.stockmarket.players.player.data.StockData;
 import com.maldahleh.stockmarket.stocks.StockManager;
-import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -89,9 +88,9 @@ public class PortfolioInventoryProvider
             .put("<symbol>", key.getSymbol().toUpperCase())
             .put("<name>", key.getName())
             .put("<quantity>", value.getQuantity())
-            .put("<current-value>", CurrencyUtils.formatCurrency(currentPrice, settings))
-            .put("<purchase-value>", CurrencyUtils.formatCurrency(value.getValue(), settings))
-            .put("<net>", CurrencyUtils.formatCurrency(net, settings))
+            .put("<current-value>", settings.format(currentPrice))
+            .put("<purchase-value>", settings.format(value.getValue()))
+            .put("<net>", settings.format(net))
             .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
             .build()
     );
@@ -102,16 +101,12 @@ public class PortfolioInventoryProvider
     return Utils.updateItemStack(
         baseStack.clone(),
         Map.of(
-            "<purchase-value>",
-                CurrencyUtils.formatCurrency(
-                    ((BigDecimal) extraData.get("purchase_value")), settings),
-            "<current-value>",
-                CurrencyUtils.formatCurrency(
-                    ((BigDecimal) extraData.get("current_value")), settings),
-            "<net-value>",
-                CurrencyUtils.formatCurrency(
-                    ((BigDecimal) extraData.get("net_value")), settings),
-            "<server-currency>", stockMarket.getEcon().currencyNamePlural()));
+            "<purchase-value>", settings.format(((BigDecimal) extraData.get("purchase_value"))),
+            "<current-value>", settings.format(((BigDecimal) extraData.get("current_value"))),
+            "<net-value>", settings.format(((BigDecimal) extraData.get("net_value"))),
+            "<server-currency>", stockMarket.getEcon().currencyNamePlural()
+        )
+    );
   }
 
   static class StockComparator implements Comparator<Stock> {
