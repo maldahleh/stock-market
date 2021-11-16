@@ -31,7 +31,7 @@ public class TransactionInventoryProvider
   public Map<Instant, Transaction> getContent(UUID uuid) {
     StockPlayer stockPlayer = playerManager.forceGetStockPlayer(uuid);
     if (stockPlayer == null) {
-      return null;
+      return Collections.emptyMap();
     }
 
     return stockPlayer.getTransactionMap();

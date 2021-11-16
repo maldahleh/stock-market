@@ -10,6 +10,7 @@ import com.maldahleh.stockmarket.players.player.data.StockData;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class PortfolioInventoryProvider
   public Map<String, StockData> getContent(UUID uuid) {
     StockPlayer stockPlayer = playerManager.forceGetStockPlayer(uuid);
     if (stockPlayer == null) {
-      return null;
+      return Collections.emptyMap();
     }
 
     return stockPlayer.getStockMap();
