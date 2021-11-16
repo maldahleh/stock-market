@@ -99,3 +99,36 @@ items:
     name: "&6&lYear Low"
     lore:
       - "&e<year-low> <market-currency>"
+historical:
+  data:
+    material: "ENCHANTED_BOOK"
+    name: "&6&l<date>"
+    lore:
+      - "&6Day Open:"
+      - "&e<day-open> <market-currency>"
+      - "&6Day Close:"
+      - "&e<day-close> <market-currency>"
+      - "&6Volume:"
+      - "&e<volume>"
+      - "&6Day High:"
+      - "&e<day-high> <market-currency>"
+      - "&6Day Low:"
+      - "&e<day-low> <market-currency>"
+  no-data:
+    material: "BARRIER"
+    name: "&6&lNo Historical Data"
+    lore:
+      - "&eNo Data Available"
+  slots:
+    - 18
+    - 19
+    - 20
+    - 21
+    - 22
+    - 23
+    - 24
+    - 25
+    - 26
+    - 30
+    - 31
+    - 32
