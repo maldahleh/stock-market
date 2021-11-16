@@ -28,6 +28,7 @@ public class Transaction {
 
   private BigDecimal stockValue;
   private BigDecimal grandTotal;
+  @Setter
   private boolean sold;
 
   public BigDecimal getStockValue() {
@@ -49,15 +50,11 @@ public class Transaction {
   }
 
   public boolean hasElapsed(int minutes) {
-    if (minutes == 0) {
+    if (minutes <= 0) {
       return true;
     }
 
     return TimeUtils.minutesSince(transactionDate) >= minutes;
-  }
-
-  public void markSold() {
-    this.sold = true;
   }
 
   public static Transaction buildPurchase(UUID uuid, String symbol, int quantity, BigDecimal price,

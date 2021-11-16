@@ -98,7 +98,7 @@ class TransactionTests {
     );
 
     // WHEN
-    transaction.markSold();
+    transaction.setSold(true);
 
     // THEN
     assertTrue(transaction.isSold());

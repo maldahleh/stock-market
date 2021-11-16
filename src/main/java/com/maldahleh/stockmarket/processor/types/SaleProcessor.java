@@ -103,7 +103,7 @@ public class SaleProcessor extends StockProcessor {
     BigDecimal soldValue = BigDecimal.ZERO;
     for (Transaction sold : context.getProcessedTransactions()) {
       soldValue = soldValue.add(sold.getStockValue());
-      sold.markSold();
+      sold.setSold(true);
       storage.markSold(sold);
     }
 
