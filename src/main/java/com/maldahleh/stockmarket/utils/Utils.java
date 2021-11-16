@@ -82,11 +82,12 @@ public class Utils {
   }
 
   private String replace(String value, Map<String, Object> replacements) {
+    String replacedLine = value;
     for (Entry<String, Object> e : replacements.entrySet()) {
-      value = value.replace(e.getKey(), String.valueOf(e.getValue()));
+      replacedLine = replacedLine.replace(e.getKey(), String.valueOf(e.getValue()));
     }
 
-    return value;
+    return replacedLine;
   }
 
   private ItemMeta getItemMeta(ItemStack stack) {
