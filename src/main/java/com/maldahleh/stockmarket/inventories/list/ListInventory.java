@@ -7,7 +7,6 @@ import com.maldahleh.stockmarket.inventories.lookup.LookupInventory;
 import com.maldahleh.stockmarket.inventories.utils.common.StockInventory;
 import com.maldahleh.stockmarket.processor.types.PurchaseProcessor;
 import com.maldahleh.stockmarket.processor.types.SaleProcessor;
-import com.maldahleh.stockmarket.utils.Utils;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.Bukkit;
@@ -38,7 +37,7 @@ public class ListInventory extends StockInventory {
         symbolMap.put(slot, symbol.toUpperCase());
       }
 
-      inventory.setItem(slot, Utils.createItemStack(section.getSection("items." + key)));
+      inventory.setItem(slot, section.getItemStack("items." + key));
     }
 
     Bukkit.getServer()
