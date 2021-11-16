@@ -15,8 +15,7 @@ import java.util.TreeMap;
 import java.util.UUID;
 import org.bukkit.inventory.ItemStack;
 
-public class TransactionInventoryProvider
-    extends ContentProvider<UUID, Instant, Transaction, Instant, Transaction> {
+public class TransactionInventoryProvider extends ContentProvider<UUID, Instant, Transaction> {
 
   private final PlayerManager playerManager;
 
@@ -29,16 +28,7 @@ public class TransactionInventoryProvider
 
   @Override
   public Map<Instant, Transaction> getContent(UUID uuid) {
-    StockPlayer stockPlayer = playerManager.forceGetStockPlayer(uuid);
-    if (stockPlayer == null) {
-      return null;
-    }
-
-    return stockPlayer.getTransactionMap();
-  }
-
-  @Override
-  public Map<Instant, Transaction> applyTransformations(Map<Instant, Transaction> data) {
+    Map<Instant, Transaction> data = getData(uuid);
     Map<Instant, Transaction> stockDataMap = new TreeMap<>(Collections.reverseOrder());
     stockDataMap.putAll(data);
 
@@ -62,5 +52,14 @@ public class TransactionInventoryProvider
             .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
             .put("<sold>", String.valueOf(value.isSold()))
             .build());
+  }
+
+  private Map<Instant, Transaction> getData(UUID uuid) {
+    StockPlayer stockPlayer = playerManager.forceGetStockPlayer(uuid);
+    if (stockPlayer == null) {
+      return Collections.emptyMap();
+    }
+
+    return stockPlayer.getTransactionMap();
   }
 }

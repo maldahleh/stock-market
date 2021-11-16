@@ -16,8 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
-public class StockHistoryProvider
-    extends ContentProvider<String, Transaction, UUID, Transaction, OfflinePlayer> {
+public class StockHistoryProvider extends ContentProvider<String, Transaction, OfflinePlayer> {
 
   private final Storage storage;
 
@@ -28,18 +27,8 @@ public class StockHistoryProvider
   }
 
   @Override
-  public Map<Transaction, UUID> getContent(String lookup) {
-    if (lookup == null) {
-      return storage.getTransactionHistory().stream()
-          .collect(Collectors.toMap(t -> t, Transaction::getUuid));
-    }
-
-    return storage.getStockTransactions(lookup.toUpperCase()).stream()
-        .collect(Collectors.toMap(t -> t, Transaction::getUuid));
-  }
-
-  @Override
-  public Map<Transaction, OfflinePlayer> applyTransformations(Map<Transaction, UUID> data) {
+  public Map<Transaction, OfflinePlayer> getContent(String lookup) {
+    Map<Transaction, UUID> data = getData(lookup);
     Map<Transaction, OfflinePlayer> stockDataMap = new TreeMap<>(new TransactionComparator());
     for (Map.Entry<Transaction, UUID> e : data.entrySet()) {
       if (e.getKey().getQuantity() == 0) {
@@ -71,6 +60,16 @@ public class StockHistoryProvider
             .put("<sold>", String.valueOf(key.isSold()))
             .build()
     );
+  }
+
+  private Map<Transaction, UUID> getData(String key) {
+    if (key == null) {
+      return storage.getTransactionHistory().stream()
+          .collect(Collectors.toMap(t -> t, Transaction::getUuid));
+    }
+
+    return storage.getStockTransactions(key.toUpperCase()).stream()
+        .collect(Collectors.toMap(t -> t, Transaction::getUuid));
   }
 
   static class TransactionComparator implements Comparator<Transaction> {

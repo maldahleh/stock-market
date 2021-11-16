@@ -1,11 +1,13 @@
 package com.maldahleh.stockmarket.utils;
 
+import com.maldahleh.stockmarket.config.common.ConfigSection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import lombok.experimental.UtilityClass;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -16,54 +18,83 @@ public class Utils {
     return ChatColor.translateAlternateColorCodes('&', message);
   }
 
-  public ItemStack createItemStack(ConfigurationSection configurationSection) {
-    return new ItemStackBuilder(
-            Material.valueOf(configurationSection.getString("material")),
-            configurationSection.getInt("amount"),
-            (byte) configurationSection.getInt("durability"))
-        .setDisplayName(configurationSection.getString("name"))
-        .addLore(configurationSection.getStringList("lore"))
-        .buildItemStack();
+  public ItemStack createItemStack(ConfigSection section) {
+    return createItemStack(section, Collections.emptyMap());
   }
 
-  public ItemStack createItemStack(
-      ConfigurationSection section, Map<String, Object> replacementMap) {
-    return updateItemStack(createItemStack(section), replacementMap);
+  public ItemStack createItemStack(ConfigSection section, Map<String, Object> replacements) {
+    ItemStack itemStack = new ItemStack(
+        Material.valueOf(section.getString("material")),
+        section.getAmount("amount")
+    );
+
+    setDisplayName(itemStack, section.getString("name"), replacements);
+    setLore(itemStack, section.getStringList("lore"), replacements);
+    return itemStack;
   }
 
-  public ItemStack updateItemStack(ItemStack stack, Map<String, Object> replacementMap) {
-    if (stack == null || !stack.hasItemMeta()) {
-      return stack;
-    }
-
-    ItemMeta meta = stack.getItemMeta();
-    if (meta == null || !meta.hasLore()) {
+  public ItemStack updateItemStack(ItemStack stack, Map<String, Object> replacements) {
+    ItemMeta meta = getItemMeta(stack);
+    if (meta == null) {
       return stack;
     }
 
     if (meta.hasDisplayName()) {
-      String displayName = meta.getDisplayName();
-      for (Map.Entry<String, Object> e : replacementMap.entrySet()) {
-        displayName = displayName.replace(e.getKey(), String.valueOf(e.getValue()));
-      }
-
-      meta.setDisplayName(displayName);
+      setDisplayName(stack, meta.getDisplayName(), replacements);
     }
 
-    List<String> lore = meta.getLore();
-    if (lore != null) {
-      for (int index = 0; index < lore.size(); index++) {
-        String loreLine = lore.get(index);
-        for (Map.Entry<String, Object> e : replacementMap.entrySet()) {
-          loreLine = loreLine.replace(e.getKey(), String.valueOf(e.getValue()));
-        }
-
-        lore.set(index, loreLine);
-      }
+    if (meta.hasLore()) {
+      setLore(stack, meta.getLore(), replacements);
     }
 
-    meta.setLore(lore);
-    stack.setItemMeta(meta);
     return stack;
+  }
+
+  private void setDisplayName(ItemStack stack, String name, Map<String, Object> replacements) {
+    ItemMeta meta = getItemMeta(stack);
+    if (meta == null) {
+      return;
+    }
+
+    String formattedLine = formatLine(name, replacements);
+    meta.setDisplayName(formattedLine);
+
+    stack.setItemMeta(meta);
+  }
+
+  private void setLore(ItemStack stack, List<String> lore, Map<String, Object> replacements) {
+    ItemMeta meta = getItemMeta(stack);
+    if (meta == null) {
+      return;
+    }
+
+    List<String> replacedLore = lore.stream()
+        .map(line -> formatLine(line, replacements))
+        .toList();
+    meta.setLore(replacedLore);
+
+    stack.setItemMeta(meta);
+  }
+
+  private String formatLine(String line, Map<String, Object> replacements) {
+    String colored = color(line);
+    return replace(colored, replacements);
+  }
+
+  private String replace(String value, Map<String, Object> replacements) {
+    String replacedLine = value;
+    for (Entry<String, Object> e : replacements.entrySet()) {
+      replacedLine = replacedLine.replace(e.getKey(), String.valueOf(e.getValue()));
+    }
+
+    return replacedLine;
+  }
+
+  private ItemMeta getItemMeta(ItemStack stack) {
+    if (stack == null || !stack.hasItemMeta()) {
+      return null;
+    }
+
+    return stack.getItemMeta();
   }
 }

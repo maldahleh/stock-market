@@ -3,29 +3,21 @@ size: 36
 items:
   0:
     material: "BOOK"
-    amount: 1
-    durability: 0
     name: "&6&lName"
     lore:
       - "&e<name>"
   1:
     material: "BOOK"
-    amount: 1
-    durability: 0
     name: "&6&lStock Exchange"
     lore:
       - "&e<exchange>"
   2:
     material: "BOOK"
-    amount: 1
-    durability: 0
     name: "&6&lMarket Cap"
     lore:
       - "&e<cap> <market-currency>"
   3:
     material: "DIAMOND"
-    amount: 1
-    durability: 0
     name: "&6&lServer Price"
     lore:
       - "&e<server-price> <server-currency>"
@@ -35,8 +27,6 @@ items:
       - "&e<broker-percent>%"
   4:
     material: "BOOK"
-    amount: 1
-    durability: 0
     name: "&6&lMarket Price"
     lore:
       - "&e<market-price> <market-currency>"
@@ -52,8 +42,6 @@ items:
       - "&e<change-200-moving-avg>"
   5:
     material: "DIAMOND"
-    amount: 1
-    durability: 0
     name: "&6&lServer Price"
     lore:
       - "&e<server-price> <server-currency>"
@@ -63,71 +51,84 @@ items:
       - "&e<broker-percent>%"
   6:
     material: "BOOK"
-    amount: 1
-    durability: 0
     name: "&6&lAnnual Yield"
     lore:
       - "&e<yield>%"
   7:
     material: "BOOK"
-    amount: 1
-    durability: 0
     name: "&6&lCurrency"
     lore:
       - "&e<market-currency>"
   8:
     material: "BOOK"
-    amount: 1
-    durability: 0
     name: "&6&lSymbol"
     lore:
       - "&e<symbol>"
   10:
     material: "BOOK"
-    amount: 1
-    durability: 0
     name: "&6&lDay High"
     lore:
       - "&e<day-high> <market-currency>"
   11:
     material: "BOOK"
-    amount: 1
-    durability: 0
     name: "&6&lDay Low"
     lore:
       - "&e<day-low> <market-currency>"
   12:
     material: "BOOK"
-    amount: 1
-    durability: 0
     name: "&6&lOpen Price"
     lore:
       - "&e<open-price> <market-currency>"
   13:
     material: "BOOK"
-    amount: 1
-    durability: 0
     name: "&6&lVolume"
     lore:
       - "&e<volume>"
   14:
     material: "BOOK"
-    amount: 1
-    durability: 0
     name: "&6&lPrevious Close Price"
     lore:
       - "&e<close-price> <market-currency>"
   15:
     material: "BOOK"
-    amount: 1
-    durability: 0
     name: "&6&lYear High"
     lore:
       - "&e<year-high> <market-currency>"
   16:
     material: "BOOK"
-    amount: 1
-    durability: 0
     name: "&6&lYear Low"
     lore:
       - "&e<year-low> <market-currency>"
+historical:
+  data:
+    material: "ENCHANTED_BOOK"
+    name: "&6&l<date>"
+    lore:
+      - "&6Day Open:"
+      - "&e<day-open> <market-currency>"
+      - "&6Day Close:"
+      - "&e<day-close> <market-currency>"
+      - "&6Volume:"
+      - "&e<volume>"
+      - "&6Day High:"
+      - "&e<day-high> <market-currency>"
+      - "&6Day Low:"
+      - "&e<day-low> <market-currency>"
+  no-data:
+    material: "BARRIER"
+    name: "&6&lNo Historical Data"
+    lore:
+      - "&eNo Data Available"
+  slots:
+    - 18
+    - 19
+    - 20
+    - 21
+    - 22
+    - 23
+    - 24
+    - 25
+    - 26
+    - 30
+    - 31
+    - 32

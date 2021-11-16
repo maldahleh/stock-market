@@ -4,6 +4,7 @@ sql:
 cache:
   expire-minutes: 5
 unknown-data: "N/A"
+amount: 5
 transaction-cooldown-seconds: 2
 minutes-between-sale: 5
 minimum-price: 5.0
@@ -13,3 +14,12 @@ allowed-currencies:
   - "CAD"
   - "USD"
 allowed-exchanges: []
+stack:
+  material: "BOOK"
+  name: "&6&lVolume"
+  lore:
+    - "&eVolume"
+ints:
+  - 6
+  - 7
+  - 8

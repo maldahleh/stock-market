@@ -12,38 +12,28 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.inventory.ItemStack;
 
 @RequiredArgsConstructor
-public abstract class ContentProvider<L, K, V, T, TV>
-    implements IContentProvider<L, K, V, T, TV> {
+public abstract class ContentProvider<L, K, V> {
 
   protected final StockMarket stockMarket;
   protected final Settings settings;
 
-  @Override
   public Map<K, V> getContent(L lookup) {
     return Collections.emptyMap();
   }
 
-  @Override
-  public Map<T, TV> applyTransformations(Map<K, V> data) {
-    return Collections.emptyMap();
-  }
-
-  @Override
   public Map<String, Object> getExtraData(L lookup) {
     return Collections.emptyMap();
   }
 
-  @Override
-  public ItemStack getContentStack(ItemStack baseStack, int position, T key, TV value) {
+  public ItemStack getContentStack(ItemStack baseStack, int position, K key, V value) {
     return null;
   }
 
-  @Override
   public ItemStack getExtraItem(ItemStack baseStack, Map<String, Object> extraData) {
     return baseStack;
   }
 
-  protected String formatInstant(Instant instant) {
+  protected final String formatInstant(Instant instant) {
     return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
         .withLocale(settings.getLocale())
         .withZone(ZoneId.systemDefault())

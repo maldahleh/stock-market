@@ -24,8 +24,8 @@ public class Settings {
 
   public Settings(JavaPlugin javaPlugin) {
     this.configFile = new ConfigSection(javaPlugin, "config");
-    this.brokerSettings = new BrokerSettings(configFile.getConfigSection("broker"));
-    this.sqlSettings = new SqlSettings(configFile.getConfigSection("sql"));
+    this.brokerSettings = new BrokerSettings(configFile.getSection("broker"));
+    this.sqlSettings = new SqlSettings(configFile.getSection("sql"));
   }
 
   public Locale getLocale() {

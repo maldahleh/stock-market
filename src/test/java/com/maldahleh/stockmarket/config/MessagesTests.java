@@ -189,6 +189,19 @@ class MessagesTests {
         .sendMessage(color("&eYou do not have permission to use that command."));
   }
 
+  @Test
+  void noContent() {
+    // GIVEN
+    Player player = mock(Player.class);
+
+    // WHEN
+    messages.sendNoContent(player);
+
+    // THEN
+    verify(player)
+        .sendMessage(color("&6No data found!"));
+  }
+
   @Nested
   class Pending {
 

@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
+import com.maldahleh.stockmarket.config.common.ConfigSection;
 import com.maldahleh.stockmarket.stocks.StockManager;
-import com.maldahleh.stockmarket.utils.Utils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import yahoofinance.Stock;
@@ -24,16 +23,16 @@ public abstract class StockDataInventory extends StockInventory {
   protected final StockManager stockManager;
   protected final Messages messages;
   protected final Settings settings;
-  protected final ConfigurationSection section;
+  protected final ConfigSection section;
 
-  protected final String inventoryName;
+  protected final String name;
 
   protected StockDataInventory(
       StockMarket stockMarket,
       StockManager stockManager,
       Messages messages,
       Settings settings,
-      ConfigurationSection section) {
+      ConfigSection section) {
     super(stockMarket);
 
     this.stockMarket = stockMarket;
@@ -42,7 +41,7 @@ public abstract class StockDataInventory extends StockInventory {
     this.settings = settings;
     this.section = section;
 
-    this.inventoryName = Utils.color(section.getString("inventory.name"));
+    this.name = section.getString("name");
   }
 
   protected abstract Inventory buildInventory(List<Entry<Stock, BigDecimal>> stocks);

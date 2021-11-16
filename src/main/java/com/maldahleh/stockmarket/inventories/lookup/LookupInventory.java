@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
+import com.maldahleh.stockmarket.config.common.ConfigSection;
 import com.maldahleh.stockmarket.inventories.utils.common.StockDataInventory;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.utils.Utils;
@@ -15,7 +16,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import yahoofinance.Stock;
@@ -25,26 +25,20 @@ public class LookupInventory extends StockDataInventory {
 
   private static final String DATE_FORMAT = "MMMM dd, yyyy";
 
-  private final int inventorySize;
+  private final int size;
 
   private final ItemStack historicalStack;
   private final ItemStack noHistoricalStack;
   private final List<Integer> historicalSlots;
 
-  public LookupInventory(
-      StockMarket stockMarket,
-      StockManager stockManager,
-      Messages messages,
-      Settings settings,
-      ConfigurationSection section) {
+  public LookupInventory(StockMarket stockMarket, StockManager stockManager, Messages messages,
+      Settings settings, ConfigSection section) {
     super(stockMarket, stockManager, messages, settings, section);
 
-    this.inventorySize = section.getInt("inventory.size");
+    this.size = section.getInt("size");
 
-    this.historicalStack =
-        Utils.createItemStack(section.getConfigurationSection("historical." + "data"));
-    this.noHistoricalStack =
-        Utils.createItemStack(section.getConfigurationSection("historical." + "no-data"));
+    this.historicalStack = section.getItemStack("historical.data");
+    this.noHistoricalStack = section.getItemStack("historical.no-data");
     this.historicalSlots = section.getIntegerList("historical.slots");
   }
 
@@ -53,17 +47,14 @@ public class LookupInventory extends StockDataInventory {
     Stock stock = stocks.get(0).getKey();
     BigDecimal price = stocks.get(0).getValue();
 
-    Inventory inventory =
-        Bukkit.createInventory(
-            null,
-            inventorySize,
-            inventoryName.replace("<symbol>", stock.getSymbol().toUpperCase()));
+    Inventory inventory = Bukkit.createInventory(null, size,
+        name.replace("<symbol>", stock.getSymbol().toUpperCase()));
 
-    for (String key : section.getConfigurationSection("items").getKeys(false)) {
+    for (String key : section.getSection("items").getKeys()) {
       inventory.setItem(
           Integer.parseInt(key),
           Utils.createItemStack(
-              section.getConfigurationSection("items." + key),
+              section.getSection("items." + key),
               buildStockDataMap(stock, price)
           )
       );

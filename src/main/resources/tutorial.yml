@@ -3,8 +3,6 @@ size: 9
 items:
   0:
     material: "BOOK"
-    amount: 1
-    durability: 0
     name: "&6What are stocks?"
     lore:
       - "&8- A stock market is where"
@@ -15,8 +13,6 @@ items:
       - "&8ownership in the company."
   2:
     material: "BOOK"
-    amount: 1
-    durability: 0
     name: "&6Why do people buy stocks?"
     lore:
       - "&8- Shareholders, the people who buy stocks,"
@@ -28,8 +24,6 @@ items:
       - "&8it's room for growth."
   4:
     material: "BOOK"
-    amount: 1
-    durability: 0
     name: "&6What companies are on the stock market?"
     lore:
       - "&8Do you play on a PlayStation or Xbox?"
@@ -48,8 +42,6 @@ items:
       - "&ehttps://finance.yahoo.com"
   6:
     material: "BOOK"
-    amount: 1
-    durability: 0
     name: "&6What is volume?"
     lore:
       - "&8Companies usually split their"
@@ -57,8 +49,6 @@ items:
       - "&8the number of shares issued is the volume."
   8:
     material: "BOOK"
-    amount: 1
-    durability: 0
     name: "&6How can I learn how to use the stock market?"
     lore:
       - "&8To learn how to use the stock market, do &e/stock help"
