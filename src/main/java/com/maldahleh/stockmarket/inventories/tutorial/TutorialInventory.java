@@ -1,6 +1,7 @@
 package com.maldahleh.stockmarket.inventories.tutorial;
 
 import com.maldahleh.stockmarket.StockMarket;
+import com.maldahleh.stockmarket.config.common.ConfigSection;
 import com.maldahleh.stockmarket.inventories.utils.common.StockInventory;
 import com.maldahleh.stockmarket.utils.Utils;
 import org.bukkit.Bukkit;
@@ -10,26 +11,21 @@ import org.bukkit.inventory.Inventory;
 
 public class TutorialInventory extends StockInventory {
 
-  private final Inventory bukkitInventory;
+  private final Inventory inventory;
 
-  public TutorialInventory(StockMarket plugin, ConfigurationSection section) {
+  public TutorialInventory(StockMarket plugin, ConfigSection section) {
     super(plugin);
 
-    this.bukkitInventory =
-        Bukkit.createInventory(
-            null,
-            section.getInt("inventory.size"),
-            Utils.color(section.getString("inventory.name")));
+    this.inventory = Bukkit.createInventory(null, section.getInt("size"),
+        section.getString("name"));
 
-    for (String key : section.getConfigurationSection("items").getKeys(false)) {
-      bukkitInventory.setItem(
-          Integer.parseInt(key),
-          Utils.createItemStack(section.getConfigurationSection("items." + key)));
+    for (String key : section.getSection("items").getKeys()) {
+      inventory.setItem(Integer.parseInt(key), section.getItemStack("items." + key));
     }
   }
 
   public void openInventory(Player player) {
-    player.openInventory(bukkitInventory);
+    player.openInventory(inventory);
     addViewer(player);
   }
 }

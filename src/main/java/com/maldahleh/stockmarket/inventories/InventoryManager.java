@@ -3,6 +3,7 @@ package com.maldahleh.stockmarket.inventories;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
+import com.maldahleh.stockmarket.config.common.ConfigSection;
 import com.maldahleh.stockmarket.inventories.compare.CompareInventory;
 import com.maldahleh.stockmarket.inventories.history.StockHistoryInventory;
 import com.maldahleh.stockmarket.inventories.list.ListInventory;
@@ -35,7 +36,6 @@ public class InventoryManager {
       StockManager stockManager,
       PurchaseProcessor purchaseProcessor,
       SaleProcessor saleProcessor,
-      FileConfiguration config,
       Messages messages,
       Storage storage,
       Settings settings) {
@@ -45,39 +45,39 @@ public class InventoryManager {
             stockManager,
             messages,
             settings,
-            config.getConfigurationSection("inventories.lookup"));
+            new ConfigSection(stockMarket, "lookup"));
     this.compareInventory =
         new CompareInventory(
             stockMarket,
             stockManager,
             messages,
             settings,
-            config.getConfigurationSection("inventories.compare"));
+            new ConfigSection(stockMarket, "compare"));
     this.tutorialInventory =
-        new TutorialInventory(stockMarket, config.getConfigurationSection("inventories.tutorial"));
+        new TutorialInventory(stockMarket, new ConfigSection(stockMarket, "tutorial"));
     this.listInventory =
         new ListInventory(
             stockMarket,
             purchaseProcessor,
             saleProcessor,
             lookupInventory,
-            config.getConfigurationSection("inventories.list"));
+            new ConfigSection(stockMarket, "list"));
     this.portfolioInventory =
         new PortfolioInventory(
             stockMarket,
             playerManager,
             stockManager,
             settings,
-            config.getConfigurationSection("inventories.portfolio"));
+            new ConfigSection(stockMarket, "portfolio"));
     this.transactionInventory =
         new TransactionInventory(
             stockMarket,
             playerManager,
             settings,
-            config.getConfigurationSection("inventories.transactions"));
+            new ConfigSection(stockMarket, "transactions"));
     this.stockHistoryInventory =
         new StockHistoryInventory(
-            stockMarket, storage, settings, config.getConfigurationSection("inventories.history"));
+            stockMarket, storage, settings, new ConfigSection(stockMarket, "history"));
   }
 
   public void openLookupInventory(Player player, String symbol) {

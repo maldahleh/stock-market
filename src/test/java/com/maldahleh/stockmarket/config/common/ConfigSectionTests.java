@@ -151,7 +151,7 @@ class ConfigSectionTests {
     ConfigSection section = new ConfigSection(javaPlugin, DUMMY_CONFIG);
 
     // WHEN
-    ConfigSection newSection = section.getConfigSection("sql");
+    ConfigSection newSection = section.getSection("sql");
 
     // THEN
     assertNotNull(newSection);
@@ -164,7 +164,7 @@ class ConfigSectionTests {
     ConfigSection section = new ConfigSection(javaPlugin, DUMMY_CONFIG);
 
     // WHEN
-    ConfigSection newSection = section.getConfigSection("sql-invalid");
+    ConfigSection newSection = section.getSection("sql-invalid");
 
     // THEN
     assertNull(newSection);

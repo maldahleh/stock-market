@@ -1,5 +1,6 @@
 package com.maldahleh.stockmarket.utils;
 
+import com.maldahleh.stockmarket.config.common.ConfigSection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -7,7 +8,6 @@ import java.util.Map.Entry;
 import lombok.experimental.UtilityClass;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -18,11 +18,11 @@ public class Utils {
     return ChatColor.translateAlternateColorCodes('&', message);
   }
 
-  public ItemStack createItemStack(ConfigurationSection section) {
+  public ItemStack createItemStack(ConfigSection section) {
     return createItemStack(section, Collections.emptyMap());
   }
 
-  public ItemStack createItemStack(ConfigurationSection section, Map<String, Object> replacements) {
+  public ItemStack createItemStack(ConfigSection section, Map<String, Object> replacements) {
     ItemStack itemStack = new ItemStack(
         Material.valueOf(section.getString("material")),
         section.getInt("amount")

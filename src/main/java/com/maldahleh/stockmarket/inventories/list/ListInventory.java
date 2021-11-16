@@ -1,6 +1,7 @@
 package com.maldahleh.stockmarket.inventories.list;
 
 import com.maldahleh.stockmarket.StockMarket;
+import com.maldahleh.stockmarket.config.common.ConfigSection;
 import com.maldahleh.stockmarket.inventories.list.listeners.ListListener;
 import com.maldahleh.stockmarket.inventories.lookup.LookupInventory;
 import com.maldahleh.stockmarket.inventories.utils.common.StockInventory;
@@ -24,25 +25,21 @@ public class ListInventory extends StockInventory {
       PurchaseProcessor purchaseProcessor,
       SaleProcessor saleProcessor,
       LookupInventory lookupInventory,
-      ConfigurationSection section) {
+      ConfigSection section) {
     super(plugin);
 
     this.symbolMap = new HashMap<>();
-    this.inventory =
-        Bukkit.createInventory(
-            null,
-            section.getInt("inventory.size"),
-            Utils.color(section.getString("inventory.name")));
+    this.inventory = Bukkit.createInventory(null, section.getInt("size"),
+        section.getString("name"));
 
-    for (String key : section.getConfigurationSection("items").getKeys(false)) {
+    for (String key : section.getSection("items").getKeys()) {
       int slot = Integer.parseInt(key);
       String symbol = section.getString("items." + key + ".symbol");
       if (symbol != null && !symbol.isEmpty()) {
         symbolMap.put(slot, symbol.toUpperCase());
       }
 
-      inventory.setItem(
-          slot, Utils.createItemStack(section.getConfigurationSection("items." + key)));
+      inventory.setItem(slot, Utils.createItemStack(section.getSection("items." + key)));
     }
 
     Bukkit.getServer()

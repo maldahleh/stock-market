@@ -1,15 +1,14 @@
 package com.maldahleh.stockmarket.inventories.utils.paged;
 
+import com.maldahleh.stockmarket.config.common.ConfigSection;
 import com.maldahleh.stockmarket.inventories.utils.paged.data.PaginatedPlayer;
 import com.maldahleh.stockmarket.inventories.utils.paged.listeners.PagedInventoryListener;
 import com.maldahleh.stockmarket.inventories.utils.paged.provider.ContentProvider;
-import com.maldahleh.stockmarket.utils.Utils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -24,8 +23,8 @@ public class PagedInventory<L, K, V, T, TV> {
   private final ContentProvider<L, K, V, T, TV> contentProvider;
   private final Map<UUID, PaginatedPlayer> playerMap;
 
-  private final String inventoryName;
-  private final int inventorySize;
+  private final String name;
+  private final int size;
   private final ItemStack baseItem;
 
   private final int previousPageSlot;
@@ -43,44 +42,38 @@ public class PagedInventory<L, K, V, T, TV> {
 
   private final String noContentMessage;
 
-  public PagedInventory(
-      Plugin plugin, ContentProvider<L, K, V, T, TV> provider, ConfigurationSection section) {
+  public PagedInventory(Plugin plugin, ContentProvider<L, K, V, T, TV> provider,
+      ConfigSection section) {
     this.plugin = plugin;
 
     this.contentProvider = provider;
     this.playerMap = new HashMap<>();
 
-    this.inventoryName = Utils.color(section.getString("name"));
-    this.inventorySize = section.getInt("size");
-    this.baseItem = Utils.createItemStack(section.getConfigurationSection("base-item"));
+    this.name = section.getString("name");
+    this.size = section.getInt("size");
+    this.baseItem = section.getItemStack("base-item");
 
     this.previousPageSlot = section.getInt("previous-page.slot");
-    this.previousPageStack =
-        Utils.createItemStack(section.getConfigurationSection("previous-page.previous-page"));
-    this.noPreviousPageStack =
-        Utils.createItemStack(section.getConfigurationSection("previous-page.no-previous"));
+    this.previousPageStack = section.getItemStack("previous-page.previous-page");
+    this.noPreviousPageStack = section.getItemStack("previous-page.no-previous");
 
     this.nextPageSlot = section.getInt("next-page.slot");
-    this.nextPageStack =
-        Utils.createItemStack(section.getConfigurationSection("next-page.next-page"));
-    this.noNextPageStack =
-        Utils.createItemStack(section.getConfigurationSection("next-page.no-next"));
+    this.nextPageStack = section.getItemStack("next-page.next-page");
+    this.noNextPageStack = section.getItemStack("next-page.no-next");
 
     this.contentSlots = section.getIntegerList("content-slots");
     this.contentPerPage = contentSlots.size();
 
     this.extraItems = new HashMap<>();
 
-    ConfigurationSection extraSection = section.getConfigurationSection("extra-items");
+    ConfigSection extraSection = section.getSection("extra-items");
     if (extraSection != null) {
-      for (String key : section.getConfigurationSection("extra-items").getKeys(false)) {
-        extraItems.put(
-            Integer.valueOf(key),
-            Utils.createItemStack(section.getConfigurationSection("extra-items." + key)));
+      for (String key : extraSection.getKeys()) {
+        extraItems.put(Integer.valueOf(key), extraSection.getItemStack(key));
       }
     }
 
-    this.noContentMessage = Utils.color(section.getString("messages.no-content"));
+    this.noContentMessage = section.getString("messages.no-content");
 
     Bukkit.getPluginManager().registerEvents(new PagedInventoryListener(this), plugin);
   }
@@ -112,7 +105,7 @@ public class PagedInventory<L, K, V, T, TV> {
                         int currentPage = 1;
                         int currentIndex = 0;
                         int totalDisplayed = 0;
-                        Inventory i = Bukkit.createInventory(null, inventorySize, inventoryName);
+                        Inventory i = Bukkit.createInventory(null, size, name);
                         for (Map.Entry<T, TV> e : transformedData.entrySet()) {
                           int position = ((currentPage - 1) * contentPerPage) + (currentIndex + 1);
                           i.setItem(
@@ -144,7 +137,7 @@ public class PagedInventory<L, K, V, T, TV> {
                               playerMap.put(player.getUniqueId(), paginatedPlayer);
                             }
 
-                            i = Bukkit.createInventory(null, inventorySize, inventoryName);
+                            i = Bukkit.createInventory(null, size, name);
 
                             currentPage++;
                             currentIndex = 0;
@@ -168,7 +161,7 @@ public class PagedInventory<L, K, V, T, TV> {
     }
 
     e.setCancelled(true);
-    if (e.getRawSlot() >= inventorySize) {
+    if (e.getRawSlot() >= size) {
       return;
     }
 

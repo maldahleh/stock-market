@@ -30,5 +30,8 @@ class UtilsTest {
 
     when(section.get("material"))
         .thenReturn("PLANKS");
+
+    when(section.get("amount"))
+        .thenReturn(2);
   }
 }

@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class ConfigSection {
     this.config = loadFile(plugin, fileName);
   }
 
-  public ConfigSection getConfigSection(String path) {
+  public ConfigSection getSection(String path) {
     ConfigurationSection section = config.getConfigurationSection(path);
     if (section == null) {
       return null;
@@ -46,8 +47,16 @@ public class ConfigSection {
     return config.getBoolean(path, false);
   }
 
+  public ItemStack getItemStack(String path) {
+    return Utils.createItemStack(getSection(path));
+  }
+
   public List<String> getStringList(String path) {
     return config.getStringList(path);
+  }
+
+  public List<Integer> getIntegerList(String path) {
+    return config.getIntegerList(path);
   }
 
   public Set<String> getStringSet(String path) {
@@ -58,6 +67,10 @@ public class ConfigSection {
   public BigDecimal getBigDecimal(String path) {
     double value = config.getDouble(path, 0);
     return BigDecimal.valueOf(value);
+  }
+
+  public Set<String> getKeys() {
+    return config.getKeys(false);
   }
 
   public Locale getLocale(String path) {

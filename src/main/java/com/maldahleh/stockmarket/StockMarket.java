@@ -52,7 +52,6 @@ public class StockMarket extends JavaPlugin {
             stockManager,
             purchaseProcessor,
             saleProcessor,
-            getConfig(),
             messages,
             storage,
             settings);
