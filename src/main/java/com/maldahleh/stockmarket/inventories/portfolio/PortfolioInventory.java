@@ -15,7 +15,7 @@ import yahoofinance.Stock;
 
 public class PortfolioInventory {
 
-  private final PagedInventory<UUID, String, StockData, Stock, StockData> inventory;
+  private final PagedInventory<UUID, Stock, StockData> inventory;
 
   public PortfolioInventory(StockMarket stockMarket, Messages messages, PlayerManager playerManager,
       StockManager stockManager, Settings settings, ConfigSection section) {

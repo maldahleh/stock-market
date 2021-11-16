@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 
 public class TransactionInventory {
 
-  private final PagedInventory<UUID, Instant, Transaction, Instant, Transaction> inventory;
+  private final PagedInventory<UUID, Instant, Transaction> inventory;
 
   public TransactionInventory(StockMarket stockMarket, Messages messages,
       PlayerManager playerManager, Settings settings, ConfigSection section) {

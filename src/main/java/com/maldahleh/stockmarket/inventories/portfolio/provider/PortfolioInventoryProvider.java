@@ -19,8 +19,7 @@ import java.util.UUID;
 import org.bukkit.inventory.ItemStack;
 import yahoofinance.Stock;
 
-public class PortfolioInventoryProvider
-    extends ContentProvider<UUID, String, StockData, Stock, StockData> {
+public class PortfolioInventoryProvider extends ContentProvider<UUID, Stock, StockData> {
 
   private final PlayerManager playerManager;
   private final StockManager stockManager;
@@ -34,17 +33,8 @@ public class PortfolioInventoryProvider
   }
 
   @Override
-  public Map<String, StockData> getContent(UUID uuid) {
-    StockPlayer stockPlayer = playerManager.forceGetStockPlayer(uuid);
-    if (stockPlayer == null) {
-      return Collections.emptyMap();
-    }
-
-    return stockPlayer.getStockMap();
-  }
-
-  @Override
-  public Map<Stock, StockData> applyTransformations(Map<String, StockData> data) {
+  public Map<Stock, StockData> getContent(UUID uuid) {
+    Map<String, StockData> data = getData(uuid);
     Map<Stock, StockData> stockDataMap = new TreeMap<>(new StockComparator());
     for (Map.Entry<String, StockData> e : data.entrySet()) {
       if (e.getValue().getQuantity() == 0) {
@@ -106,6 +96,15 @@ public class PortfolioInventoryProvider
             "<server-currency>", stockMarket.getEcon().currencyNamePlural()
         )
     );
+  }
+
+  private Map<String, StockData> getData(UUID uuid) {
+    StockPlayer stockPlayer = playerManager.forceGetStockPlayer(uuid);
+    if (stockPlayer == null) {
+      return Collections.emptyMap();
+    }
+
+    return stockPlayer.getStockMap();
   }
 
   static class StockComparator implements Comparator<Stock> {

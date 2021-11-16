@@ -8,13 +8,12 @@ import com.maldahleh.stockmarket.inventories.history.providers.StockHistoryProvi
 import com.maldahleh.stockmarket.inventories.utils.paged.PagedInventory;
 import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
-import java.util.UUID;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public class StockHistoryInventory {
 
-  private final PagedInventory<String, Transaction, UUID, Transaction, OfflinePlayer> inventory;
+  private final PagedInventory<String, Transaction, OfflinePlayer> inventory;
 
   public StockHistoryInventory(StockMarket stockMarket, Storage storage, Messages messages,
       Settings settings, ConfigSection section) {

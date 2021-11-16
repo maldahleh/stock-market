@@ -17,11 +17,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-public class PagedInventory<L, K, V, T, U> {
+public class PagedInventory<L, K, V> {
 
   private final Plugin plugin;
   private final Messages messages;
-  private final ContentProvider<L, K, V, T, U> contentProvider;
+  private final ContentProvider<L, K, V> contentProvider;
 
   private final Map<UUID, PaginatedPlayer> playerMap = new HashMap<>();
 
@@ -42,7 +42,7 @@ public class PagedInventory<L, K, V, T, U> {
 
   private final Map<Integer, ItemStack> extraItems = new HashMap<>();
 
-  public PagedInventory(Plugin plugin, Messages messages, ContentProvider<L, K, V, T, U> provider,
+  public PagedInventory(Plugin plugin, Messages messages, ContentProvider<L, K, V> provider,
       ConfigSection section) {
     this.plugin = plugin;
     this.messages = messages;
@@ -84,12 +84,6 @@ public class PagedInventory<L, K, V, T, U> {
                 return;
               }
 
-              Map<T, U> transformedData = contentProvider.applyTransformations(data);
-              if (transformedData.isEmpty()) {
-                messages.sendNoContent(player);
-                return;
-              }
-
               Map<String, Object> extraData = contentProvider.getExtraData(target);
               Bukkit.getScheduler()
                   .runTask(
@@ -101,7 +95,7 @@ public class PagedInventory<L, K, V, T, U> {
                         int currentIndex = 0;
                         int totalDisplayed = 0;
                         Inventory i = Bukkit.createInventory(null, size, name);
-                        for (Map.Entry<T, U> e : transformedData.entrySet()) {
+                        for (Map.Entry<K, V> e : data.entrySet()) {
                           int position = ((currentPage - 1) * contentPerPage) + (currentIndex + 1);
                           i.setItem(
                               contentSlots.get(currentIndex),
@@ -110,13 +104,13 @@ public class PagedInventory<L, K, V, T, U> {
                           totalDisplayed++;
 
                           if ((currentIndex + 1) == contentPerPage
-                              || totalDisplayed == transformedData.size()) {
+                              || totalDisplayed == data.size()) {
                             i.setItem(
                                 previousPageSlot,
                                 currentPage == 1 ? noPreviousPageStack : previousPageStack);
                             i.setItem(
                                 nextPageSlot,
-                                totalDisplayed < transformedData.size()
+                                totalDisplayed < data.size()
                                     ? nextPageStack
                                     : noNextPageStack);
 
