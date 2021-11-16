@@ -14,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Settings {
 
   private static final String DECIMAL_FORMAT = "#,##0.00";
+  private static final String SINGLE_FORMAT = "0.#";
 
   private final ConfigSection configFile;
   @Getter
@@ -79,6 +80,15 @@ public class Settings {
     }
 
     return new DecimalFormat(DECIMAL_FORMAT, DecimalFormatSymbols.getInstance(getLocale()))
+        .format(input);
+  }
+
+  public String formatSingle(BigDecimal input) {
+    if (input == null) {
+      return getUnknownData();
+    }
+
+    return new DecimalFormat(SINGLE_FORMAT, DecimalFormatSymbols.getInstance(getLocale()))
         .format(input);
   }
 }

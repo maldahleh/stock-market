@@ -190,4 +190,29 @@ class SettingsTests {
       assertEquals("1,000,000.00", formatted);
     }
   }
+
+  @Nested
+  class FormatSingle {
+
+    @Test
+    void nullValue() {
+      // WHEN
+      String formatted = settings.formatSingle(null);
+
+      // THEN
+      assertEquals("N/A", formatted);
+    }
+
+    @Test
+    void validValue() {
+      // GIVEN
+      BigDecimal value = BigDecimal.valueOf(12.57);
+
+      // WHEN
+      String formatted = settings.formatSingle(value);
+
+      // THEN
+      assertEquals("12.6", formatted);
+    }
+  }
 }

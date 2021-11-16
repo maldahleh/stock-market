@@ -104,8 +104,7 @@ public abstract class StockDataInventory extends StockInventory {
         .put("<change-year-low>", settings.format(stock.getQuote().getChangeFromYearLow()))
         .put("<change-50-moving-avg>", settings.format(stock.getQuote().getChangeFromAvg50()))
         .put("<change-200-moving-avg>", settings.format(stock.getQuote().getChangeFromAvg200()))
-        .put("<yield>",
-            CurrencyUtils.formatSingle(stock.getDividend().getAnnualYieldPercent(), settings))
+        .put("<yield>", settings.formatSingle(stock.getDividend().getAnnualYieldPercent()))
         .put("<symbol>", stock.getSymbol().toUpperCase())
         .put("<day-high>", settings.format(stock.getQuote().getDayHigh()))
         .put("<day-low>", settings.format(stock.getQuote().getDayLow()))

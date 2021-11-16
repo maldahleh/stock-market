@@ -1,11 +1,6 @@
 package com.maldahleh.stockmarket.utils;
 
-import com.maldahleh.stockmarket.config.Settings;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.util.Locale;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -31,22 +26,5 @@ public class CurrencyUtils {
 
     int exponent = (int) (Math.log(input) / Math.log(1000));
     return String.format("%.1f%c", input / Math.pow(1000, exponent), suffixes.charAt(exponent - 1));
-  }
-
-  public String formatSingle(BigDecimal input, Settings settings) {
-    return formatSingle(input, settings.getUnknownData(), settings.getLocale());
-  }
-
-  private String formatSingle(BigDecimal input, String unknown, Locale locale) {
-    if (input == null) {
-      return unknown;
-    }
-
-    return singleDecimal(input.doubleValue(), locale);
-  }
-
-  private String singleDecimal(double input, Locale locale) {
-    NumberFormat decimalFormat = new DecimalFormat("0.#", DecimalFormatSymbols.getInstance(locale));
-    return decimalFormat.format(input);
   }
 }

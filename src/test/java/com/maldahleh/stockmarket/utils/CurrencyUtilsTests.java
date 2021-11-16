@@ -27,33 +27,7 @@ class CurrencyUtilsTests {
   }
 
   @Nested
-  class FormatSingle {
-
-    @Test
-    void nullValue() {
-      // WHEN
-      String formatted = CurrencyUtils.formatSingle(null, settings);
-
-      // THEN
-      assertEquals("N/A", formatted);
-    }
-
-    @Test
-    void validValue() {
-      // GIVEN
-      BigDecimal value = BigDecimal.valueOf(12.57);
-
-      // WHEN
-      String formatted = CurrencyUtils.formatSingle(value, settings);
-
-      // THEN
-      assertEquals("12.6", formatted);
-    }
-  }
-
-
-  @Nested
-  class FormatSigFIg {
+  class FormatSigFig {
 
     @Test
     void nullValue() {
