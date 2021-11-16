@@ -80,7 +80,7 @@ public class PagedInventory<L, K, V, T, TV> {
             plugin,
             () -> {
               Map<K, V> data = contentProvider.getContent(target);
-              if (data == null || data.isEmpty()) {
+              if (data.isEmpty()) {
                 player.sendMessage(noContentMessage);
                 return;
               }

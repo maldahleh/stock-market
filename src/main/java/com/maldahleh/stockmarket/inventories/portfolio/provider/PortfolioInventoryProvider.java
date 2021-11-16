@@ -45,8 +45,6 @@ public class PortfolioInventoryProvider
 
   @Override
   public Map<Stock, StockData> applyTransformations(Map<String, StockData> data) {
-    stockManager.cacheStocks(data.keySet().toArray(new String[0]));
-
     Map<Stock, StockData> stockDataMap = new TreeMap<>(new StockComparator());
     for (Map.Entry<String, StockData> e : data.entrySet()) {
       if (e.getValue().getQuantity() == 0) {

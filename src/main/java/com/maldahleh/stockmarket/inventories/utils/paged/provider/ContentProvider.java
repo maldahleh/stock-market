@@ -12,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.inventory.ItemStack;
 
 @RequiredArgsConstructor
-public abstract class ContentProvider<L, K, V, T, TV>
-    implements IContentProvider<L, K, V, T, TV> {
+public abstract class ContentProvider<L, K, V, T, U>
+    implements IContentProvider<L, K, V, T, U> {
 
   protected final StockMarket stockMarket;
   protected final Settings settings;
@@ -24,7 +24,7 @@ public abstract class ContentProvider<L, K, V, T, TV>
   }
 
   @Override
-  public Map<T, TV> applyTransformations(Map<K, V> data) {
+  public Map<T, U> applyTransformations(Map<K, V> data) {
     return Collections.emptyMap();
   }
 
@@ -34,7 +34,7 @@ public abstract class ContentProvider<L, K, V, T, TV>
   }
 
   @Override
-  public ItemStack getContentStack(ItemStack baseStack, int position, T key, TV value) {
+  public ItemStack getContentStack(ItemStack baseStack, int position, T key, U value) {
     return null;
   }
 
