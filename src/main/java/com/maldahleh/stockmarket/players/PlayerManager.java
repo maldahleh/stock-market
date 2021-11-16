@@ -6,8 +6,8 @@ import com.maldahleh.stockmarket.players.player.StockPlayer;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
-import com.maldahleh.stockmarket.utils.TimeUtils;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
@@ -83,12 +83,21 @@ public class PlayerManager {
       return false;
     }
 
-    Instant lastAction = lastActionMap.get(uuid);
-    if (lastAction == null) {
+    Long elapsedSeconds = getSecondsSinceLastAction(uuid);
+    if (elapsedSeconds == null) {
       return false;
     }
 
-    return TimeUtils.secondsSince(lastAction) < settings.getTransactionCooldownSeconds();
+    return elapsedSeconds < settings.getTransactionCooldownSeconds();
+  }
+
+  private Long getSecondsSinceLastAction(UUID uuid) {
+    Instant lastAction = lastActionMap.get(uuid);
+    if (lastAction == null) {
+      return null;
+    }
+
+    return Duration.between(lastAction, Instant.now()).toSeconds();
   }
 
   private StockPlayer getAndRemoveStockPlayer(UUID uuid) {

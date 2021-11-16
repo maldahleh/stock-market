@@ -1,8 +1,8 @@
 package com.maldahleh.stockmarket.transactions;
 
 import com.maldahleh.stockmarket.transactions.types.TransactionType;
-import com.maldahleh.stockmarket.utils.TimeUtils;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -28,6 +28,7 @@ public class Transaction {
 
   private BigDecimal stockValue;
   private BigDecimal grandTotal;
+  @Setter
   private boolean sold;
 
   public BigDecimal getStockValue() {
@@ -49,15 +50,12 @@ public class Transaction {
   }
 
   public boolean hasElapsed(int minutes) {
-    if (minutes == 0) {
+    if (minutes <= 0) {
       return true;
     }
 
-    return TimeUtils.minutesSince(transactionDate) >= minutes;
-  }
-
-  public void markSold() {
-    this.sold = true;
+    long elapsedMinutes = Duration.between(transactionDate, Instant.now()).toMinutes();
+    return elapsedMinutes >= minutes;
   }
 
   public static Transaction buildPurchase(UUID uuid, String symbol, int quantity, BigDecimal price,

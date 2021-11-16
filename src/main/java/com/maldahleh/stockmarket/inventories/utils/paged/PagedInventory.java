@@ -2,7 +2,7 @@ package com.maldahleh.stockmarket.inventories.utils.paged;
 
 import com.maldahleh.stockmarket.inventories.utils.paged.data.PaginatedPlayer;
 import com.maldahleh.stockmarket.inventories.utils.paged.listeners.PagedInventoryListener;
-import com.maldahleh.stockmarket.inventories.utils.paged.provider.IContentProvider;
+import com.maldahleh.stockmarket.inventories.utils.paged.provider.ContentProvider;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +21,7 @@ public class PagedInventory<L, K, V, T, TV> {
 
   private final Plugin plugin;
 
-  private final IContentProvider<L, K, V, T, TV> contentProvider;
+  private final ContentProvider<L, K, V, T, TV> contentProvider;
   private final Map<UUID, PaginatedPlayer> playerMap;
 
   private final String inventoryName;
@@ -44,7 +44,7 @@ public class PagedInventory<L, K, V, T, TV> {
   private final String noContentMessage;
 
   public PagedInventory(
-      Plugin plugin, IContentProvider<L, K, V, T, TV> provider, ConfigurationSection section) {
+      Plugin plugin, ContentProvider<L, K, V, T, TV> provider, ConfigurationSection section) {
     this.plugin = plugin;
 
     this.contentProvider = provider;

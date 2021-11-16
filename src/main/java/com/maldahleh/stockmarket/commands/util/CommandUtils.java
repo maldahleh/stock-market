@@ -1,6 +1,5 @@
 package com.maldahleh.stockmarket.commands.util;
 
-import com.maldahleh.stockmarket.utils.Utils;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -28,11 +27,19 @@ public class CommandUtils {
       return DEFAULT_QUANTITY;
     }
 
-    Integer quantity = Utils.getInteger(args[QUANTITY_ARG_INDEX]);
+    Integer quantity = getInteger(args[QUANTITY_ARG_INDEX]);
     if (quantity == null || quantity <= 0) {
       return INVALID_QUANTITY;
     }
 
     return quantity;
+  }
+
+  private Integer getInteger(String string) {
+    try {
+      return Integer.parseInt(string);
+    } catch (NumberFormatException e) {
+      return null;
+    }
   }
 }

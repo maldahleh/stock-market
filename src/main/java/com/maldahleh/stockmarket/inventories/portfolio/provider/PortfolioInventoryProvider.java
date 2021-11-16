@@ -3,7 +3,7 @@ package com.maldahleh.stockmarket.inventories.portfolio.provider;
 import com.google.common.collect.ImmutableMap;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Settings;
-import com.maldahleh.stockmarket.inventories.utils.paged.provider.IContentProvider;
+import com.maldahleh.stockmarket.inventories.utils.paged.provider.ContentProvider;
 import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.players.player.StockPlayer;
 import com.maldahleh.stockmarket.players.player.data.StockData;
@@ -19,12 +19,19 @@ import java.util.UUID;
 import org.bukkit.inventory.ItemStack;
 import yahoofinance.Stock;
 
-public record PortfolioInventoryProvider(
-    StockMarket stockMarket,
-    PlayerManager playerManager,
-    StockManager stockManager,
-    Settings settings)
-    implements IContentProvider<UUID, String, StockData, Stock, StockData> {
+public class PortfolioInventoryProvider
+    extends ContentProvider<UUID, String, StockData, Stock, StockData> {
+
+  private final PlayerManager playerManager;
+  private final StockManager stockManager;
+
+  public PortfolioInventoryProvider(StockMarket stockMarket, PlayerManager playerManager,
+      StockManager stockManager, Settings settings) {
+    super(stockMarket, settings);
+
+    this.playerManager = playerManager;
+    this.stockManager = stockManager;
+  }
 
   @Override
   public Map<String, StockData> getContent(UUID uuid) {

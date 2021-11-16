@@ -5,7 +5,6 @@ import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.inventories.utils.common.StockDataInventory;
 import com.maldahleh.stockmarket.stocks.StockManager;
-import com.maldahleh.stockmarket.utils.StockDataUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.math.BigDecimal;
 import java.util.List;
@@ -42,11 +41,9 @@ public class CompareInventory extends StockDataInventory {
             slot,
             Utils.createItemStack(
                 section.getConfigurationSection("items." + key),
-                StockDataUtils.buildStockDataMap(
+                buildStockDataMap(
                     stocks.get(index).getKey(),
-                    stocks.get(index).getValue(),
-                    stockMarket.getEcon().currencyNamePlural(),
-                    settings
+                    stocks.get(index).getValue()
                 )
             )
         );
