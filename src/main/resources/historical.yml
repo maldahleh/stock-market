@@ -1,6 +1,5 @@
 data:
   material: "ENCHANTED_BOOK"
-  amount: 1
   name: "&6&l<date>"
   lore:
     - "&6Day Open:"
@@ -15,7 +14,6 @@ data:
     - "&e<day-low> <market-currency>"
 no-data:
   material: "BARRIER"
-  amount: 1
   name: "&6&lNo Historical Data"
   lore:
     - "&eNo Data Available"

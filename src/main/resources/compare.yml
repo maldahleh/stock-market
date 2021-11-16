@@ -3,25 +3,21 @@ per-stock: 18
 items:
   0:
     material: "BOOK"
-    amount: 1
     name: "&6&lName"
     lore:
       - "&e<name>"
   1:
     material: "BOOK"
-    amount: 1
     name: "&6&lStock Exchange"
     lore:
       - "&e<exchange>"
   2:
     material: "BOOK"
-    amount: 1
     name: "&6&lMarket Cap"
     lore:
       - "&e<cap> <market-currency>"
   3:
     material: "DIAMOND"
-    amount: 1
     name: "&6&lServer Price"
     lore:
       - "&e<server-price> <server-currency>"
@@ -31,7 +27,6 @@ items:
       - "&e<broker-percent>%"
   4:
     material: "BOOK"
-    amount: 1
     name: "&6&lMarket Price"
     lore:
       - "&e<market-price> <market-currency>"
@@ -47,7 +42,6 @@ items:
       - "&e<change-200-moving-avg>"
   5:
     material: "DIAMOND"
-    amount: 1
     name: "&6&lServer Price"
     lore:
       - "&e<server-price> <server-currency>"
@@ -57,61 +51,51 @@ items:
       - "&e<broker-percent>%"
   6:
     material: "BOOK"
-    amount: 1
     name: "&6&lAnnual Yield"
     lore:
       - "&e<yield>%"
   7:
     material: "BOOK"
-    amount: 1
     name: "&6&lCurrency"
     lore:
       - "&e<market-currency>"
   8:
     material: "BOOK"
-    amount: 1
     name: "&6&lSymbol"
     lore:
       - "&e<symbol>"
   10:
     material: "BOOK"
-    amount: 1
     name: "&6&lDay High"
     lore:
       - "&e<day-high> <market-currency>"
   11:
     material: "BOOK"
-    amount: 1
     name: "&6&lDay Low"
     lore:
       - "&e<day-low> <market-currency>"
   12:
     material: "BOOK"
-    amount: 1
     name: "&6&lOpen Price"
     lore:
       - "&e<open-price> <market-currency>"
   13:
     material: "BOOK"
-    amount: 1
     name: "&6&lVolume"
     lore:
       - "&e<volume>"
   14:
     material: "BOOK"
-    amount: 1
     name: "&6&lPrevious Close Price"
     lore:
       - "&e<close-price> <market-currency>"
   15:
     material: "BOOK"
-    amount: 1
     name: "&6&lYear High"
     lore:
       - "&e<year-high> <market-currency>"
   16:
     material: "BOOK"
-    amount: 1
     name: "&6&lYear Low"
     lore:
       - "&e<year-low> <market-currency>"
