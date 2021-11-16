@@ -547,6 +547,18 @@ class MessagesTests {
           BigDecimal.valueOf(20)
       );
 
+      when(settings.format(transaction.getSinglePrice()))
+          .thenReturn("5.00");
+
+      when(settings.format(transaction.getBrokerFee()))
+          .thenReturn("10.00");
+
+      when(settings.format(transaction.getGrandTotal()))
+          .thenReturn("20.00");
+
+      when(settings.format(transaction.getEarnings()))
+          .thenReturn("N/A");
+
       // WHEN
       messages.sendBoughtStockMessage(player, company, transaction);
 
@@ -575,6 +587,18 @@ class MessagesTests {
           BigDecimal.valueOf(100),
           BigDecimal.valueOf(20)
       );
+
+      when(settings.format(transaction.getSinglePrice()))
+          .thenReturn("5.00");
+
+      when(settings.format(transaction.getBrokerFee()))
+          .thenReturn("10.00");
+
+      when(settings.format(transaction.getGrandTotal()))
+          .thenReturn("20.00");
+
+      when(settings.format(transaction.getEarnings()))
+          .thenReturn("100.00");
 
       // WHEN
       messages.sendSoldStockMessage(player, company, transaction);

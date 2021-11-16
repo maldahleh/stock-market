@@ -6,7 +6,6 @@ import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.inventories.utils.paged.provider.ContentProvider;
 import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
-import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.util.Comparator;
 import java.util.Map;
@@ -64,10 +63,10 @@ public class StockHistoryProvider
             .put("<symbol>", key.getSymbol().toUpperCase())
             .put("<transaction-type>", key.getTransactionType())
             .put("<quantity>", key.getQuantity())
-            .put("<stock-value>", CurrencyUtils.formatCurrency(key.getStockValue(), settings))
-            .put("<broker-fees>", CurrencyUtils.formatCurrency(key.getBrokerFee(), settings))
-            .put("<grand-total>", CurrencyUtils.formatCurrency(key.getGrandTotal(), settings))
-            .put("<earnings>", CurrencyUtils.format(key.getEarnings(), settings))
+            .put("<stock-value>", settings.format(key.getStockValue()))
+            .put("<broker-fees>", settings.format(key.getBrokerFee()))
+            .put("<grand-total>", settings.format(key.getGrandTotal()))
+            .put("<earnings>", settings.format(key.getEarnings()))
             .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
             .put("<sold>", String.valueOf(key.isSold()))
             .build()

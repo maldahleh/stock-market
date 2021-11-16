@@ -66,6 +66,9 @@ class StockPlaceholderManagerTests {
       when(stockManager.getServerPrice(stock))
           .thenReturn(BigDecimal.TEN);
 
+      when(settings.format(BigDecimal.TEN))
+          .thenReturn("10.00");
+
       // allow the lookup to complete
       SchedulerUtils.interceptAsyncRun(plugin, scheduler);
       // run the timer from the constructor

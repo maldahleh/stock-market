@@ -7,7 +7,6 @@ import com.maldahleh.stockmarket.inventories.utils.paged.provider.ContentProvide
 import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.players.player.StockPlayer;
 import com.maldahleh.stockmarket.transactions.Transaction;
-import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.time.Instant;
 import java.util.Collections;
@@ -56,18 +55,10 @@ public class TransactionInventoryProvider
             .put("<symbol>", value.getSymbol().toUpperCase())
             .put("<transaction-type>", value.getTransactionType())
             .put("<quantity>", value.getQuantity())
-            .put(
-                "<stock-value>",
-                CurrencyUtils.formatCurrency(value.getStockValue(), settings))
-            .put(
-                "<broker-fees>",
-                CurrencyUtils.formatCurrency(value.getBrokerFee(), settings))
-            .put(
-                "<grand-total>",
-                CurrencyUtils.formatCurrency(value.getGrandTotal(), settings))
-            .put(
-                "<earnings>",
-                CurrencyUtils.format(value.getEarnings(), settings))
+            .put("<stock-value>", settings.format(value.getStockValue()))
+            .put("<broker-fees>", settings.format(value.getBrokerFee()))
+            .put("<grand-total>", settings.format(value.getGrandTotal()))
+            .put("<earnings>", settings.format(value.getEarnings()))
             .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
             .put("<sold>", String.valueOf(value.isSold()))
             .build());

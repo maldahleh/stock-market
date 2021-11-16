@@ -66,7 +66,7 @@ public class StockMarket extends JavaPlugin {
     if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
       StockPlaceholderManager stockPlaceholderManager = new StockPlaceholderManager(this,
           stockManager, settings);
-      new StockPlaceholder(playerManager, stockPlaceholderManager).register();
+      new StockPlaceholder(settings, playerManager, stockPlaceholderManager).register();
     }
   }
 

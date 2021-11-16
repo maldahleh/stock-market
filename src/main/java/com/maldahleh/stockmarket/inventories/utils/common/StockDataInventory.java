@@ -5,7 +5,6 @@ import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.stocks.StockManager;
-import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -92,32 +91,27 @@ public abstract class StockDataInventory extends StockInventory {
     return ImmutableMap.<String, Object>builder()
         .put("<name>", stock.getName())
         .put("<exchange>", stock.getStockExchange())
-        .put("<cap>", CurrencyUtils.sigFigNumber(stock.getStats().getMarketCap()))
-        .put("<market-price>", CurrencyUtils.format(stock.getQuote().getPrice(), settings))
+        .put("<cap>", settings.formatSigFig(stock.getStats().getMarketCap()))
+        .put("<market-price>", settings.format(stock.getQuote().getPrice()))
         .put("<market-currency>", stock.getCurrency())
-        .put("<server-price>", CurrencyUtils.format(serverPrice, settings))
+        .put("<server-price>", settings.format(serverPrice))
         .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
         .put("<broker-flat>", settings.getBrokerSettings().getBrokerFlatString())
         .put("<broker-percent>", settings.getBrokerSettings().getBrokerPercentString())
-        .put("<change-close>", CurrencyUtils.format(stock.getQuote().getChange(), settings))
-        .put("<change-year-high>",
-            CurrencyUtils.format(stock.getQuote().getChangeFromYearHigh(), settings))
-        .put("<change-year-low>",
-            CurrencyUtils.format(stock.getQuote().getChangeFromYearLow(), settings))
-        .put("<change-50-moving-avg>",
-            CurrencyUtils.format(stock.getQuote().getChangeFromAvg50(), settings))
-        .put("<change-200-moving-avg>",
-            CurrencyUtils.format(stock.getQuote().getChangeFromAvg200(), settings))
-        .put("<yield>",
-            CurrencyUtils.formatSingle(stock.getDividend().getAnnualYieldPercent(), settings))
+        .put("<change-close>", settings.format(stock.getQuote().getChange()))
+        .put("<change-year-high>", settings.format(stock.getQuote().getChangeFromYearHigh()))
+        .put("<change-year-low>", settings.format(stock.getQuote().getChangeFromYearLow()))
+        .put("<change-50-moving-avg>", settings.format(stock.getQuote().getChangeFromAvg50()))
+        .put("<change-200-moving-avg>", settings.format(stock.getQuote().getChangeFromAvg200()))
+        .put("<yield>", settings.formatSingle(stock.getDividend().getAnnualYieldPercent()))
         .put("<symbol>", stock.getSymbol().toUpperCase())
-        .put("<day-high>", CurrencyUtils.format(stock.getQuote().getDayHigh(), settings))
-        .put("<day-low>", CurrencyUtils.format(stock.getQuote().getDayLow(), settings))
-        .put("<open-price>", CurrencyUtils.format(stock.getQuote().getOpen(), settings))
-        .put("<volume>", CurrencyUtils.sigFigNumber(stock.getQuote().getVolume()))
-        .put("<close-price>", CurrencyUtils.format(stock.getQuote().getPreviousClose(), settings))
-        .put("<year-high>", CurrencyUtils.format(stock.getQuote().getYearHigh(), settings))
-        .put("<year-low>", CurrencyUtils.format(stock.getQuote().getYearLow(), settings))
+        .put("<day-high>", settings.format(stock.getQuote().getDayHigh()))
+        .put("<day-low>", settings.format(stock.getQuote().getDayLow()))
+        .put("<open-price>", settings.format(stock.getQuote().getOpen()))
+        .put("<volume>", settings.formatSigFig(stock.getQuote().getVolume()))
+        .put("<close-price>", settings.format(stock.getQuote().getPreviousClose()))
+        .put("<year-high>", settings.format(stock.getQuote().getYearHigh()))
+        .put("<year-low>", settings.format(stock.getQuote().getYearLow()))
         .build();
   }
 }

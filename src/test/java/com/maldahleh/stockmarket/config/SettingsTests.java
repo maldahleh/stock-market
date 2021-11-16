@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.Locale;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -163,5 +164,113 @@ class SettingsTests {
 
     // THEN
     assertTrue(isAllowedExchange);
+  }
+
+  @Nested
+  class Format {
+
+    @Test
+    void nullValue() {
+      // WHEN
+      String formatted = settings.format(null);
+
+      // THEN
+      assertEquals("N/A", formatted);
+    }
+
+    @Test
+    void validValue() {
+      // GIVEN
+      BigDecimal value = BigDecimal.valueOf(1_000_000);
+
+      // WHEN
+      String formatted = settings.format(value);
+
+      // THEN
+      assertEquals("1,000,000.00", formatted);
+    }
+  }
+
+  @Nested
+  class FormatSingle {
+
+    @Test
+    void nullValue() {
+      // WHEN
+      String formatted = settings.formatSingle(null);
+
+      // THEN
+      assertEquals("N/A", formatted);
+    }
+
+    @Test
+    void validValue() {
+      // GIVEN
+      BigDecimal value = BigDecimal.valueOf(12.57);
+
+      // WHEN
+      String formatted = settings.formatSingle(value);
+
+      // THEN
+      assertEquals("12.6", formatted);
+    }
+  }
+
+  @Nested
+  class FormatSigFig {
+
+    @Test
+    void nullValueBigDecimal() {
+      // WHEN
+      String formatted = settings.formatSigFig((BigDecimal) null);
+
+      // THEN
+      assertEquals("N/A", formatted);
+    }
+
+    @Test
+    void nullValue() {
+      // WHEN
+      String formatted = settings.formatSigFig((Long) null);
+
+      // THEN
+      assertEquals("N/A", formatted);
+    }
+
+    @Test
+    void validValue() {
+      // GIVEN
+      long value = 1_000_000L;
+
+      // WHEN
+      String formatted = settings.formatSigFig(value);
+
+      // THEN
+      assertEquals("1.0m", formatted);
+    }
+
+    @Test
+    void validValueBigDecimal() {
+      // GIVEN
+      BigDecimal value = BigDecimal.valueOf(1_000_000);
+
+      // WHEN
+      String formatted = settings.formatSigFig(value);
+
+      // THEN
+      assertEquals("1.0m", formatted);
+    }
+
+    @Test
+    void validValueBelowOneThousand() {
+      // GIVEN
+      long value = 879L;
+
+      // WHEN
+      String formatted = settings.formatSigFig(value);
+
+      // THEN
+      assertEquals("879", formatted);
+    }
   }
 }

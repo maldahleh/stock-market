@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.placeholder.model.PlaceholderStock;
 import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.players.player.StockPlayer;
@@ -25,6 +26,7 @@ import yahoofinance.quotes.stock.StockStats;
 
 class StockPlaceholderTests {
 
+  private Settings settings;
   private PlayerManager playerManager;
   private StockPlaceholderManager stockPlaceholderManager;
 
@@ -32,10 +34,11 @@ class StockPlaceholderTests {
 
   @BeforeEach
   void setup() {
+    this.settings = mock(Settings.class);
     this.playerManager = mock(PlayerManager.class);
     this.stockPlaceholderManager = mock(StockPlaceholderManager.class);
 
-    this.stockPlaceholder = new StockPlaceholder(playerManager, stockPlaceholderManager);
+    this.stockPlaceholder = new StockPlaceholder(settings, playerManager, stockPlaceholderManager);
   }
 
   @Test
@@ -118,6 +121,7 @@ class StockPlaceholderTests {
       // GIVEN
       String params = "portfolio-value";
       UUID uuid = UUID.randomUUID();
+      BigDecimal portfolioValue = BigDecimal.valueOf(1100);
 
       OfflinePlayer player = mock(OfflinePlayer.class);
       StockPlayer stockPlayer = mock(StockPlayer.class);
@@ -129,10 +133,13 @@ class StockPlaceholderTests {
           .thenReturn(uuid);
 
       when(stockPlayer.getPortfolioValue())
-          .thenReturn(BigDecimal.valueOf(1100));
+          .thenReturn(portfolioValue);
 
       when(playerManager.getStockPlayer(uuid))
           .thenReturn(stockPlayer);
+
+      when(settings.formatSigFig(portfolioValue))
+          .thenReturn("1.1k");
 
       // WHEN
       String result = stockPlaceholder.onRequest(player, params);
@@ -178,6 +185,12 @@ class StockPlaceholderTests {
       // GIVEN
       when(stockPlaceholderManager.getPlaceholderStock("ba"))
           .thenReturn(buildPlaceholderStock());
+
+      when(settings.formatSigFig(BigDecimal.valueOf(1_987_000_000)))
+          .thenReturn("2.0b");
+
+      when(settings.formatSigFig(1_100_000L))
+          .thenReturn("1.1m");
 
       // WHEN
       String result = stockPlaceholder.onRequest(null, params);

@@ -6,7 +6,6 @@ import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.inventories.utils.common.StockDataInventory;
 import com.maldahleh.stockmarket.stocks.StockManager;
-import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -86,17 +85,11 @@ public class LookupInventory extends StockDataInventory {
                 ImmutableMap.<String, Object>builder()
                     .put("<date>", formatDate(quote.getDate().getTime()))
                     .put("<market-currency>", stock.getCurrency())
-                    .put("<day-open>",
-                        CurrencyUtils.format(quote.getOpen(), settings))
-                    .put("<day-close>",
-                        CurrencyUtils.format(quote.getClose(), settings))
-                    .put("<volume>",
-                        CurrencyUtils.formatSigFig(
-                            quote.getVolume(), settings.getUnknownData()))
-                    .put("<day-high>",
-                        CurrencyUtils.format(quote.getHigh(), settings))
-                    .put("<day-low>",
-                        CurrencyUtils.format(quote.getLow(), settings))
+                    .put("<day-open>", settings.format(quote.getOpen()))
+                    .put("<day-close>", settings.format(quote.getClose()))
+                    .put("<volume>", settings.formatSigFig(quote.getVolume()))
+                    .put("<day-high>", settings.format(quote.getHigh()))
+                    .put("<day-low>", settings.format(quote.getLow()))
                     .build()));
     }
 
