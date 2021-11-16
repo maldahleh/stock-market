@@ -4,12 +4,16 @@ import com.maldahleh.stockmarket.config.common.ConfigSection;
 import com.maldahleh.stockmarket.config.models.BrokerSettings;
 import com.maldahleh.stockmarket.config.models.SqlSettings;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 import java.util.Set;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Settings {
+
+  private static final String DECIMAL_FORMAT = "#,##0.00";
 
   private final ConfigSection configFile;
   @Getter
@@ -67,5 +71,14 @@ public class Settings {
 
     return configValues.stream()
         .anyMatch(setValue -> setValue.equalsIgnoreCase(value));
+  }
+
+  public String format(BigDecimal input) {
+    if (input == null) {
+      return getUnknownData();
+    }
+
+    return new DecimalFormat(DECIMAL_FORMAT, DecimalFormatSymbols.getInstance(getLocale()))
+        .format(input);
   }
 }

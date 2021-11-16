@@ -3,7 +3,6 @@ package com.maldahleh.stockmarket.placeholder;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.placeholder.model.PlaceholderStock;
 import com.maldahleh.stockmarket.stocks.StockManager;
-import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -69,7 +68,7 @@ public class StockPlaceholderManager {
 
     PlaceholderStock placeholder = determinePlaceholderStock(existing);
     placeholder.setStock(stock);
-    placeholder.setServerPrice(CurrencyUtils.format(stockManager.getServerPrice(stock), settings));
+    placeholder.setServerPrice(settings.format(stockManager.getServerPrice(stock)));
 
     return placeholder;
   }

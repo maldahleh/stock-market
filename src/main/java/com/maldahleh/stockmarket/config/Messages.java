@@ -3,7 +3,6 @@ package com.maldahleh.stockmarket.config;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.common.ConfigSection;
 import com.maldahleh.stockmarket.transactions.Transaction;
-import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -152,14 +151,10 @@ public class Messages {
         .replace("<company>", company)
         .replace("<symbol>", transaction.getSymbol())
         .replace("<quantity>", String.valueOf(transaction.getQuantity()))
-        .replace("<stock-value>",
-            CurrencyUtils.formatCurrency(transaction.getSinglePrice(), settings))
-        .replace("<broker-fees>",
-            CurrencyUtils.formatCurrency(transaction.getBrokerFee(), settings))
-        .replace("<total>",
-            CurrencyUtils.formatCurrency(transaction.getGrandTotal(), settings))
-        .replace("<net>",
-            CurrencyUtils.formatCurrency(transaction.getEarnings(), settings));
+        .replace("<stock-value>", settings.format(transaction.getSinglePrice()))
+        .replace("<broker-fees>", settings.format(transaction.getBrokerFee()))
+        .replace("<total>", settings.format(transaction.getGrandTotal()))
+        .replace("<net>", settings.format(transaction.getEarnings()));
   }
 
   private String getCurrentTime() {

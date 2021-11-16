@@ -27,31 +27,6 @@ class CurrencyUtilsTests {
   }
 
   @Nested
-  class Format {
-
-    @Test
-    void nullValue() {
-      // WHEN
-      String formatted = CurrencyUtils.format(null, settings);
-
-      // THEN
-      assertEquals("N/A", formatted);
-    }
-
-    @Test
-    void validValue() {
-      // GIVEN
-      BigDecimal value = BigDecimal.valueOf(1_000_000);
-
-      // WHEN
-      String formatted = CurrencyUtils.format(value, settings);
-
-      // THEN
-      assertEquals("1,000,000.00", formatted);
-    }
-  }
-
-  @Nested
   class FormatCurrency {
 
     @Test
