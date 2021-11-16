@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -72,6 +73,30 @@ class ConfigSectionTests {
   }
 
   @Test
+  void validAmount() {
+    // GIVEN
+    ConfigSection section = new ConfigSection(javaPlugin, DUMMY_CONFIG);
+
+    // WHEN
+    int value = section.getAmount("amount");
+
+    // THEN
+    assertEquals(5, value);
+  }
+
+  @Test
+  void invalidAmount() {
+    // GIVEN
+    ConfigSection section = new ConfigSection(javaPlugin, DUMMY_CONFIG);
+
+    // WHEN
+    int value = section.getAmount("amount-invalid");
+
+    // THEN
+    assertEquals(1, value);
+  }
+
+  @Test
   void validBoolean() {
     // GIVEN
     ConfigSection section = new ConfigSection(javaPlugin, DUMMY_CONFIG);
@@ -109,6 +134,19 @@ class ConfigSectionTests {
   }
 
   @Test
+  void intList() {
+    // GIVEN
+    ConfigSection section = new ConfigSection(javaPlugin, DUMMY_CONFIG);
+
+    // WHEN
+    List<Integer> value = section.getIntegerList("ints");
+
+    // THEN
+    assertEquals(3, value.size());
+    assertTrue(value.containsAll(List.of(6, 7, 8)));
+  }
+
+  @Test
   void stringSet() {
     // GIVEN
     ConfigSection section = new ConfigSection(javaPlugin, DUMMY_CONFIG);
@@ -119,6 +157,19 @@ class ConfigSectionTests {
     // THEN
     assertEquals(2, value.size());
     assertTrue(value.containsAll(List.of("USD", "CAD")));
+  }
+
+  @Test
+  void keys() {
+    // GIVEN
+    ConfigSection section = new ConfigSection(javaPlugin, DUMMY_CONFIG);
+
+    // WHEN
+    Set<String> value = section.getKeys();
+
+    // THEN
+    assertEquals(13, value.size());
+    assertTrue(value.containsAll(List.of("locale", "sql", "cache", "unknown-data", "amount")));
   }
 
   @Test
@@ -168,6 +219,21 @@ class ConfigSectionTests {
 
     // THEN
     assertNull(newSection);
+  }
+
+  @Test
+  void itemStack() {
+    // GIVEN
+    ConfigSection section = new ConfigSection(javaPlugin, DUMMY_CONFIG);
+
+    // WHEN
+    Throwable exception = assertThrows(NullPointerException.class,
+        () -> section.getItemStack("stack"));
+
+    // THEN
+    assertEquals(
+        "Cannot invoke \"org.bukkit.Server.getItemFactory()\" because \"org.bukkit.Bukkit.server\" is null",
+        exception.getMessage());
   }
 
   @Test
