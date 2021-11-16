@@ -9,7 +9,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 @UtilityClass
@@ -29,7 +28,6 @@ public class Utils {
         section.getInt("amount")
     );
 
-    setDamage(itemStack, section.getInt("durability"));
     setDisplayName(itemStack, section.getString("name"), replacements);
     setLore(itemStack, section.getStringList("lore"), replacements);
     return itemStack;
@@ -50,14 +48,6 @@ public class Utils {
     }
 
     return stack;
-  }
-
-  private void setDamage(ItemStack stack, int damage) {
-    ItemMeta meta = getItemMeta(stack);
-    if (meta instanceof Damageable damageable) {
-      damageable.setDamage(damage);
-      stack.setItemMeta(meta);
-    }
   }
 
   private void setDisplayName(ItemStack stack, String name, Map<String, Object> replacements) {

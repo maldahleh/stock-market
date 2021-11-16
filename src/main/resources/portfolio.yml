@@ -2,7 +2,6 @@ name: "&6Stocks &8- &ePortfolio"
 size: 45
 base-item:
   material: "BOOK"
-  durability: 0
   amount: 1
   name: "&6&l<symbol> &e&l(&6&l<name>&e&l)"
   lore:
@@ -14,14 +13,12 @@ previous-page:
   slot: 36
   previous-page:
     material: "ARROW"
-    durability: 0
     amount: 1
     name: "&6Go To Previous Page"
     lore:
       - "&eGo to the previous page"
   no-previous:
     material: "BARRIER"
-    durability: 0
     amount: 1
     name: "&4No Previous Page"
     lore:
@@ -30,14 +27,12 @@ next-page:
   slot: 44
   next-page:
     material: "ARROW"
-    durability: 0
     amount: 1
     name: "&6Go To Next Page"
     lore:
       - "&eGo to the next page"
   no-next:
     material: "BARRIER"
-    durability: 0
     amount: 1
     name: "&4No Next Page"
     lore:
@@ -83,7 +78,6 @@ extra-items:
   40:
     material: "DIAMOND"
     amount: 1
-    durability: 0
     name: "&6&lStats"
     lore:
       - "&6Current Value:"

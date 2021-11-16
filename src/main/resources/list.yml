@@ -4,7 +4,6 @@ items:
   0:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lAmazon"
     symbol: "AMZN"
     lore:
@@ -21,7 +20,6 @@ items:
   1:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lApple"
     symbol: "AAPL"
     lore:
@@ -38,7 +36,6 @@ items:
   2:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lAT&T"
     symbol: "T"
     lore:
@@ -55,7 +52,6 @@ items:
   3:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lBoeing"
     symbol: "BA"
     lore:
@@ -72,7 +68,6 @@ items:
   4:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lCedar Fair"
     symbol: "FUN"
     lore:
@@ -89,7 +84,6 @@ items:
   5:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lChipotle"
     symbol: "CMG"
     lore:
@@ -106,7 +100,6 @@ items:
   6:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lCoca-Cola"
     symbol: "KO"
     lore:
@@ -123,7 +116,6 @@ items:
   7:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lCostco"
     symbol: "COST"
     lore:
@@ -140,7 +132,6 @@ items:
   8:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lFacebook"
     symbol: "FB"
     lore:
@@ -157,7 +148,6 @@ items:
   9:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lFedEx"
     symbol: "FDX"
     lore:
@@ -174,7 +164,6 @@ items:
   10:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lFord"
     symbol: "F"
     lore:
@@ -191,7 +180,6 @@ items:
   11:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lGeneral Motors"
     symbol: "GM"
     lore:
@@ -208,7 +196,6 @@ items:
   12:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lGoogle"
     symbol: "GOOG"
     lore:
@@ -225,7 +212,6 @@ items:
   13:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lHome Depot"
     symbol: "HD"
     lore:
@@ -242,7 +228,6 @@ items:
   14:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lKellogg's"
     symbol: "K"
     lore:
@@ -259,7 +244,6 @@ items:
   15:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lLowe's"
     symbol: "LOW"
     lore:
@@ -276,7 +260,6 @@ items:
   16:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lMastercard"
     symbol: "MA"
     lore:
@@ -293,7 +276,6 @@ items:
   17:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lMcDonald's"
     symbol: "MCD"
     lore:
@@ -310,7 +292,6 @@ items:
   18:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lMicrosoft"
     symbol: "MSFT"
     lore:
@@ -327,7 +308,6 @@ items:
   19:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lNetflix"
     symbol: "NFLX"
     lore:
@@ -344,7 +324,6 @@ items:
   20:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lNvidia"
     symbol: "NVDA"
     lore:
@@ -361,7 +340,6 @@ items:
   21:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lStarbucks"
     symbol: "SBUX"
     lore:
@@ -378,7 +356,6 @@ items:
   22:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lSnapchat"
     symbol: "SNAP"
     lore:
@@ -395,7 +372,6 @@ items:
   23:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lUber"
     symbol: "UBER"
     lore:
@@ -412,7 +388,6 @@ items:
   24:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lUnited"
     symbol: "UAL"
     lore:
@@ -429,7 +404,6 @@ items:
   25:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lVisa"
     symbol: "V"
     lore:
@@ -446,7 +420,6 @@ items:
   26:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lTime Warner"
     symbol: "TWX"
     lore:
@@ -463,7 +436,6 @@ items:
   30:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lTwitter"
     symbol: "TWTR"
     lore:
@@ -480,7 +452,6 @@ items:
   31:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lWalmart"
     symbol: "WMT"
     lore:
@@ -497,7 +468,6 @@ items:
   32:
     material: "BOOK"
     amount: 1
-    durability: 0
     name: "&6&lWalt Disney Company"
     symbol: "DIS"
     lore:
@@ -514,7 +484,6 @@ items:
   27:
     material: "ENCHANTED_BOOK"
     amount: 1
-    durability: 0
     name: "&6&lThousands more at:"
     symbol: ""
     lore:
@@ -522,7 +491,6 @@ items:
   35:
     material: "ENCHANTED_BOOK"
     amount: 1
-    durability: 0
     name: "&6&lThousands more at:"
     symbol: ""
     lore:

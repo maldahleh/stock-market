@@ -1,7 +1,6 @@
 data:
   material: "ENCHANTED_BOOK"
   amount: 1
-  durability: 0
   name: "&6&l<date>"
   lore:
     - "&6Day Open:"
@@ -17,7 +16,6 @@ data:
 no-data:
   material: "BARRIER"
   amount: 1
-  durability: 0
   name: "&6&lNo Historical Data"
   lore:
     - "&eNo Data Available"
