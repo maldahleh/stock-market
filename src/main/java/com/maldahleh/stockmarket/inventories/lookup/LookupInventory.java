@@ -6,7 +6,6 @@ import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.inventories.utils.common.StockDataInventory;
 import com.maldahleh.stockmarket.stocks.StockManager;
-import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -88,9 +87,7 @@ public class LookupInventory extends StockDataInventory {
                     .put("<market-currency>", stock.getCurrency())
                     .put("<day-open>", settings.format(quote.getOpen()))
                     .put("<day-close>", settings.format(quote.getClose()))
-                    .put("<volume>",
-                        CurrencyUtils.formatSigFig(
-                            quote.getVolume(), settings.getUnknownData()))
+                    .put("<volume>", settings.formatSigFig(quote.getVolume()))
                     .put("<day-high>", settings.format(quote.getHigh()))
                     .put("<day-low>", settings.format(quote.getLow()))
                     .build()));

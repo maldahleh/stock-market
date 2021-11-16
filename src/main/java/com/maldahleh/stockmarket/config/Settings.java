@@ -91,4 +91,26 @@ public class Settings {
     return new DecimalFormat(SINGLE_FORMAT, DecimalFormatSymbols.getInstance(getLocale()))
         .format(input);
   }
+
+  public String formatSigFig(BigDecimal input) {
+    if (input == null) {
+      return getUnknownData();
+    }
+
+    return formatSigFig(input.longValue());
+  }
+
+  public String formatSigFig(Long input) {
+    if (input == null) {
+      return getUnknownData();
+    }
+
+    String suffixes = "kmbt";
+    if (input < 1000) {
+      return String.valueOf(input).replace(".0", "");
+    }
+
+    int exponent = (int) (Math.log(input) / Math.log(1000));
+    return String.format("%.1f%c", input / Math.pow(1000, exponent), suffixes.charAt(exponent - 1));
+  }
 }

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.placeholder.model.PlaceholderStock;
 import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.players.player.StockPlayer;
@@ -32,10 +33,11 @@ class StockPlaceholderTests {
 
   @BeforeEach
   void setup() {
+    Settings settings = mock(Settings.class);
     this.playerManager = mock(PlayerManager.class);
     this.stockPlaceholderManager = mock(StockPlaceholderManager.class);
 
-    this.stockPlaceholder = new StockPlaceholder(playerManager, stockPlaceholderManager);
+    this.stockPlaceholder = new StockPlaceholder(settings, playerManager, stockPlaceholderManager);
   }
 
   @Test

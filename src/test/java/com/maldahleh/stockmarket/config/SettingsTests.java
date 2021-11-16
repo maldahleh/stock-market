@@ -215,4 +215,62 @@ class SettingsTests {
       assertEquals("12.6", formatted);
     }
   }
+
+  @Nested
+  class FormatSigFig {
+
+    @Test
+    void nullValueBigDecimal() {
+      // WHEN
+      String formatted = settings.formatSigFig((BigDecimal) null);
+
+      // THEN
+      assertEquals("N/A", formatted);
+    }
+
+    @Test
+    void nullValue() {
+      // WHEN
+      String formatted = settings.formatSigFig((Long) null);
+
+      // THEN
+      assertEquals("N/A", formatted);
+    }
+
+    @Test
+    void validValue() {
+      // GIVEN
+      long value = 1_000_000L;
+
+      // WHEN
+      String formatted = settings.formatSigFig(value);
+
+      // THEN
+      assertEquals("1.0m", formatted);
+    }
+
+    @Test
+    void validValueBigDecimal() {
+      // GIVEN
+      BigDecimal value = BigDecimal.valueOf(1_000_000);
+
+      // WHEN
+      String formatted = settings.formatSigFig(value);
+
+      // THEN
+      assertEquals("1.0m", formatted);
+    }
+
+    @Test
+    void validValueBelowOneThousand() {
+      // GIVEN
+      long value = 879L;
+
+      // WHEN
+      String formatted = settings.formatSigFig(value);
+
+      // THEN
+      assertEquals("879", formatted);
+    }
+  }
 }

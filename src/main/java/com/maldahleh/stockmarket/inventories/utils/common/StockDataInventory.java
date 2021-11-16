@@ -5,7 +5,6 @@ import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.stocks.StockManager;
-import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -92,7 +91,7 @@ public abstract class StockDataInventory extends StockInventory {
     return ImmutableMap.<String, Object>builder()
         .put("<name>", stock.getName())
         .put("<exchange>", stock.getStockExchange())
-        .put("<cap>", CurrencyUtils.sigFigNumber(stock.getStats().getMarketCap()))
+        .put("<cap>", settings.formatSigFig(stock.getStats().getMarketCap()))
         .put("<market-price>", settings.format(stock.getQuote().getPrice()))
         .put("<market-currency>", stock.getCurrency())
         .put("<server-price>", settings.format(serverPrice))
@@ -109,7 +108,7 @@ public abstract class StockDataInventory extends StockInventory {
         .put("<day-high>", settings.format(stock.getQuote().getDayHigh()))
         .put("<day-low>", settings.format(stock.getQuote().getDayLow()))
         .put("<open-price>", settings.format(stock.getQuote().getOpen()))
-        .put("<volume>", CurrencyUtils.sigFigNumber(stock.getQuote().getVolume()))
+        .put("<volume>", settings.formatSigFig(stock.getQuote().getVolume()))
         .put("<close-price>", settings.format(stock.getQuote().getPreviousClose()))
         .put("<year-high>", settings.format(stock.getQuote().getYearHigh()))
         .put("<year-low>", settings.format(stock.getQuote().getYearLow()))

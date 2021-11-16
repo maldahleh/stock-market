@@ -1,13 +1,14 @@
 package com.maldahleh.stockmarket.placeholder;
 
+import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.players.player.StockPlayer;
 import com.maldahleh.stockmarket.placeholder.model.PlaceholderStock;
-import com.maldahleh.stockmarket.utils.CurrencyUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
+import yahoofinance.Stock;
 
 @RequiredArgsConstructor
 public class StockPlaceholder extends PlaceholderExpansion {
@@ -36,6 +37,7 @@ public class StockPlaceholder extends PlaceholderExpansion {
   private static final String OFFLINE_PLAYER = "Player Offline";
   private static final String NOT_APPLICABLE = "N/A";
 
+  private final Settings settings;
   private final PlayerManager playerManager;
   private final StockPlaceholderManager stockManager;
 
@@ -90,7 +92,7 @@ public class StockPlaceholder extends PlaceholderExpansion {
       return ZERO_VALUE;
     }
 
-    return CurrencyUtils.sigFigNumber(player.getPortfolioValue());
+    return settings.formatSigFig(player.getPortfolioValue());
   }
 
   private String[] getStockDataParams(String params) {
@@ -111,14 +113,13 @@ public class StockPlaceholder extends PlaceholderExpansion {
       return NOT_APPLICABLE;
     }
 
+    Stock stock = placeholderStock.getStock();
     String dataPoint = splitInfo[DATA_POINT_NAME_INDEX].toLowerCase();
     return switch (dataPoint) {
       case NAME_DATA_POINT -> placeholderStock.getStock().getName();
-      case MARKET_CAP_DATA_POINT -> CurrencyUtils.sigFigNumber(
-          placeholderStock.getStock().getStats().getMarketCap());
+      case MARKET_CAP_DATA_POINT -> settings.formatSigFig(stock.getStats().getMarketCap());
       case SERVER_PRICE_DATA_POINT -> placeholderStock.getServerPrice();
-      case VOLUME_DATA_POINT -> CurrencyUtils.sigFigNumber(
-          placeholderStock.getStock().getQuote().getVolume());
+      case VOLUME_DATA_POINT -> settings.formatSigFig(stock.getQuote().getVolume());
       default -> null;
     };
   }
