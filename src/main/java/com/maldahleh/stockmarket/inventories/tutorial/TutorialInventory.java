@@ -3,9 +3,7 @@ package com.maldahleh.stockmarket.inventories.tutorial;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.common.ConfigSection;
 import com.maldahleh.stockmarket.inventories.utils.common.StockInventory;
-import com.maldahleh.stockmarket.utils.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 

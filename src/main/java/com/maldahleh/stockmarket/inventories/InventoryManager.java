@@ -17,7 +17,6 @@ import com.maldahleh.stockmarket.processor.types.SaleProcessor;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.storage.Storage;
 import java.util.UUID;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 public class InventoryManager {
