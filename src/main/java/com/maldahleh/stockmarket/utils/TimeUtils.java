@@ -9,15 +9,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Date;
 import java.util.Locale;
-import java.util.TimeZone;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class TimeUtils {
-
-  public long secondsSince(Instant timestamp) {
-    return durationSince(timestamp).toSeconds();
-  }
 
   public long minutesSince(Instant timestamp) {
     return durationSince(timestamp).toMinutes();
