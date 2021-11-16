@@ -67,6 +67,10 @@ public class Messages {
     player.sendMessage(configFile.getString("no-permission"));
   }
 
+  public void sendNoContent(Player player) {
+    player.sendMessage(configFile.getString("no-content"));
+  }
+
   public void sendPendingLookup(Player player) {
     player.sendMessage(configFile.getString("pending.lookup"));
   }

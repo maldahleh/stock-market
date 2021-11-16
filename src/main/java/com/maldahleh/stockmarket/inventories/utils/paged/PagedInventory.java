@@ -1,5 +1,6 @@
 package com.maldahleh.stockmarket.inventories.utils.paged;
 
+import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.common.ConfigSection;
 import com.maldahleh.stockmarket.inventories.utils.paged.data.PaginatedPlayer;
 import com.maldahleh.stockmarket.inventories.utils.paged.listeners.PagedInventoryListener;
@@ -19,6 +20,7 @@ import org.bukkit.plugin.Plugin;
 public class PagedInventory<L, K, V, T, U> {
 
   private final Plugin plugin;
+  private final Messages messages;
   private final ContentProvider<L, K, V, T, U> contentProvider;
 
   private final Map<UUID, PaginatedPlayer> playerMap = new HashMap<>();
@@ -40,11 +42,10 @@ public class PagedInventory<L, K, V, T, U> {
 
   private final Map<Integer, ItemStack> extraItems = new HashMap<>();
 
-  private final String noContentMessage;
-
-  public PagedInventory(Plugin plugin, ContentProvider<L, K, V, T, U> provider,
+  public PagedInventory(Plugin plugin, Messages messages, ContentProvider<L, K, V, T, U> provider,
       ConfigSection section) {
     this.plugin = plugin;
+    this.messages = messages;
     this.contentProvider = provider;
 
     this.name = section.getString("name");
@@ -69,8 +70,6 @@ public class PagedInventory<L, K, V, T, U> {
       }
     }
 
-    this.noContentMessage = section.getString("messages.no-content");
-
     Bukkit.getPluginManager().registerEvents(new PagedInventoryListener(this), plugin);
   }
 
@@ -81,13 +80,13 @@ public class PagedInventory<L, K, V, T, U> {
             () -> {
               Map<K, V> data = contentProvider.getContent(target);
               if (data.isEmpty()) {
-                player.sendMessage(noContentMessage);
+                messages.sendNoContent(player);
                 return;
               }
 
               Map<T, U> transformedData = contentProvider.applyTransformations(data);
               if (transformedData.isEmpty()) {
-                player.sendMessage(noContentMessage);
+                messages.sendNoContent(player);
                 return;
               }
 

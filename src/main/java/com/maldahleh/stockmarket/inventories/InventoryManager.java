@@ -64,6 +64,7 @@ public class InventoryManager {
     this.portfolioInventory =
         new PortfolioInventory(
             stockMarket,
+            messages,
             playerManager,
             stockManager,
             settings,
@@ -71,12 +72,13 @@ public class InventoryManager {
     this.transactionInventory =
         new TransactionInventory(
             stockMarket,
+            messages,
             playerManager,
             settings,
             new ConfigSection(stockMarket, "transactions"));
     this.stockHistoryInventory =
-        new StockHistoryInventory(
-            stockMarket, storage, settings, new ConfigSection(stockMarket, "history"));
+        new StockHistoryInventory(stockMarket, storage, messages, settings,
+            new ConfigSection(stockMarket, "history"));
   }
 
   public void openLookupInventory(Player player, String symbol) {

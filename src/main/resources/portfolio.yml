@@ -80,5 +80,3 @@ extra-items:
       - "&e<purchase-value> <server-currency>"
       - "&6Net:"
       - "&e<net-value> <server-currency>"
-messages:
-  no-content: "&6No data found!"

@@ -1,6 +1,7 @@
 package com.maldahleh.stockmarket.inventories.portfolio;
 
 import com.maldahleh.stockmarket.StockMarket;
+import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.config.common.ConfigSection;
 import com.maldahleh.stockmarket.inventories.portfolio.provider.PortfolioInventoryProvider;
@@ -16,10 +17,10 @@ public class PortfolioInventory {
 
   private final PagedInventory<UUID, String, StockData, Stock, StockData> inventory;
 
-  public PortfolioInventory(StockMarket stockMarket, PlayerManager playerManager,
+  public PortfolioInventory(StockMarket stockMarket, Messages messages, PlayerManager playerManager,
       StockManager stockManager, Settings settings, ConfigSection section) {
-    inventory = new PagedInventory<>(stockMarket, new PortfolioInventoryProvider(stockMarket,
-        playerManager, stockManager, settings), section);
+    inventory = new PagedInventory<>(stockMarket, messages, new PortfolioInventoryProvider(
+        stockMarket, playerManager, stockManager, settings), section);
   }
 
   public void openInventory(Player player, UUID target) {
