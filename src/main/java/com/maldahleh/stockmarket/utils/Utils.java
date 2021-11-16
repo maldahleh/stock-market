@@ -25,7 +25,7 @@ public class Utils {
   public ItemStack createItemStack(ConfigSection section, Map<String, Object> replacements) {
     ItemStack itemStack = new ItemStack(
         Material.valueOf(section.getString("material")),
-        section.getInt("amount")
+        section.getAmount("amount")
     );
 
     setDisplayName(itemStack, section.getString("name"), replacements);

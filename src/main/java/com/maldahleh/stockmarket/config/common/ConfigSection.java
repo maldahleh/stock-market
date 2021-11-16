@@ -40,11 +40,15 @@ public class ConfigSection {
   }
 
   public int getInt(String path) {
-    return config.getInt(path, 0);
+    return config.getInt(path);
+  }
+
+  public int getAmount(String path) {
+    return config.getInt(path, 1);
   }
 
   public boolean getBoolean(String path) {
-    return config.getBoolean(path, false);
+    return config.getBoolean(path);
   }
 
   public ItemStack getItemStack(String path) {
@@ -65,7 +69,7 @@ public class ConfigSection {
   }
 
   public BigDecimal getBigDecimal(String path) {
-    double value = config.getDouble(path, 0);
+    double value = config.getDouble(path);
     return BigDecimal.valueOf(value);
   }
 
