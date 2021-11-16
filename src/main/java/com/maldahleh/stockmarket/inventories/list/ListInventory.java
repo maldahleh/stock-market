@@ -16,7 +16,7 @@ import org.bukkit.inventory.Inventory;
 public class ListInventory extends StockInventory {
 
   private final Inventory inventory;
-  private final Map<Integer, String> symbolMap;
+  private final Map<Integer, String> symbolMap = new HashMap<>();
 
   public ListInventory(
       StockMarket plugin,
@@ -26,7 +26,6 @@ public class ListInventory extends StockInventory {
       ConfigSection section) {
     super(plugin);
 
-    this.symbolMap = new HashMap<>();
     this.inventory = Bukkit.createInventory(null, section.getInt("size"),
         section.getString("name"));
 

@@ -17,11 +17,10 @@ import org.bukkit.plugin.Plugin;
 public class BrokerManager {
 
   @Getter
-  private final boolean enabled;
+  private final boolean enabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
   private final BrokerSettings settings;
 
   public BrokerManager(Plugin plugin, BrokerSettings settings, InventoryManager inventoryManager) {
-    this.enabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
     this.settings = settings;
     if (!enabled) {
       return;

@@ -11,8 +11,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 public record ListListener(ListInventory inventory, LookupInventory lookupInventory,
-                           PurchaseProcessor purchaseProcessor,
-                           SaleProcessor saleProcessor)
+                           PurchaseProcessor purchaseProcessor, SaleProcessor saleProcessor)
     implements Listener {
 
   @EventHandler

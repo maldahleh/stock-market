@@ -9,7 +9,6 @@ import com.maldahleh.stockmarket.players.PlayerManager;
 import com.maldahleh.stockmarket.players.player.data.StockData;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import java.util.UUID;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import yahoofinance.Stock;
 
