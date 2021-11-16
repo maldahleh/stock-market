@@ -66,12 +66,4 @@ public class Utils {
     stack.setItemMeta(meta);
     return stack;
   }
-
-  public Integer getInteger(String string) {
-    try {
-      return Integer.parseInt(string);
-    } catch (NumberFormatException e) {
-      return null;
-    }
-  }
 }
