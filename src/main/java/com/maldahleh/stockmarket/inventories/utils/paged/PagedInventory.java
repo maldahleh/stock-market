@@ -16,10 +16,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-public class PagedInventory<L, K, V, T, TV> {
+public class PagedInventory<L, K, V, T, U> {
 
   private final Plugin plugin;
-  private final ContentProvider<L, K, V, T, TV> contentProvider;
+  private final ContentProvider<L, K, V, T, U> contentProvider;
 
   private final Map<UUID, PaginatedPlayer> playerMap = new HashMap<>();
 
@@ -42,7 +42,7 @@ public class PagedInventory<L, K, V, T, TV> {
 
   private final String noContentMessage;
 
-  public PagedInventory(Plugin plugin, ContentProvider<L, K, V, T, TV> provider,
+  public PagedInventory(Plugin plugin, ContentProvider<L, K, V, T, U> provider,
       ConfigSection section) {
     this.plugin = plugin;
     this.contentProvider = provider;
@@ -85,7 +85,7 @@ public class PagedInventory<L, K, V, T, TV> {
                 return;
               }
 
-              Map<T, TV> transformedData = contentProvider.applyTransformations(data);
+              Map<T, U> transformedData = contentProvider.applyTransformations(data);
               if (transformedData.isEmpty()) {
                 player.sendMessage(noContentMessage);
                 return;
@@ -102,7 +102,7 @@ public class PagedInventory<L, K, V, T, TV> {
                         int currentIndex = 0;
                         int totalDisplayed = 0;
                         Inventory i = Bukkit.createInventory(null, size, name);
-                        for (Map.Entry<T, TV> e : transformedData.entrySet()) {
+                        for (Map.Entry<T, U> e : transformedData.entrySet()) {
                           int position = ((currentPage - 1) * contentPerPage) + (currentIndex + 1);
                           i.setItem(
                               contentSlots.get(currentIndex),
