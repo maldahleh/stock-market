@@ -25,6 +25,8 @@ import yahoofinance.histquotes.HistoricalQuote;
 
 public class LookupInventory extends StockDataInventory {
 
+  private static final String DATE_FORMAT = "MMMM dd, yyyy";
+
   private final int inventorySize;
 
   private final ItemStack historicalStack;
@@ -102,7 +104,7 @@ public class LookupInventory extends StockDataInventory {
   }
 
   private String formatDate(Date date) {
-    DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy", settings.getLocale());
+    DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, settings.getLocale());
     return dateFormat.format(date);
   }
 
