@@ -3,14 +3,12 @@ package com.maldahleh.stockmarket.inventories.history.providers;
 import com.google.common.collect.ImmutableMap;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Settings;
-import com.maldahleh.stockmarket.inventories.utils.paged.provider.IContentProvider;
+import com.maldahleh.stockmarket.inventories.utils.paged.provider.ContentProvider;
 import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
 import com.maldahleh.stockmarket.utils.CurrencyUtils;
-import com.maldahleh.stockmarket.utils.TimeUtils;
 import com.maldahleh.stockmarket.utils.Utils;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -19,8 +17,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
-public record StockHistoryProvider(StockMarket stockMarket, Storage storage, Settings settings)
-    implements IContentProvider<String, Transaction, UUID, Transaction, OfflinePlayer> {
+public class StockHistoryProvider
+    extends ContentProvider<String, Transaction, UUID, Transaction, OfflinePlayer> {
+
+  private final Storage storage;
+
+  public StockHistoryProvider(StockMarket stockMarket, Storage storage, Settings settings) {
+    super(stockMarket, settings);
+
+    this.storage = storage;
+  }
 
   @Override
   public Map<Transaction, UUID> getContent(String lookup) {
@@ -48,18 +54,13 @@ public record StockHistoryProvider(StockMarket stockMarket, Storage storage, Set
   }
 
   @Override
-  public Map<String, Object> getExtraData(String uuid) {
-    return new HashMap<>();
-  }
-
-  @Override
   public ItemStack getContentStack(
       ItemStack baseStack, int position, Transaction key, OfflinePlayer value) {
     return Utils.updateItemStack(
         baseStack.clone(),
         ImmutableMap.<String, Object>builder()
             .put("<name>", value.getName())
-            .put("<date>", TimeUtils.formatInstant(key.getTransactionDate(), settings.getLocale()))
+            .put("<date>", formatInstant(key.getTransactionDate()))
             .put("<symbol>", key.getSymbol().toUpperCase())
             .put("<transaction-type>", key.getTransactionType())
             .put("<quantity>", key.getQuantity())
@@ -71,11 +72,6 @@ public record StockHistoryProvider(StockMarket stockMarket, Storage storage, Set
             .put("<sold>", String.valueOf(key.isSold()))
             .build()
     );
-  }
-
-  @Override
-  public ItemStack getExtraItem(ItemStack baseStack, Map<String, Object> extraData) {
-    return baseStack;
   }
 
   static class TransactionComparator implements Comparator<Transaction> {
