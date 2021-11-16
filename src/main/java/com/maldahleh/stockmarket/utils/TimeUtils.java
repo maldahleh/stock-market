@@ -2,7 +2,6 @@ package com.maldahleh.stockmarket.utils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -14,10 +13,6 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class TimeUtils {
 
-  public long minutesSince(Instant timestamp) {
-    return durationSince(timestamp).toMinutes();
-  }
-
   public String formatDate(Date date, Locale locale) {
     DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy", locale);
     return dateFormat.format(date);
@@ -28,9 +23,5 @@ public class TimeUtils {
         .withLocale(locale)
         .withZone(ZoneId.systemDefault())
         .format(instant);
-  }
-
-  private Duration durationSince(Instant timestamp) {
-    return Duration.between(timestamp, Instant.now());
   }
 }
