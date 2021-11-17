@@ -49,6 +49,11 @@ public abstract class TargetableCommand extends BaseCommand {
     return keys;
   }
 
+  @Override
+  public boolean shouldTabCompleterReturnPlayerList(Player player) {
+    return hasOtherPermission(player);
+  }
+
   private boolean hasOtherPermission(Player player) {
     String otherPermission = buildOtherPermission();
     return player.hasPermission(otherPermission);
