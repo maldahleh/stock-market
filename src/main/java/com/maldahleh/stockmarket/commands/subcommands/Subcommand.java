@@ -18,4 +18,6 @@ public interface Subcommand {
   List<String> commandHelpKeys(Player player);
 
   boolean canPlayerExecute(Player player);
+
+  boolean shouldTabCompleterReturnPlayerList(Player player);
 }

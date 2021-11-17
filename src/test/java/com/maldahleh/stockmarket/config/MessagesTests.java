@@ -202,6 +202,32 @@ class MessagesTests {
         .sendMessage(color("&6No data found!"));
   }
 
+  @Test
+  void citizensRequired() {
+    // GIVEN
+    Player player = mock(Player.class);
+
+    // WHEN
+    messages.sendCitizensRequired(player);
+
+    // THEN
+    verify(player)
+        .sendMessage(color("&cCitizens is not enabled, and is required for brokers."));
+  }
+
+  @Test
+  void playerOnly() {
+    // GIVEN
+    Player player = mock(Player.class);
+
+    // WHEN
+    messages.sendPlayerOnly(player);
+
+    // THEN
+    verify(player)
+        .sendMessage(color("&cYou must be a player to use this command."));
+  }
+
   @Nested
   class Pending {
 
@@ -368,7 +394,7 @@ class MessagesTests {
             new HistoryCommand(inventoryManager, messages),
             new BuyCommand(purchaseProcessor, messages),
             new SellCommand(saleProcessor, messages),
-            new SpawnSimpleBrokerCommand(brokerManager)
+            new SpawnSimpleBrokerCommand(brokerManager, messages)
         );
 
         when(commandManager.getRegisteredSubcommands())

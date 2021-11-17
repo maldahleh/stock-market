@@ -10,12 +10,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public record StockMarketCommand(
-    CommandManager commandManager, BrokerManager brokerManager, Messages messages)
-    implements CommandExecutor {
-
-  private static final String PLAYER_ONLY_MESSAGE =
-      "Stocks - You must be a player to use this command.";
+public record StockMarketCommand(CommandManager commandManager, BrokerManager brokerManager,
+                                 Messages messages) implements CommandExecutor {
 
   @Override
   @SuppressWarnings("java:S3516")
@@ -25,7 +21,7 @@ public record StockMarketCommand(
       @NonNull String s,
       @NonNull String[] strings) {
     if (!(commandSender instanceof Player player)) {
-      commandSender.sendMessage(PLAYER_ONLY_MESSAGE);
+      messages.sendPlayerOnly(commandSender);
       return true;
     }
 

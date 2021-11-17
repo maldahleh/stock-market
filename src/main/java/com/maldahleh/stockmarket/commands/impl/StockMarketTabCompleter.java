@@ -10,17 +10,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
+@SuppressWarnings("java:S1168")
 public record StockMarketTabCompleter(CommandManager commandManager) implements TabCompleter {
 
   private static final int COMMAND_INDEX = 0;
 
   @Override
-  @SuppressWarnings("java:S1168")
-  public List<String> onTabComplete(
-      @NonNull CommandSender commandSender,
-      @NonNull Command command,
-      @NonNull String s,
-      @NonNull String[] strings) {
+  public List<String> onTabComplete(@NonNull CommandSender commandSender, @NonNull Command command,
+      @NonNull String s, @NonNull String[] strings) {
     if (!(commandSender instanceof Player player)) {
       return new ArrayList<>();
     }
@@ -35,24 +32,21 @@ public record StockMarketTabCompleter(CommandManager commandManager) implements 
 
     String commandName = strings[COMMAND_INDEX];
     if (strings.length == 2) {
-      if (shouldReturnPlayerList(commandName, player)) {
-        return null;
-      }
-
-      return new ArrayList<>();
+      return shouldReturnPlayerList(player, commandName);
     }
 
     return findPossibleMatches(player, commandName);
   }
 
-  private boolean shouldReturnPlayerList(String firstArg, Player player) {
-    if (firstArg.equalsIgnoreCase("portfolio")
-        && player.hasPermission("stockmarket.portfolio.other")) {
-      return true;
+  private List<String> shouldReturnPlayerList(Player player, String commandName) {
+    boolean shouldReturnPlayerList = commandManager.getRegisteredSubcommands().stream()
+        .filter(subcommand -> subcommand.commandName().equalsIgnoreCase(commandName))
+        .anyMatch(subcommand -> subcommand.shouldTabCompleterReturnPlayerList(player));
+    if (shouldReturnPlayerList) {
+      return null;
     }
 
-    return firstArg.equalsIgnoreCase("transactions")
-        && player.hasPermission("stockmarket.transactions.other");
+    return new ArrayList<>();
   }
 
   private List<String> findPossibleMatches(Player player, String arg) {

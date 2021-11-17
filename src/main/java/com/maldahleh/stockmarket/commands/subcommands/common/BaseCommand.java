@@ -30,4 +30,9 @@ public abstract class BaseCommand implements Subcommand {
   public boolean canPlayerExecute(Player player) {
     return requiredPerm() == null || player.hasPermission(requiredPerm());
   }
+
+  @Override
+  public boolean shouldTabCompleterReturnPlayerList(Player player) {
+    return false;
+  }
 }

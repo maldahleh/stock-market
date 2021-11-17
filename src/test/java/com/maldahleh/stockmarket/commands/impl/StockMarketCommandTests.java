@@ -43,8 +43,8 @@ class StockMarketCommandTests {
     stockMarketCommand.onCommand(commandSender, command, "", ARGS);
 
     // THEN
-    verify(commandSender)
-        .sendMessage("Stocks - You must be a player to use this command.");
+    verify(messages)
+        .sendPlayerOnly(commandSender);
   }
 
   @Test

@@ -48,6 +48,77 @@ class TransactionCommandTests {
   }
 
   @Test
+  void invalidQuantityNotInteger() {
+    // GIVEN
+    String[] args = new String[]{"test", "BA", "cd"};
+
+    Player player = mock(Player.class);
+    Messages messages = mock(Messages.class);
+    StockProcessor stockProcessor = mock(StockProcessor.class);
+
+    // WHEN
+    TransactionCommand transactionCommand = new TransactionCommand(stockProcessor, messages) {
+      @Override
+      public void sendTransactionMessage(Player player) {
+        // implementation not tested
+      }
+
+      @Override
+      public String commandName() {
+        return "transaction";
+      }
+    };
+
+    transactionCommand.onCommand(player, args);
+
+    // THEN
+    assertEquals(2, transactionCommand.minArgs());
+    assertEquals(3, transactionCommand.maxArgs());
+    assertNull(transactionCommand.requiredPerm());
+
+    verify(messages)
+        .sendInvalidQuantity(player);
+  }
+
+  @Test
+  void defaultQuantity() {
+    // GIVEN
+    String[] args = new String[]{"test", "BA"};
+
+    Player player = mock(Player.class);
+    Messages messages = mock(Messages.class);
+    StockProcessor stockProcessor = mock(StockProcessor.class);
+
+    // WHEN
+    TransactionCommand transactionCommand = spy(
+        new TransactionCommand(stockProcessor, messages) {
+          @Override
+          public void sendTransactionMessage(Player player) {
+            // implementation not tested
+          }
+
+          @Override
+          public String commandName() {
+            return "transaction";
+          }
+        }
+    );
+
+    transactionCommand.onCommand(player, args);
+
+    // THEN
+    assertEquals(2, transactionCommand.minArgs());
+    assertEquals(3, transactionCommand.maxArgs());
+    assertNull(transactionCommand.requiredPerm());
+
+    verify(stockProcessor)
+        .processTransaction(player, "BA", 1);
+
+    verify(transactionCommand)
+        .sendTransactionMessage(player);
+  }
+
+  @Test
   void validQuantity() {
     // GIVEN
     String[] args = new String[]{"test", "BA", "5"};

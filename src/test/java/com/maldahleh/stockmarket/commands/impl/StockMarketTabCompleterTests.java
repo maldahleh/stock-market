@@ -3,11 +3,16 @@ package com.maldahleh.stockmarket.commands.impl;
 import com.maldahleh.stockmarket.commands.CommandManager;
 import com.maldahleh.stockmarket.commands.subcommands.Subcommand;
 import com.maldahleh.stockmarket.commands.subcommands.common.BaseCommand;
+import com.maldahleh.stockmarket.commands.subcommands.common.TargetableCommand;
+import com.maldahleh.stockmarket.config.Messages;
+import com.maldahleh.stockmarket.inventories.InventoryManager;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.UUID;
 import org.bukkit.command.Command;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -25,13 +30,15 @@ class StockMarketTabCompleterTests {
 
   private Command command;
   private CommandManager commandManager;
+
   private StockMarketTabCompleter stockMarketTabCompleter;
 
   @BeforeEach
   void setup() {
-    command = mock(Command.class);
-    commandManager = mock(CommandManager.class);
-    stockMarketTabCompleter = new StockMarketTabCompleter(commandManager);
+    this.command = mock(Command.class);
+    this.commandManager = mock(CommandManager.class);
+
+    this.stockMarketTabCompleter = new StockMarketTabCompleter(commandManager);
   }
 
   @Test
@@ -101,6 +108,13 @@ class StockMarketTabCompleterTests {
   @DisplayName("returnPlayerList")
   class ReturnPlayerList {
 
+    @BeforeEach
+    void setupManager() {
+      Collection<Subcommand> subcommands = buildSubcommandCollection();
+      when(commandManager.getRegisteredSubcommands())
+          .thenReturn(subcommands);
+    }
+
     @Test
     void portfolio() {
       // GIVEN
@@ -142,6 +156,27 @@ class StockMarketTabCompleterTests {
     }
 
     @Test
+    void noPlayerListSupport() {
+      // GIVEN
+      Player player = mock(Player.class);
+      String[] args = new String[]{"dummy", "a"};
+
+      when(player.hasPermission("stockmarket.use"))
+          .thenReturn(true);
+
+      when(player.hasPermission("stockmarket.dummy.other"))
+          .thenReturn(true);
+
+      // WHEN
+      List<String> completed =
+          stockMarketTabCompleter.onTabComplete(player, command, EMPTY_STRING, args);
+
+      // THEN
+      assertNotNull(completed);
+      assertTrue(completed.isEmpty());
+    }
+
+    @Test
     void noPermission() {
       // GIVEN
       Player player = mock(Player.class);
@@ -160,6 +195,64 @@ class StockMarketTabCompleterTests {
       // THEN
       assertNotNull(completed);
       assertTrue(completed.isEmpty());
+    }
+
+    private Collection<Subcommand> buildSubcommandCollection() {
+      Collection<Subcommand> subcommandCollection = new ArrayList<>();
+      subcommandCollection.add(buildTargeted("portfolio", "stockmarket.portfolio"));
+      subcommandCollection.add(buildTargeted("transactions", "stockmarket.transactions"));
+      subcommandCollection.add(buildBase());
+
+      return subcommandCollection;
+    }
+
+    private Subcommand buildBase() {
+      return new BaseCommand() {
+        @Override
+        public void onCommand(Player player, String[] args) {
+          // implementation not tested
+        }
+
+        @Override
+        public String commandName() {
+          return "dummy";
+        }
+
+        @Override
+        public String requiredPerm() {
+          return "stockmarket.dummy";
+        }
+      };
+    }
+
+    private Subcommand buildTargeted(String commandName, String permission) {
+      return new TargetableCommand(mock(Plugin.class), mock(InventoryManager.class),
+          mock(Messages.class)) {
+        @Override
+        public void callerAction(Player caller) {
+          // implementation not tested
+        }
+
+        @Override
+        public void targetAction(Player caller, UUID target) {
+          // implementation not tested
+        }
+
+        @Override
+        public void onCommand(Player player, String[] args) {
+          // implementation not tested
+        }
+
+        @Override
+        public String commandName() {
+          return commandName;
+        }
+
+        @Override
+        public String requiredPerm() {
+          return permission;
+        }
+      };
     }
   }
 

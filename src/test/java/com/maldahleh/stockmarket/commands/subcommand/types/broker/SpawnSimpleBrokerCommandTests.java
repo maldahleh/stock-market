@@ -2,7 +2,7 @@ package com.maldahleh.stockmarket.commands.subcommand.types.broker;
 
 import com.maldahleh.stockmarket.brokers.BrokerManager;
 import com.maldahleh.stockmarket.commands.subcommands.types.broker.SpawnSimpleBrokerCommand;
-import org.bukkit.ChatColor;
+import com.maldahleh.stockmarket.config.Messages;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,12 +14,16 @@ import static org.mockito.Mockito.*;
 class SpawnSimpleBrokerCommandTests {
 
     private BrokerManager brokerManager;
+    private Messages messages;
+
     private SpawnSimpleBrokerCommand command;
 
     @BeforeEach
     void setup() {
-        brokerManager = mock(BrokerManager.class);
-        command = new SpawnSimpleBrokerCommand(brokerManager);
+        this.brokerManager = mock(BrokerManager.class);
+        this.messages = mock(Messages.class);
+
+        this.command = new SpawnSimpleBrokerCommand(brokerManager, messages);
     }
 
     @Test
@@ -49,8 +53,8 @@ class SpawnSimpleBrokerCommandTests {
         command.onCommand(player, new String[]{});
 
         // THEN
-        verify(player)
-                .sendMessage(ChatColor.RED + "Citizens is not enabled, and is required for brokers");
+        verify(messages)
+            .sendCitizensRequired(player);
     }
 
     @Test
