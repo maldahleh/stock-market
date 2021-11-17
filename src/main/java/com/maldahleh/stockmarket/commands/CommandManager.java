@@ -60,7 +60,7 @@ public class CommandManager {
         new HistoryCommand(inventoryManager, messages),
         new BuyCommand(purchaseProcessor, messages),
         new SellCommand(saleProcessor, messages),
-        new SpawnSimpleBrokerCommand(brokerManager)
+        new SpawnSimpleBrokerCommand(brokerManager, messages)
     );
 
     pluginCommand.setExecutor(new StockMarketCommand(this, brokerManager, messages));

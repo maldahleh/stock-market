@@ -10,6 +10,7 @@ insufficient-funds: "&eYou do not have enough money to make that purchase."
 invalid-syntax: "&eInvalid syntax! Use &6/stocks help &efor help."
 no-permission: "&eYou do not have permission to use that command."
 no-content: "&6No data found!"
+citizens-required: "&cCitizens is not enabled, and is required for brokers."
 bought-stock:
   - "&6Purchase Summary (&e<date>&6):"
   - "&6You purchased &e<quantity> &6of &e<company> &6(&e<symbol>&6)"

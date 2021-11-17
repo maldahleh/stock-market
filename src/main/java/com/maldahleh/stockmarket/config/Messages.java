@@ -71,6 +71,10 @@ public class Messages {
     player.sendMessage(configFile.getString("no-content"));
   }
 
+  public void sendCitizensRequired(Player player) {
+    player.sendMessage(configFile.getString("citizens-required"));
+  }
+
   public void sendPendingLookup(Player player) {
     player.sendMessage(configFile.getString("pending.lookup"));
   }
