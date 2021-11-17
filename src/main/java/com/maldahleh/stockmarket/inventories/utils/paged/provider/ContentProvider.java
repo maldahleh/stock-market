@@ -17,16 +17,12 @@ public abstract class ContentProvider<L, K, V> {
   protected final StockMarket stockMarket;
   protected final Settings settings;
 
-  public Map<K, V> getContent(L lookup) {
-    return Collections.emptyMap();
-  }
+  public abstract Map<K, V> getContent(L lookup);
+
+  public abstract ItemStack getContentStack(ItemStack baseStack, int position, K key, V value);
 
   public Map<String, Object> getExtraData(L lookup) {
     return Collections.emptyMap();
-  }
-
-  public ItemStack getContentStack(ItemStack baseStack, int position, K key, V value) {
-    return null;
   }
 
   public ItemStack getExtraItem(ItemStack baseStack, Map<String, Object> extraData) {
