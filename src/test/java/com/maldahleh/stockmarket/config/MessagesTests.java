@@ -215,6 +215,19 @@ class MessagesTests {
         .sendMessage(color("&cCitizens is not enabled, and is required for brokers."));
   }
 
+  @Test
+  void playerOnly() {
+    // GIVEN
+    Player player = mock(Player.class);
+
+    // WHEN
+    messages.sendPlayerOnly(player);
+
+    // THEN
+    verify(player)
+        .sendMessage(color("&cYou must be a player to use this command."));
+  }
+
   @Nested
   class Pending {
 

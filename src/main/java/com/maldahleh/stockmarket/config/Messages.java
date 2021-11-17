@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.stream.Stream;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class Messages {
@@ -73,6 +74,10 @@ public class Messages {
 
   public void sendCitizensRequired(Player player) {
     player.sendMessage(configFile.getString("citizens-required"));
+  }
+
+  public void sendPlayerOnly(CommandSender sender) {
+    sender.sendMessage(configFile.getString("player-only"));
   }
 
   public void sendPendingLookup(Player player) {
