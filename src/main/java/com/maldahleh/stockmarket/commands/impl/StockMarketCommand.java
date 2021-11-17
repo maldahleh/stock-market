@@ -10,9 +10,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public record StockMarketCommand(
-    CommandManager commandManager, BrokerManager brokerManager, Messages messages)
-    implements CommandExecutor {
+public record StockMarketCommand(CommandManager commandManager, BrokerManager brokerManager,
+                                 Messages messages) implements CommandExecutor {
 
   private static final String PLAYER_ONLY_MESSAGE =
       "Stocks - You must be a player to use this command.";
