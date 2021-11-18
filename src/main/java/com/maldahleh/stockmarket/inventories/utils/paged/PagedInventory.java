@@ -17,6 +17,13 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+/**
+ * An inventory which supports multiple pages.
+ *
+ * @param <L> the type used to lookup data.
+ * @param <K> the key for looked up data.
+ * @param <V> the value for looked up data.
+ */
 public class PagedInventory<L, K, V> {
 
   private final Plugin plugin;
