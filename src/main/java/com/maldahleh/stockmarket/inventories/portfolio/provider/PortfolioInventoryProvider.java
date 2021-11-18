@@ -63,7 +63,7 @@ public class PortfolioInventoryProvider extends ContentProvider<UUID, Stock, Sto
   }
 
   @Override
-  public ItemStack getContentStack(ItemStack baseStack, int position, Stock key, StockData value) {
+  public ItemStack getContentStack(ItemStack baseStack, Stock key, StockData value) {
     BigDecimal currentPrice = stockManager.getServerPrice(key);
     if (currentPrice == null) {
       return baseStack;

@@ -36,8 +36,7 @@ public class TransactionInventoryProvider extends ContentProvider<UUID, Instant,
   }
 
   @Override
-  public ItemStack getContentStack(
-      ItemStack baseStack, int position, Instant key, Transaction value) {
+  public ItemStack getContentStack(ItemStack baseStack, Instant key, Transaction value) {
     return Utils.updateItemStack(
         baseStack.clone(),
         ImmutableMap.<String, Object>builder()

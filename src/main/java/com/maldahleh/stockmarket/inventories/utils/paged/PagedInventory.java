@@ -96,11 +96,10 @@ public class PagedInventory<L, K, V> {
                         int totalDisplayed = 0;
                         Inventory i = Bukkit.createInventory(null, size, name);
                         for (Map.Entry<K, V> e : data.entrySet()) {
-                          int position = ((currentPage - 1) * contentPerPage) + (currentIndex + 1);
                           i.setItem(
                               contentSlots.get(currentIndex),
-                              contentProvider.getContentStack(
-                                  baseItem, position, e.getKey(), e.getValue()));
+                              contentProvider.getContentStack(baseItem, e.getKey(), e.getValue())
+                          );
                           totalDisplayed++;
 
                           if ((currentIndex + 1) == contentPerPage

@@ -42,8 +42,7 @@ public class StockHistoryProvider extends ContentProvider<String, Transaction, O
   }
 
   @Override
-  public ItemStack getContentStack(
-      ItemStack baseStack, int position, Transaction key, OfflinePlayer value) {
+  public ItemStack getContentStack(ItemStack baseStack, Transaction key, OfflinePlayer value) {
     return Utils.updateItemStack(
         baseStack.clone(),
         ImmutableMap.<String, Object>builder()
