@@ -69,19 +69,21 @@ public class LookupInventory extends StockDataInventory {
         continue;
       }
 
-        inventory.setItem(
-            slot,
-            Utils.updateItemStack(
-                historicalStack.clone(),
-                ImmutableMap.<String, Object>builder()
-                    .put("<date>", formatDate(quote.getDate().getTime()))
-                    .put("<market-currency>", stock.getCurrency())
-                    .put("<day-open>", settings.format(quote.getOpen()))
-                    .put("<day-close>", settings.format(quote.getClose()))
-                    .put("<volume>", settings.formatSigFig(quote.getVolume()))
-                    .put("<day-high>", settings.format(quote.getHigh()))
-                    .put("<day-low>", settings.format(quote.getLow()))
-                    .build()));
+      inventory.setItem(
+          slot,
+          Utils.updateItemStack(
+              historicalStack.clone(),
+              ImmutableMap.<String, Object>builder()
+                  .put("<date>", formatDate(quote.getDate().getTime()))
+                  .put("<market-currency>", stock.getCurrency())
+                  .put("<day-open>", settings.format(quote.getOpen()))
+                  .put("<day-close>", settings.format(quote.getClose()))
+                  .put("<volume>", settings.formatSigFig(quote.getVolume()))
+                  .put("<day-high>", settings.format(quote.getHigh()))
+                  .put("<day-low>", settings.format(quote.getLow()))
+                  .build()
+          )
+      );
     }
 
     return inventory;
