@@ -1,10 +1,16 @@
 package com.maldahleh.stockmarket.inventories.utils.paged;
 
+import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Messages;
+import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.config.common.ConfigSection;
 import com.maldahleh.stockmarket.inventories.utils.paged.data.PaginatedPlayer;
 import com.maldahleh.stockmarket.inventories.utils.paged.listeners.PagedInventoryListener;
-import com.maldahleh.stockmarket.inventories.utils.paged.provider.ContentProvider;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,11 +30,11 @@ import org.bukkit.plugin.Plugin;
  * @param <K> the key for looked up data.
  * @param <V> the value for looked up data.
  */
-public class PagedInventory<L, K, V> {
+public abstract class PagedInventory<L, K, V> {
 
-  private final Plugin plugin;
+  protected final StockMarket plugin;
+  protected final Settings settings;
   private final Messages messages;
-  private final ContentProvider<L, K, V> contentProvider;
 
   private final Map<UUID, PaginatedPlayer> playerMap = new HashMap<>();
 
@@ -49,11 +55,11 @@ public class PagedInventory<L, K, V> {
 
   private final Map<Integer, ItemStack> extraItems = new HashMap<>();
 
-  public PagedInventory(Plugin plugin, Messages messages, ContentProvider<L, K, V> provider,
+  protected PagedInventory(StockMarket plugin, Messages messages, Settings settings,
       ConfigSection section) {
     this.plugin = plugin;
     this.messages = messages;
-    this.contentProvider = provider;
+    this.settings = settings;
 
     this.name = section.getString("name");
     this.size = section.getInt("size");
@@ -85,13 +91,13 @@ public class PagedInventory<L, K, V> {
         .runTaskAsynchronously(
             plugin,
             () -> {
-              Map<K, V> data = contentProvider.getContent(target);
+              Map<K, V> data = getContent(target);
               if (data.isEmpty()) {
                 messages.sendNoContent(player);
                 return;
               }
 
-              Map<String, Object> extraData = contentProvider.getExtraData(target);
+              Map<String, Object> extraData = getExtraData(target);
               Bukkit.getScheduler()
                   .runTask(
                       plugin,
@@ -105,7 +111,7 @@ public class PagedInventory<L, K, V> {
                         for (Map.Entry<K, V> e : data.entrySet()) {
                           i.setItem(
                               contentSlots.get(currentIndex),
-                              contentProvider.getContentStack(baseItem, e.getKey(), e.getValue())
+                              getContentStack(baseItem, e.getKey(), e.getValue())
                           );
                           totalDisplayed++;
 
@@ -113,17 +119,20 @@ public class PagedInventory<L, K, V> {
                               || totalDisplayed == data.size()) {
                             i.setItem(
                                 previousPageSlot,
-                                currentPage == 1 ? noPreviousPageStack : previousPageStack);
+                                currentPage == 1 ? noPreviousPageStack : previousPageStack
+                            );
                             i.setItem(
                                 nextPageSlot,
                                 totalDisplayed < data.size()
                                     ? nextPageStack
-                                    : noNextPageStack);
+                                    : noNextPageStack
+                            );
 
                             for (Map.Entry<Integer, ItemStack> extraEntry : extraItems.entrySet()) {
                               i.setItem(
                                   extraEntry.getKey(),
-                                  contentProvider.getExtraItem(extraEntry.getValue(), extraData));
+                                  getExtraItem(extraEntry.getValue(), extraData)
+                              );
                             }
 
                             paginatedPlayer.addInventory(currentPage, i);
@@ -176,11 +185,30 @@ public class PagedInventory<L, K, V> {
     }
   }
 
+  protected abstract Map<K, V> getContent(L lookup);
+
+  protected abstract ItemStack getContentStack(ItemStack baseStack, K key, V value);
+
+  protected Map<String, Object> getExtraData(L lookup) {
+    return Collections.emptyMap();
+  }
+
+  protected ItemStack getExtraItem(ItemStack baseStack, Map<String, Object> extraData) {
+    return baseStack;
+  }
+
   public boolean hasInventory(HumanEntity entity) {
     return playerMap.containsKey(entity.getUniqueId());
   }
 
   public void remove(HumanEntity entity) {
     playerMap.remove(entity.getUniqueId());
+  }
+
+  protected final String formatInstant(Instant instant) {
+    return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+        .withLocale(settings.getLocale())
+        .withZone(ZoneId.systemDefault())
+        .format(instant);
   }
 }
