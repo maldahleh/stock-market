@@ -19,7 +19,7 @@ public abstract class ContentProvider<L, K, V> {
 
   public abstract Map<K, V> getContent(L lookup);
 
-  public abstract ItemStack getContentStack(ItemStack baseStack, int position, K key, V value);
+  public abstract ItemStack getContentStack(ItemStack baseStack, K key, V value);
 
   public Map<String, Object> getExtraData(L lookup) {
     return Collections.emptyMap();

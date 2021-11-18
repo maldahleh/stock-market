@@ -1,6 +1,5 @@
 package com.maldahleh.stockmarket.inventories.portfolio.provider;
 
-import com.google.common.collect.ImmutableMap;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.inventories.utils.paged.provider.ContentProvider;
@@ -63,7 +62,7 @@ public class PortfolioInventoryProvider extends ContentProvider<UUID, Stock, Sto
   }
 
   @Override
-  public ItemStack getContentStack(ItemStack baseStack, int position, Stock key, StockData value) {
+  public ItemStack getContentStack(ItemStack baseStack, Stock key, StockData value) {
     BigDecimal currentPrice = stockManager.getServerPrice(key);
     if (currentPrice == null) {
       return baseStack;
@@ -72,23 +71,23 @@ public class PortfolioInventoryProvider extends ContentProvider<UUID, Stock, Sto
     currentPrice = currentPrice.multiply(BigDecimal.valueOf(value.getQuantity()));
     BigDecimal net = currentPrice.subtract(value.getValue());
     return Utils.updateItemStack(
-        baseStack.clone(),
-        ImmutableMap.<String, Object>builder()
-            .put("<symbol>", key.getSymbol().toUpperCase())
-            .put("<name>", key.getName())
-            .put("<quantity>", value.getQuantity())
-            .put("<current-value>", settings.format(currentPrice))
-            .put("<purchase-value>", settings.format(value.getValue()))
-            .put("<net>", settings.format(net))
-            .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
-            .build()
+        baseStack,
+        Map.of(
+            "<symbol>", key.getSymbol().toUpperCase(),
+            "<name>", key.getName(),
+            "<quantity>", value.getQuantity(),
+            "<current-value>", settings.format(currentPrice),
+            "<purchase-value>", settings.format(value.getValue()),
+            "<net>", settings.format(net),
+            "<server-currency>", stockMarket.getEcon().currencyNamePlural()
+        )
     );
   }
 
   @Override
   public ItemStack getExtraItem(ItemStack baseStack, Map<String, Object> extraData) {
     return Utils.updateItemStack(
-        baseStack.clone(),
+        baseStack,
         Map.of(
             "<purchase-value>", settings.format(((BigDecimal) extraData.get("purchase_value"))),
             "<current-value>", settings.format(((BigDecimal) extraData.get("current_value"))),

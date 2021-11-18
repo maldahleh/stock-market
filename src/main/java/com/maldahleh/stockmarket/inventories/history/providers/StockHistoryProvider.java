@@ -1,6 +1,5 @@
 package com.maldahleh.stockmarket.inventories.history.providers;
 
-import com.google.common.collect.ImmutableMap;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.inventories.utils.paged.provider.ContentProvider;
@@ -42,23 +41,22 @@ public class StockHistoryProvider extends ContentProvider<String, Transaction, O
   }
 
   @Override
-  public ItemStack getContentStack(
-      ItemStack baseStack, int position, Transaction key, OfflinePlayer value) {
+  public ItemStack getContentStack(ItemStack baseStack, Transaction key, OfflinePlayer value) {
     return Utils.updateItemStack(
-        baseStack.clone(),
-        ImmutableMap.<String, Object>builder()
-            .put("<name>", value.getName())
-            .put("<date>", formatInstant(key.getTransactionDate()))
-            .put("<symbol>", key.getSymbol().toUpperCase())
-            .put("<transaction-type>", key.getTransactionType())
-            .put("<quantity>", key.getQuantity())
-            .put("<stock-value>", settings.format(key.getStockValue()))
-            .put("<broker-fees>", settings.format(key.getBrokerFee()))
-            .put("<grand-total>", settings.format(key.getGrandTotal()))
-            .put("<earnings>", settings.format(key.getEarnings()))
-            .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
-            .put("<sold>", String.valueOf(key.isSold()))
-            .build()
+        baseStack,
+        Map.ofEntries(
+            Map.entry("<name>", value.getName() != null ? value.getName() : ""),
+            Map.entry("<date>", formatInstant(key.getTransactionDate())),
+            Map.entry("<symbol>", key.getSymbol().toUpperCase()),
+            Map.entry("<transaction-type>", key.getTransactionType()),
+            Map.entry("<quantity>", key.getQuantity()),
+            Map.entry("<stock-value>", settings.format(key.getStockValue())),
+            Map.entry("<broker-fees>", settings.format(key.getBrokerFee())),
+            Map.entry("<grand-total>", settings.format(key.getGrandTotal())),
+            Map.entry("<earnings>", settings.format(key.getEarnings())),
+            Map.entry("<server-currency>", stockMarket.getEcon().currencyNamePlural()),
+            Map.entry("<sold>", key.isSold())
+        )
     );
   }
 

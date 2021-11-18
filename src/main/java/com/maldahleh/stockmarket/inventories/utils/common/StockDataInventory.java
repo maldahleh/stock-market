@@ -1,6 +1,5 @@
 package com.maldahleh.stockmarket.inventories.utils.common;
 
-import com.google.common.collect.ImmutableMap;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
@@ -87,30 +86,31 @@ public abstract class StockDataInventory extends StockInventory {
   }
 
   protected Map<String, Object> buildStockDataMap(Stock stock, BigDecimal serverPrice) {
-    return ImmutableMap.<String, Object>builder()
-        .put("<name>", stock.getName())
-        .put("<exchange>", stock.getStockExchange())
-        .put("<cap>", settings.formatSigFig(stock.getStats().getMarketCap()))
-        .put("<market-price>", settings.format(stock.getQuote().getPrice()))
-        .put("<market-currency>", stock.getCurrency())
-        .put("<server-price>", settings.format(serverPrice))
-        .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
-        .put("<broker-flat>", settings.getBrokerSettings().getBrokerFlatString())
-        .put("<broker-percent>", settings.getBrokerSettings().getBrokerPercentString())
-        .put("<change-close>", settings.format(stock.getQuote().getChange()))
-        .put("<change-year-high>", settings.format(stock.getQuote().getChangeFromYearHigh()))
-        .put("<change-year-low>", settings.format(stock.getQuote().getChangeFromYearLow()))
-        .put("<change-50-moving-avg>", settings.format(stock.getQuote().getChangeFromAvg50()))
-        .put("<change-200-moving-avg>", settings.format(stock.getQuote().getChangeFromAvg200()))
-        .put("<yield>", settings.formatSingle(stock.getDividend().getAnnualYieldPercent()))
-        .put("<symbol>", stock.getSymbol().toUpperCase())
-        .put("<day-high>", settings.format(stock.getQuote().getDayHigh()))
-        .put("<day-low>", settings.format(stock.getQuote().getDayLow()))
-        .put("<open-price>", settings.format(stock.getQuote().getOpen()))
-        .put("<volume>", settings.formatSigFig(stock.getQuote().getVolume()))
-        .put("<close-price>", settings.format(stock.getQuote().getPreviousClose()))
-        .put("<year-high>", settings.format(stock.getQuote().getYearHigh()))
-        .put("<year-low>", settings.format(stock.getQuote().getYearLow()))
-        .build();
+    return Map.ofEntries(
+        Map.entry("<name>", stock.getName()),
+        Map.entry("<exchange>", stock.getStockExchange()),
+        Map.entry("<cap>", settings.formatSigFig(stock.getStats().getMarketCap())),
+        Map.entry("<market-price>", settings.format(stock.getQuote().getPrice())),
+        Map.entry("<market-currency>", stock.getCurrency()),
+        Map.entry("<server-price>", settings.format(serverPrice)),
+        Map.entry("<server-currency>", stockMarket.getEcon().currencyNamePlural()),
+        Map.entry("<broker-flat>", settings.getBrokerSettings().getBrokerFlatString()),
+        Map.entry("<broker-percent>", settings.getBrokerSettings().getBrokerPercentString()),
+        Map.entry("<change-close>", settings.format(stock.getQuote().getChange())),
+        Map.entry("<change-year-high>", settings.format(stock.getQuote().getChangeFromYearHigh())),
+        Map.entry("<change-year-low>", settings.format(stock.getQuote().getChangeFromYearLow())),
+        Map.entry("<change-50-moving-avg>", settings.format(stock.getQuote().getChangeFromAvg50())),
+        Map.entry("<change-200-moving-avg>",
+            settings.format(stock.getQuote().getChangeFromAvg200())),
+        Map.entry("<yield>", settings.formatSingle(stock.getDividend().getAnnualYieldPercent())),
+        Map.entry("<symbol>", stock.getSymbol().toUpperCase()),
+        Map.entry("<day-high>", settings.format(stock.getQuote().getDayHigh())),
+        Map.entry("<day-low>", settings.format(stock.getQuote().getDayLow())),
+        Map.entry("<open-price>", settings.format(stock.getQuote().getOpen())),
+        Map.entry("<volume>", settings.formatSigFig(stock.getQuote().getVolume())),
+        Map.entry("<close-price>", settings.format(stock.getQuote().getPreviousClose())),
+        Map.entry("<year-high>", settings.format(stock.getQuote().getYearHigh())),
+        Map.entry("<year-low>", settings.format(stock.getQuote().getYearLow()))
+    );
   }
 }

@@ -1,6 +1,5 @@
 package com.maldahleh.stockmarket.inventories.lookup;
 
-import com.google.common.collect.ImmutableMap;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.config.Settings;
@@ -14,6 +13,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
@@ -69,19 +69,21 @@ public class LookupInventory extends StockDataInventory {
         continue;
       }
 
-        inventory.setItem(
-            slot,
-            Utils.updateItemStack(
-                historicalStack.clone(),
-                ImmutableMap.<String, Object>builder()
-                    .put("<date>", formatDate(quote.getDate().getTime()))
-                    .put("<market-currency>", stock.getCurrency())
-                    .put("<day-open>", settings.format(quote.getOpen()))
-                    .put("<day-close>", settings.format(quote.getClose()))
-                    .put("<volume>", settings.formatSigFig(quote.getVolume()))
-                    .put("<day-high>", settings.format(quote.getHigh()))
-                    .put("<day-low>", settings.format(quote.getLow()))
-                    .build()));
+      inventory.setItem(
+          slot,
+          Utils.updateItemStack(
+              historicalStack,
+              Map.of(
+                  "<date>", formatDate(quote.getDate().getTime()),
+                  "<market-currency>", stock.getCurrency(),
+                  "<day-open>", settings.format(quote.getOpen()),
+                  "<day-close>", settings.format(quote.getClose()),
+                  "<volume>", settings.formatSigFig(quote.getVolume()),
+                  "<day-high>", settings.format(quote.getHigh()),
+                  "<day-low>", settings.format(quote.getLow())
+              )
+          )
+      );
     }
 
     return inventory;
