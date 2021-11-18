@@ -98,26 +98,26 @@ public class InventoryManager {
   }
 
   public void openPortfolioInventory(Player player) {
-    portfolioInventory.openInventory(player, player.getUniqueId());
+    portfolioInventory.displayInventory(player, player.getUniqueId());
   }
 
   public void openPortfolioInventory(Player player, UUID target) {
-    portfolioInventory.openInventory(player, target);
+    portfolioInventory.displayInventory(player, target);
   }
 
   public void openTransactionInventory(Player player) {
-    transactionInventory.openInventory(player, player.getUniqueId());
+    transactionInventory.displayInventory(player, player.getUniqueId());
   }
 
   public void openTransactionInventory(Player player, UUID target) {
-    transactionInventory.openInventory(player, target);
+    transactionInventory.displayInventory(player, target);
   }
 
   public void openStockHistoryInventory(Player player) {
-    stockHistoryInventory.openInventory(player, null);
+    stockHistoryInventory.displayInventory(player, null);
   }
 
   public void openStockHistoryInventory(Player player, String symbol) {
-    stockHistoryInventory.openInventory(player, symbol);
+    stockHistoryInventory.displayInventory(player, symbol);
   }
 }
