@@ -38,7 +38,7 @@ public class TransactionInventoryProvider extends ContentProvider<UUID, Instant,
   @Override
   public ItemStack getContentStack(ItemStack baseStack, Instant key, Transaction value) {
     return Utils.updateItemStack(
-        baseStack.clone(),
+        baseStack,
         ImmutableMap.<String, Object>builder()
             .put("<date>", formatInstant(value.getTransactionDate()))
             .put("<symbol>", value.getSymbol().toUpperCase())
@@ -50,7 +50,8 @@ public class TransactionInventoryProvider extends ContentProvider<UUID, Instant,
             .put("<earnings>", settings.format(value.getEarnings()))
             .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
             .put("<sold>", String.valueOf(value.isSold()))
-            .build());
+            .build()
+    );
   }
 
   private Map<Instant, Transaction> getData(UUID uuid) {

@@ -72,7 +72,7 @@ public class LookupInventory extends StockDataInventory {
       inventory.setItem(
           slot,
           Utils.updateItemStack(
-              historicalStack.clone(),
+              historicalStack,
               ImmutableMap.<String, Object>builder()
                   .put("<date>", formatDate(quote.getDate().getTime()))
                   .put("<market-currency>", stock.getCurrency())

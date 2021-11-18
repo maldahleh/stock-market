@@ -72,7 +72,7 @@ public class PortfolioInventoryProvider extends ContentProvider<UUID, Stock, Sto
     currentPrice = currentPrice.multiply(BigDecimal.valueOf(value.getQuantity()));
     BigDecimal net = currentPrice.subtract(value.getValue());
     return Utils.updateItemStack(
-        baseStack.clone(),
+        baseStack,
         ImmutableMap.<String, Object>builder()
             .put("<symbol>", key.getSymbol().toUpperCase())
             .put("<name>", key.getName())
@@ -88,7 +88,7 @@ public class PortfolioInventoryProvider extends ContentProvider<UUID, Stock, Sto
   @Override
   public ItemStack getExtraItem(ItemStack baseStack, Map<String, Object> extraData) {
     return Utils.updateItemStack(
-        baseStack.clone(),
+        baseStack,
         Map.of(
             "<purchase-value>", settings.format(((BigDecimal) extraData.get("purchase_value"))),
             "<current-value>", settings.format(((BigDecimal) extraData.get("current_value"))),

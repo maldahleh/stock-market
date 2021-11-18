@@ -33,7 +33,8 @@ public class Utils {
     return itemStack;
   }
 
-  public ItemStack updateItemStack(ItemStack stack, Map<String, Object> replacements) {
+  public ItemStack updateItemStack(ItemStack inputStack, Map<String, Object> replacements) {
+    ItemStack stack = inputStack.clone();
     ItemMeta meta = getItemMeta(stack);
     if (meta == null) {
       return stack;

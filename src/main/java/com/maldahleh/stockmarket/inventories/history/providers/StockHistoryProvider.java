@@ -44,7 +44,7 @@ public class StockHistoryProvider extends ContentProvider<String, Transaction, O
   @Override
   public ItemStack getContentStack(ItemStack baseStack, Transaction key, OfflinePlayer value) {
     return Utils.updateItemStack(
-        baseStack.clone(),
+        baseStack,
         ImmutableMap.<String, Object>builder()
             .put("<name>", value.getName())
             .put("<date>", formatInstant(key.getTransactionDate()))
