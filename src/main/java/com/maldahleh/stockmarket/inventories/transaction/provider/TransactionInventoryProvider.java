@@ -1,6 +1,5 @@
 package com.maldahleh.stockmarket.inventories.transaction.provider;
 
-import com.google.common.collect.ImmutableMap;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.inventories.utils.paged.provider.ContentProvider;
@@ -39,18 +38,18 @@ public class TransactionInventoryProvider extends ContentProvider<UUID, Instant,
   public ItemStack getContentStack(ItemStack baseStack, Instant key, Transaction value) {
     return Utils.updateItemStack(
         baseStack,
-        ImmutableMap.<String, Object>builder()
-            .put("<date>", formatInstant(value.getTransactionDate()))
-            .put("<symbol>", value.getSymbol().toUpperCase())
-            .put("<transaction-type>", value.getTransactionType())
-            .put("<quantity>", value.getQuantity())
-            .put("<stock-value>", settings.format(value.getStockValue()))
-            .put("<broker-fees>", settings.format(value.getBrokerFee()))
-            .put("<grand-total>", settings.format(value.getGrandTotal()))
-            .put("<earnings>", settings.format(value.getEarnings()))
-            .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
-            .put("<sold>", String.valueOf(value.isSold()))
-            .build()
+        Map.of(
+            "<date>", formatInstant(value.getTransactionDate()),
+            "<symbol>", value.getSymbol().toUpperCase(),
+            "<transaction-type>", value.getTransactionType(),
+            "<quantity>", value.getQuantity(),
+            "<stock-value>", settings.format(value.getStockValue()),
+            "<broker-fees>", settings.format(value.getBrokerFee()),
+            "<grand-total>", settings.format(value.getGrandTotal()),
+            "<earnings>", settings.format(value.getEarnings()),
+            "<server-currency>", stockMarket.getEcon().currencyNamePlural(),
+            "<sold>", value.isSold()
+        )
     );
   }
 

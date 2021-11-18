@@ -1,6 +1,5 @@
 package com.maldahleh.stockmarket.inventories.portfolio.provider;
 
-import com.google.common.collect.ImmutableMap;
 import com.maldahleh.stockmarket.StockMarket;
 import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.inventories.utils.paged.provider.ContentProvider;
@@ -73,15 +72,15 @@ public class PortfolioInventoryProvider extends ContentProvider<UUID, Stock, Sto
     BigDecimal net = currentPrice.subtract(value.getValue());
     return Utils.updateItemStack(
         baseStack,
-        ImmutableMap.<String, Object>builder()
-            .put("<symbol>", key.getSymbol().toUpperCase())
-            .put("<name>", key.getName())
-            .put("<quantity>", value.getQuantity())
-            .put("<current-value>", settings.format(currentPrice))
-            .put("<purchase-value>", settings.format(value.getValue()))
-            .put("<net>", settings.format(net))
-            .put("<server-currency>", stockMarket.getEcon().currencyNamePlural())
-            .build()
+        Map.of(
+            "<symbol>", key.getSymbol().toUpperCase(),
+            "<name>", key.getName(),
+            "<quantity>", value.getQuantity(),
+            "<current-value>", settings.format(currentPrice),
+            "<purchase-value>", settings.format(value.getValue()),
+            "<net>", settings.format(net),
+            "<server-currency>", stockMarket.getEcon().currencyNamePlural()
+        )
     );
   }
 
