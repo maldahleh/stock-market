@@ -1,3 +1,4 @@
+
 # StockMarket
 
 ![CI](https://github.com/maldahleh/stock-market/workflows/CI/badge.svg)
@@ -47,7 +48,7 @@ In the above examples, BA (Boeing) is used as the stock symbol.
 
 _stockmarket.use_ - Required to use any command
 
-_stockmarket.commandbypass_ - Bypass broker command restrictions 
+_stockmarket.commandbypass_ - Bypass broker command restrictions
 
 ### Commands
 
@@ -86,16 +87,17 @@ transaction history of a stock
 
 #### Transaction Commands
 
-**/stockmarket buy {symbol} {amount (default: 1)}**
+**/stockmarket buy {symbol} {amount (default: 1)}** - Sell stock
 
-**/stockmarket sell {symbol} {amount (default: 1)}**
+**/stockmarket sell {symbol} {amount (default: 1)}** - Buy stock
 
 #### Broker Commands
 
 **/stockmarket simplebroker** - _stockmarket.spawnbroker_ - Spawn a simple
 broker (opens list inventory) at the executor's location
 
-### Command Aliases 
+### Command Aliases
+
 - /sm
 - /stock
 - /stocks
