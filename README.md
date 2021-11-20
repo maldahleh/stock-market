@@ -98,9 +98,9 @@ stock
 
 ### Command Aliases
 
-- /sm
-- /stock
-- /stocks
+  - /sm
+  - /stock
+  - /stocks
 
 ## Developers
 
