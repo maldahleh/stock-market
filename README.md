@@ -1,4 +1,3 @@
-
 # StockMarket
 
 ![CI](https://github.com/maldahleh/stock-market/workflows/CI/badge.svg)
@@ -98,9 +97,9 @@ broker (opens list inventory) at the executor's location
 
 ### Command Aliases
 
-- /sm
-- /stock
-- /stocks
+-  /sm
+-  /stock
+-  /stocks
 
 ## Developers
 
