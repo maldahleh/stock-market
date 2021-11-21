@@ -36,7 +36,7 @@ public abstract class Storage extends StorageStatements {
         PreparedStatement statement = buildActionStatement(connection, transaction);
         ResultSet resultSet = statement.executeQuery()) {
       if (resultSet.next()) {
-        transaction.setId(resultSet.getInt(1));
+        transaction.setId(resultSet.getInt("id"));
       }
     } catch (SQLException e) {
       e.printStackTrace();

@@ -40,8 +40,8 @@ public class SQLite extends Storage {
   @Override
   protected String getCreateTableQuery() {
     return "CREATE TABLE IF NOT EXISTS sm_transactions(id INTEGER PRIMARY KEY, uuid CHAR(36), "
-        + "tran_type VARCHAR(8), tran_date DATETIME, symbol VARCHAR(12), quantity INTEGER, "
-        + "single_price VARCHAR(20), broker_fee VARCHAR(20), earnings VARCHAR(20), sold BOOLEAN)";
+        + "type VARCHAR(8), date DATETIME, symbol VARCHAR(12), quantity INTEGER, single_price "
+        + "VARCHAR(20), broker_fee VARCHAR(20), earnings VARCHAR(20), sold BOOLEAN)";
   }
 
   @Override
@@ -54,24 +54,22 @@ public class SQLite extends Storage {
       throws SQLException {
     BigDecimal earnings = null;
 
-    String earningsString = resultSet.getString(9);
+    String earningsString = resultSet.getString("earnings");
     if (earningsString != null) {
       earnings = new BigDecimal(earningsString);
     }
 
-    return new Transaction(
-        resultSet.getInt(1),
-        UUID.fromString(resultSet.getString(2)),
-        TransactionType.valueOf(resultSet.getString(3)),
-        resultSet.getTimestamp(4).toInstant(),
-        resultSet.getString(5),
-        resultSet.getInt(6),
-        new BigDecimal(resultSet.getString(7)),
-        new BigDecimal(resultSet.getString(8)),
-        earnings,
-        null,
-        null,
-        resultSet.getBoolean(10)
-    );
+    return Transaction.builder()
+        .id(resultSet.getInt("id"))
+        .uuid(UUID.fromString(resultSet.getString("uuid")))
+        .transactionType(TransactionType.valueOf(resultSet.getString("type")))
+        .transactionDate(resultSet.getTimestamp("date").toInstant())
+        .symbol(resultSet.getString("symbol"))
+        .quantity(resultSet.getInt("quantity"))
+        .singlePrice(new BigDecimal(resultSet.getString("single_price")))
+        .brokerFee(new BigDecimal(resultSet.getString("broker_fee")))
+        .earnings(earnings)
+        .sold(resultSet.getBoolean("sold"))
+        .build();
   }
 }
