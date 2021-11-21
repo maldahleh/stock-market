@@ -33,9 +33,6 @@ class SqlSettingsTests {
     when(configSection.getString("password"))
         .thenReturn("password");
 
-    when(configSection.getInt("max-pool-size"))
-        .thenReturn(100);
-
     // WHEN
     SqlSettings sqlSettings = new SqlSettings(configSection);
 
@@ -46,6 +43,5 @@ class SqlSettingsTests {
     assertEquals("stockmarket", sqlSettings.getDatabase());
     assertEquals("root", sqlSettings.getUsername());
     assertEquals("password", sqlSettings.getPassword());
-    assertEquals(100, sqlSettings.getMaxPoolSize());
   }
 }
