@@ -9,8 +9,14 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class SQLite extends Storage {
+
+  private static final int MAXIMUM_POOL_SIZE = 50;
+
+  private static final long MAX_LIFETIME = TimeUnit.MINUTES.toMillis(1);
+  private static final long IDLE_TIMEOUT = TimeUnit.SECONDS.toMillis(45);
 
   public SQLite(SqlSettings settings) {
     super(settings);
@@ -23,9 +29,10 @@ public class SQLite extends Storage {
     config.setDriverClassName("org.sqlite.JDBC");
     config.setJdbcUrl("jdbc:sqlite:plugins/StockMarket/StockMarket.db");
     config.setConnectionTestQuery("SELECT 1");
-    config.setMaxLifetime(60000);
-    config.setIdleTimeout(45000);
-    config.setMaximumPoolSize(50);
+
+    config.setMaxLifetime(MAX_LIFETIME);
+    config.setIdleTimeout(IDLE_TIMEOUT);
+    config.setMaximumPoolSize(MAXIMUM_POOL_SIZE);
 
     return config;
   }
