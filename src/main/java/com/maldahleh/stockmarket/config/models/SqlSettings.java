@@ -12,7 +12,6 @@ public class SqlSettings {
   private final String database;
   private final String username;
   private final String password;
-  private final int maxPoolSize;
 
   public SqlSettings(ConfigSection configSection) {
     this.enabled = configSection.getBoolean("enabled");
@@ -21,6 +20,5 @@ public class SqlSettings {
     this.database = configSection.getString("database");
     this.username = configSection.getString("username");
     this.password = configSection.getString("password");
-    this.maxPoolSize = configSection.getInt("max-pool-size");
   }
 }

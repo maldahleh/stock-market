@@ -6,7 +6,6 @@ sql:
   database: "database"
   username: "username"
   password: "password"
-  max-pool-size: 100
 broker:
   disable-commands: false
   charge-fees-on-sale: false
