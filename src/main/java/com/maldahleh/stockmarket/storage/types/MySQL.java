@@ -70,7 +70,7 @@ public class MySQL extends Storage {
   @Override
   protected String getCreateTableQuery() {
     return "CREATE TABLE IF NOT EXISTS sm_transactions(id INTEGER PRIMARY KEY AUTO_INCREMENT, "
-        + "uuid CHAR(36), tran_type ENUM('purchase', 'sale'), tran_date DATETIME, "
+        + "uuid CHAR(36), type ENUM('purchase', 'sale'), date DATETIME, "
         + "symbol VARCHAR(12), quantity INTEGER, single_price DECIMAL(19, 2), "
         + "broker_fee DECIMAL(19, 2), earnings DECIMAL(19, 2), sold BOOLEAN)";
   }
@@ -82,19 +82,17 @@ public class MySQL extends Storage {
 
   @Override
   protected Transaction buildTransaction(ResultSet resultSet) throws SQLException {
-    return new Transaction(
-        resultSet.getInt(1),
-        UUID.fromString(resultSet.getString(2)),
-        TransactionType.valueOf(resultSet.getString(3)),
-        resultSet.getTimestamp(4).toInstant(),
-        resultSet.getString(5),
-        resultSet.getInt(6),
-        resultSet.getBigDecimal(7),
-        resultSet.getBigDecimal(8),
-        resultSet.getBigDecimal(9),
-        null,
-        null,
-        resultSet.getBoolean(10)
-    );
+    return Transaction.builder()
+        .id(resultSet.getInt("id"))
+        .uuid(UUID.fromString(resultSet.getString("uuid")))
+        .transactionType(TransactionType.valueOf(resultSet.getString("type")))
+        .transactionDate(resultSet.getTimestamp("date").toInstant())
+        .symbol(resultSet.getString("symbol"))
+        .quantity(resultSet.getInt("quantity"))
+        .singlePrice(resultSet.getBigDecimal("single_price"))
+        .brokerFee(resultSet.getBigDecimal("broker_fee"))
+        .earnings(resultSet.getBigDecimal("earnings"))
+        .sold(resultSet.getBoolean("sold"))
+        .build();
   }
 }
