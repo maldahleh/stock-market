@@ -40,8 +40,8 @@ public class SQLite extends Storage {
   @Override
   protected String getCreateTableQuery() {
     return "CREATE TABLE IF NOT EXISTS sm_transactions(id INTEGER PRIMARY KEY, uuid CHAR(36), "
-        + "tran_type VARCHAR(8), tran_date DATETIME, symbol VARCHAR(12), quantity INTEGER, "
-        + "single_price VARCHAR(20), broker_fee VARCHAR(20), earnings VARCHAR(20), sold BOOLEAN)";
+        + "type VARCHAR(8), date DATETIME, symbol VARCHAR(12), quantity INTEGER, single_price "
+        + "VARCHAR(20), broker_fee VARCHAR(20), earnings VARCHAR(20), sold BOOLEAN)";
   }
 
   @Override
