@@ -12,8 +12,8 @@ public class TransactionUtils {
   public Transaction buildTransaction(TransactionType type, int quantity, BigDecimal stockValue) {
     return Transaction.builder()
         .symbol("BA")
-        .transactionType(type)
-        .transactionDate(Instant.now())
+        .type(type)
+        .date(Instant.now())
         .quantity(quantity)
         .stockValue(stockValue)
         .build();
