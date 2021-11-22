@@ -3,7 +3,6 @@ package com.maldahleh.stockmarket.players.player;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.maldahleh.stockmarket.players.utils.TransactionUtils;
 import com.maldahleh.stockmarket.transactions.Transaction;
 import com.maldahleh.stockmarket.transactions.types.TransactionType;
 import java.math.BigDecimal;
@@ -14,9 +13,18 @@ class StockPlayerTests {
   @Test
   void performTransactions() {
     // GIVEN
-    Transaction purchase = TransactionUtils.buildTransaction(TransactionType.PURCHASE, 3,
-        BigDecimal.TEN);
-    Transaction sale = TransactionUtils.buildTransaction(TransactionType.SALE, 2, BigDecimal.ONE);
+    Transaction purchase = Transaction.builder()
+        .symbol("BA")
+        .type(TransactionType.PURCHASE)
+        .quantity(3)
+        .stockValue(BigDecimal.TEN)
+        .build();
+    Transaction sale = Transaction.builder()
+        .symbol("BA")
+        .type(TransactionType.SALE)
+        .quantity(2)
+        .stockValue(BigDecimal.ONE)
+        .build();
 
     StockPlayer stockPlayer = new StockPlayer();
     BigDecimal currentValue = BigDecimal.TEN;

@@ -41,9 +41,9 @@ public class TransactionInventory extends PagedInventory<UUID, Instant, Transact
     return Utils.updateItemStack(
         baseStack,
         Map.of(
-            "<date>", formatInstant(value.getTransactionDate()),
+            "<date>", formatInstant(value.getDate()),
             "<symbol>", value.getSymbol().toUpperCase(),
-            "<transaction-type>", value.getTransactionType(),
+            "<transaction-type>", value.getType(),
             "<quantity>", value.getQuantity(),
             "<stock-value>", settings.format(value.getStockValue()),
             "<broker-fees>", settings.format(value.getBrokerFee()),

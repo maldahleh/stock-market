@@ -61,7 +61,7 @@ public abstract class StockProcessor {
       calculateTotals(context);
 
       Bukkit.getScheduler().runTask(stockMarket, () -> {
-        if (!hasInsufficientFunds(context)) {
+        if (hasInsufficientFunds(context)) {
           messages.sendInsufficientFunds(player);
           return;
         }

@@ -49,9 +49,9 @@ public class StockHistoryInventory extends PagedInventory<String, Transaction, O
         baseStack,
         Map.ofEntries(
             Map.entry("<name>", value.getName() != null ? value.getName() : ""),
-            Map.entry("<date>", formatInstant(key.getTransactionDate())),
+            Map.entry("<date>", formatInstant(key.getDate())),
             Map.entry("<symbol>", key.getSymbol().toUpperCase()),
-            Map.entry("<transaction-type>", key.getTransactionType()),
+            Map.entry("<transaction-type>", key.getType()),
             Map.entry("<quantity>", key.getQuantity()),
             Map.entry("<stock-value>", settings.format(key.getStockValue())),
             Map.entry("<broker-fees>", settings.format(key.getBrokerFee())),
@@ -89,7 +89,7 @@ public class StockHistoryInventory extends PagedInventory<String, Transaction, O
         return 1;
       }
 
-      return obj2.getTransactionDate().compareTo(obj1.getTransactionDate());
+      return obj2.getDate().compareTo(obj1.getDate());
     }
   }
 }

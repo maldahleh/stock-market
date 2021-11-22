@@ -21,15 +21,15 @@ public class StockPlayer {
   public void addTransaction(Transaction transaction) {
     String symbol = transaction.getSymbol().toUpperCase();
     StockData data = stockMap.getOrDefault(symbol, new StockData());
-    if (transaction.getTransactionType() == TransactionType.PURCHASE) {
+    if (transaction.getType() == TransactionType.PURCHASE) {
       portfolioValue = portfolioValue.add(transaction.getStockValue());
       data.increase(transaction);
-    } else if (transaction.getTransactionType() == TransactionType.SALE) {
+    } else if (transaction.getType() == TransactionType.SALE) {
       portfolioValue = portfolioValue.subtract(transaction.getStockValue());
       data.decrease(transaction);
     }
 
-    transactionMap.put(transaction.getTransactionDate(), transaction);
+    transactionMap.put(transaction.getDate(), transaction);
     stockMap.put(symbol, data);
   }
 

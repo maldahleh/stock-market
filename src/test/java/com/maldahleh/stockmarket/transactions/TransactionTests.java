@@ -26,14 +26,15 @@ class TransactionTests {
     BigDecimal grandTotal = BigDecimal.valueOf(11);
 
     // WHEN
-    Transaction transaction = Transaction.buildPurchase(
-        uuid,
-        symbol,
-        quantity,
-        price,
-        fees,
-        grandTotal
-    );
+    Transaction transaction = Transaction.builder()
+        .uuid(uuid)
+        .type(TransactionType.PURCHASE)
+        .symbol(symbol)
+        .quantity(quantity)
+        .singlePrice(price)
+        .brokerFee(fees)
+        .grandTotal(grandTotal)
+        .build();
 
     // THEN
     assertFalse(transaction.isSold());
@@ -44,9 +45,9 @@ class TransactionTests {
     assertEquals(fees, transaction.getBrokerFee());
     assertEquals(grandTotal, transaction.getGrandTotal());
     assertEquals(BigDecimal.valueOf(2), transaction.getStockValue());
-    assertEquals(TransactionType.PURCHASE, transaction.getTransactionType());
+    assertEquals(TransactionType.PURCHASE, transaction.getType());
     assertNull(transaction.getEarnings());
-    assertNotNull(transaction.getTransactionDate());
+    assertNotNull(transaction.getDate());
   }
 
   @Test
@@ -61,15 +62,16 @@ class TransactionTests {
     BigDecimal grandTotal = BigDecimal.valueOf(11);
 
     // WHEN
-    Transaction transaction = Transaction.buildSale(
-        uuid,
-        symbol,
-        quantity,
-        price,
-        fees,
-        net,
-        grandTotal
-    );
+    Transaction transaction = Transaction.builder()
+        .uuid(uuid)
+        .type(TransactionType.SALE)
+        .symbol(symbol)
+        .quantity(quantity)
+        .singlePrice(price)
+        .brokerFee(fees)
+        .grandTotal(grandTotal)
+        .earnings(net)
+        .build();
 
     // THEN
     assertFalse(transaction.isSold());
@@ -80,22 +82,23 @@ class TransactionTests {
     assertEquals(fees, transaction.getBrokerFee());
     assertEquals(grandTotal, transaction.getGrandTotal());
     assertEquals(BigDecimal.valueOf(2), transaction.getStockValue());
-    assertEquals(TransactionType.SALE, transaction.getTransactionType());
+    assertEquals(TransactionType.SALE, transaction.getType());
     assertEquals(net, transaction.getEarnings());
-    assertNotNull(transaction.getTransactionDate());
+    assertNotNull(transaction.getDate());
   }
 
   @Test
   void markSold() {
     // GIVEN
-    Transaction transaction = Transaction.buildPurchase(
-        UUID.randomUUID(),
-        "BA",
-        2,
-        BigDecimal.ONE,
-        BigDecimal.TEN,
-        BigDecimal.valueOf(12)
-    );
+    Transaction transaction = Transaction.builder()
+        .uuid(UUID.randomUUID())
+        .type(TransactionType.PURCHASE)
+        .symbol("BA")
+        .quantity(2)
+        .singlePrice(BigDecimal.ONE)
+        .brokerFee(BigDecimal.TEN)
+        .grandTotal(BigDecimal.valueOf(12))
+        .build();
 
     // WHEN
     transaction.setSold(true);
@@ -109,14 +112,15 @@ class TransactionTests {
     // GIVEN
     int id = 1;
 
-    Transaction transaction = Transaction.buildPurchase(
-        UUID.randomUUID(),
-        "BA",
-        2,
-        BigDecimal.ONE,
-        BigDecimal.TEN,
-        BigDecimal.valueOf(12)
-    );
+    Transaction transaction = Transaction.builder()
+        .uuid(UUID.randomUUID())
+        .type(TransactionType.PURCHASE)
+        .symbol("BA")
+        .quantity(2)
+        .singlePrice(BigDecimal.ONE)
+        .brokerFee(BigDecimal.TEN)
+        .grandTotal(BigDecimal.valueOf(12))
+        .build();
 
     // WHEN
     transaction.setId(id);
@@ -128,14 +132,15 @@ class TransactionTests {
   @Test
   void zeroMinutesElapsed() {
     // GIVEN
-    Transaction transaction = Transaction.buildPurchase(
-        UUID.randomUUID(),
-        "BA",
-        2,
-        BigDecimal.ONE,
-        BigDecimal.TEN,
-        BigDecimal.valueOf(12)
-    );
+    Transaction transaction = Transaction.builder()
+        .uuid(UUID.randomUUID())
+        .type(TransactionType.PURCHASE)
+        .symbol("BA")
+        .quantity(2)
+        .singlePrice(BigDecimal.ONE)
+        .brokerFee(BigDecimal.TEN)
+        .grandTotal(BigDecimal.valueOf(12))
+        .build();
 
     // WHEN
     boolean elapsed = transaction.hasElapsed(0);
@@ -147,14 +152,15 @@ class TransactionTests {
   @Test
   void timeHasNotElapsed() {
     // GIVEN
-    Transaction transaction = Transaction.buildPurchase(
-        UUID.randomUUID(),
-        "BA",
-        2,
-        BigDecimal.ONE,
-        BigDecimal.TEN,
-        BigDecimal.valueOf(12)
-    );
+    Transaction transaction = Transaction.builder()
+        .uuid(UUID.randomUUID())
+        .type(TransactionType.PURCHASE)
+        .symbol("BA")
+        .quantity(2)
+        .singlePrice(BigDecimal.ONE)
+        .brokerFee(BigDecimal.TEN)
+        .grandTotal(BigDecimal.valueOf(12))
+        .build();
 
     // WHEN
     boolean elapsed = transaction.hasElapsed(5);
@@ -166,20 +172,20 @@ class TransactionTests {
   @Test
   void timeHasElapsed() {
     // GIVEN
-    Transaction transaction = new Transaction(
-        0,
-        UUID.randomUUID(),
-        TransactionType.PURCHASE,
-        Instant.now().minus(20, ChronoUnit.MINUTES),
-        "BA",
-        2,
-        BigDecimal.ONE,
-        BigDecimal.ONE,
-        BigDecimal.TEN,
-        BigDecimal.ZERO,
-        BigDecimal.ZERO,
-        false
-    );
+    Transaction transaction = Transaction.builder()
+        .id(0)
+        .uuid(UUID.randomUUID())
+        .type(TransactionType.PURCHASE)
+        .date(Instant.now().minus(20, ChronoUnit.MINUTES))
+        .symbol("BA")
+        .quantity(2)
+        .singlePrice(BigDecimal.ONE)
+        .brokerFee(BigDecimal.ONE)
+        .earnings(BigDecimal.TEN)
+        .stockValue(BigDecimal.ZERO)
+        .grandTotal(BigDecimal.ZERO)
+        .sold(false)
+        .build();
 
     // WHEN
     boolean elapsed = transaction.hasElapsed(15);
@@ -189,22 +195,22 @@ class TransactionTests {
   }
 
   @Test
-  void stockValueNotComputer() {
+  void stockValueNotComputed() {
     // GIVEN
-    Transaction transaction = new Transaction(
-        0,
-        UUID.randomUUID(),
-        TransactionType.PURCHASE,
-        Instant.now().minus(20, ChronoUnit.MINUTES),
-        "BA",
-        2,
-        BigDecimal.ONE,
-        BigDecimal.ONE,
-        BigDecimal.TEN,
-        BigDecimal.ZERO,
-        BigDecimal.ZERO,
-        false
-    );
+    Transaction transaction = Transaction.builder()
+        .id(0)
+        .uuid(UUID.randomUUID())
+        .type(TransactionType.PURCHASE)
+        .date(Instant.now().minus(20, ChronoUnit.MINUTES))
+        .symbol("BA")
+        .quantity(2)
+        .singlePrice(BigDecimal.ONE)
+        .brokerFee(BigDecimal.ONE)
+        .earnings(BigDecimal.TEN)
+        .stockValue(BigDecimal.ZERO)
+        .grandTotal(BigDecimal.ZERO)
+        .sold(false)
+        .build();
 
     // WHEN
     BigDecimal stockValue = transaction.getStockValue();
@@ -216,20 +222,19 @@ class TransactionTests {
   @Test
   void grandTotalComputed() {
     // GIVEN
-    Transaction transaction = new Transaction(
-        0,
-        UUID.randomUUID(),
-        TransactionType.PURCHASE,
-        Instant.now().minus(20, ChronoUnit.MINUTES),
-        "BA",
-        2,
-        BigDecimal.ONE,
-        BigDecimal.ONE,
-        BigDecimal.TEN,
-        BigDecimal.ZERO,
-        null,
-        false
-    );
+    Transaction transaction = Transaction.builder()
+        .id(0)
+        .uuid(UUID.randomUUID())
+        .type(TransactionType.PURCHASE)
+        .date(Instant.now().minus(20, ChronoUnit.MINUTES))
+        .symbol("BA")
+        .quantity(2)
+        .singlePrice(BigDecimal.ONE)
+        .brokerFee(BigDecimal.ONE)
+        .earnings(BigDecimal.TEN)
+        .stockValue(BigDecimal.ZERO)
+        .sold(false)
+        .build();
 
     // WHEN
     BigDecimal grandTotal = transaction.getGrandTotal();
