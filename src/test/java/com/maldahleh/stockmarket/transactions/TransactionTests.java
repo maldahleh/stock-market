@@ -172,20 +172,20 @@ class TransactionTests {
   @Test
   void timeHasElapsed() {
     // GIVEN
-    Transaction transaction = new Transaction(
-        0,
-        UUID.randomUUID(),
-        TransactionType.PURCHASE,
-        Instant.now().minus(20, ChronoUnit.MINUTES),
-        "BA",
-        2,
-        BigDecimal.ONE,
-        BigDecimal.ONE,
-        BigDecimal.TEN,
-        BigDecimal.ZERO,
-        BigDecimal.ZERO,
-        false
-    );
+    Transaction transaction = Transaction.builder()
+        .id(0)
+        .uuid(UUID.randomUUID())
+        .type(TransactionType.PURCHASE)
+        .date(Instant.now().minus(20, ChronoUnit.MINUTES))
+        .symbol("BA")
+        .quantity(2)
+        .singlePrice(BigDecimal.ONE)
+        .brokerFee(BigDecimal.ONE)
+        .earnings(BigDecimal.TEN)
+        .stockValue(BigDecimal.ZERO)
+        .grandTotal(BigDecimal.ZERO)
+        .sold(false)
+        .build();
 
     // WHEN
     boolean elapsed = transaction.hasElapsed(15);
@@ -195,22 +195,22 @@ class TransactionTests {
   }
 
   @Test
-  void stockValueNotComputer() {
+  void stockValueNotComputed() {
     // GIVEN
-    Transaction transaction = new Transaction(
-        0,
-        UUID.randomUUID(),
-        TransactionType.PURCHASE,
-        Instant.now().minus(20, ChronoUnit.MINUTES),
-        "BA",
-        2,
-        BigDecimal.ONE,
-        BigDecimal.ONE,
-        BigDecimal.TEN,
-        BigDecimal.ZERO,
-        BigDecimal.ZERO,
-        false
-    );
+    Transaction transaction = Transaction.builder()
+        .id(0)
+        .uuid(UUID.randomUUID())
+        .type(TransactionType.PURCHASE)
+        .date(Instant.now().minus(20, ChronoUnit.MINUTES))
+        .symbol("BA")
+        .quantity(2)
+        .singlePrice(BigDecimal.ONE)
+        .brokerFee(BigDecimal.ONE)
+        .earnings(BigDecimal.TEN)
+        .stockValue(BigDecimal.ZERO)
+        .grandTotal(BigDecimal.ZERO)
+        .sold(false)
+        .build();
 
     // WHEN
     BigDecimal stockValue = transaction.getStockValue();
@@ -222,20 +222,19 @@ class TransactionTests {
   @Test
   void grandTotalComputed() {
     // GIVEN
-    Transaction transaction = new Transaction(
-        0,
-        UUID.randomUUID(),
-        TransactionType.PURCHASE,
-        Instant.now().minus(20, ChronoUnit.MINUTES),
-        "BA",
-        2,
-        BigDecimal.ONE,
-        BigDecimal.ONE,
-        BigDecimal.TEN,
-        BigDecimal.ZERO,
-        null,
-        false
-    );
+    Transaction transaction = Transaction.builder()
+        .id(0)
+        .uuid(UUID.randomUUID())
+        .type(TransactionType.PURCHASE)
+        .date(Instant.now().minus(20, ChronoUnit.MINUTES))
+        .symbol("BA")
+        .quantity(2)
+        .singlePrice(BigDecimal.ONE)
+        .brokerFee(BigDecimal.ONE)
+        .earnings(BigDecimal.TEN)
+        .stockValue(BigDecimal.ZERO)
+        .sold(false)
+        .build();
 
     // WHEN
     BigDecimal grandTotal = transaction.getGrandTotal();
