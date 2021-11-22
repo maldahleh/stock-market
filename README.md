@@ -114,7 +114,3 @@ _getPlayerStocks(UUID uuid)_ - Get the specified player's stocks
 **StockPurchaseEvent** - Called when a purchase transaction occurs
 
 **StockSaleEvent** - Called when a sale transaction occurs
-
-## Special Thanks
-
-![JProfiler](https://www.ej-technologies.com/images/product_banners/jprofiler_large.png)
