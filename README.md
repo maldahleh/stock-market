@@ -8,8 +8,6 @@ real stocks using in-game currency. This provides players a way to
 make or lose money based on the performance of the stocks they pick,
 providing a risk-free way for players to learn about the stock market.
 
-[**Spigot Page**](https://www.spigotmc.org/resources/stockmarket-beta.67766/)
-
 ## Dependencies
 
 **Vault + Economy Plugin** - Used for transactions.
@@ -116,7 +114,3 @@ _getPlayerStocks(UUID uuid)_ - Get the specified player's stocks
 **StockPurchaseEvent** - Called when a purchase transaction occurs
 
 **StockSaleEvent** - Called when a sale transaction occurs
-
-## Special Thanks
-
-![JProfiler](https://www.ej-technologies.com/images/product_banners/jprofiler_large.png)
