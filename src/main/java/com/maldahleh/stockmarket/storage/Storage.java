@@ -113,7 +113,7 @@ public abstract class Storage extends StorageStatements {
       throws SQLException {
     PreparedStatement statement = connection.prepareStatement(getActionQuery(transaction));
     statement.setString(1, transaction.getUuid().toString());
-    statement.setTimestamp(2, Timestamp.from(transaction.getTransactionDate()));
+    statement.setTimestamp(2, Timestamp.from(transaction.getDate()));
     statement.setString(3, transaction.getSymbol().toUpperCase());
     statement.setInt(4, transaction.getQuantity());
     statement.setString(5, transaction.getSinglePrice().toPlainString());

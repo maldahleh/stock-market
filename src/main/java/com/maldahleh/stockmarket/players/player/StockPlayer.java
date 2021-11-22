@@ -29,7 +29,7 @@ public class StockPlayer {
       data.decrease(transaction);
     }
 
-    transactionMap.put(transaction.getTransactionDate(), transaction);
+    transactionMap.put(transaction.getDate(), transaction);
     stockMap.put(symbol, data);
   }
 

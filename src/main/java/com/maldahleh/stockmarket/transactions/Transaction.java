@@ -20,7 +20,7 @@ public class Transaction {
   private final UUID uuid;
   private final TransactionType type;
   @Builder.Default
-  private final Instant transactionDate = Instant.now();
+  private final Instant date = Instant.now();
   private final String symbol;
   private final int quantity;
   private final BigDecimal singlePrice;
@@ -57,7 +57,7 @@ public class Transaction {
       return true;
     }
 
-    long elapsedMinutes = Duration.between(transactionDate, Instant.now()).toMinutes();
+    long elapsedMinutes = Duration.between(date, Instant.now()).toMinutes();
     return elapsedMinutes >= minutes;
   }
 
@@ -66,7 +66,7 @@ public class Transaction {
     return Transaction.builder()
         .uuid(uuid)
         .type(TransactionType.PURCHASE)
-        .transactionDate(Instant.now())
+        .date(Instant.now())
         .symbol(symbol)
         .quantity(quantity)
         .singlePrice(price)
@@ -81,7 +81,7 @@ public class Transaction {
     return Transaction.builder()
         .uuid(uuid)
         .type(TransactionType.SALE)
-        .transactionDate(Instant.now())
+        .date(Instant.now())
         .symbol(symbol)
         .quantity(quantity)
         .singlePrice(price)

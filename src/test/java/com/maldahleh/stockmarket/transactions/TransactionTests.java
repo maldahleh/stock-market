@@ -46,7 +46,7 @@ class TransactionTests {
     assertEquals(BigDecimal.valueOf(2), transaction.getStockValue());
     assertEquals(TransactionType.PURCHASE, transaction.getType());
     assertNull(transaction.getEarnings());
-    assertNotNull(transaction.getTransactionDate());
+    assertNotNull(transaction.getDate());
   }
 
   @Test
@@ -82,7 +82,7 @@ class TransactionTests {
     assertEquals(BigDecimal.valueOf(2), transaction.getStockValue());
     assertEquals(TransactionType.SALE, transaction.getType());
     assertEquals(net, transaction.getEarnings());
-    assertNotNull(transaction.getTransactionDate());
+    assertNotNull(transaction.getDate());
   }
 
   @Test
