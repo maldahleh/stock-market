@@ -12,7 +12,6 @@ import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
 import com.maldahleh.stockmarket.transactions.types.TransactionType;
 import java.math.BigDecimal;
-import java.time.Instant;
 import org.bukkit.event.Event;
 
 public class PurchaseProcessor extends StockProcessor {

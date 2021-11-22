@@ -62,15 +62,16 @@ class TransactionTests {
     BigDecimal grandTotal = BigDecimal.valueOf(11);
 
     // WHEN
-    Transaction transaction = Transaction.buildSale(
-        uuid,
-        symbol,
-        quantity,
-        price,
-        fees,
-        net,
-        grandTotal
-    );
+    Transaction transaction = Transaction.builder()
+        .uuid(uuid)
+        .type(TransactionType.SALE)
+        .symbol(symbol)
+        .quantity(quantity)
+        .singlePrice(price)
+        .brokerFee(fees)
+        .grandTotal(grandTotal)
+        .earnings(net)
+        .build();
 
     // THEN
     assertFalse(transaction.isSold());

@@ -63,15 +63,16 @@ public class SaleProcessor extends StockProcessor {
 
   @Override
   protected Transaction buildTransaction(ProcessorContext context) {
-    return Transaction.buildSale(
-        context.getPlayer().getUniqueId(),
-        context.getStock().getSymbol(),
-        context.getQuantity(),
-        context.getServerPrice(),
-        context.getBrokerFees(),
-        context.getNet(),
-        context.getGrandTotal()
-    );
+    return Transaction.builder()
+        .uuid(context.getPlayer().getUniqueId())
+        .type(TransactionType.SALE)
+        .symbol(context.getStock().getSymbol())
+        .quantity(context.getQuantity())
+        .singlePrice(context.getServerPrice())
+        .brokerFee(context.getBrokerFees())
+        .grandTotal(context.getGrandTotal())
+        .earnings(context.getNet())
+        .build();
   }
 
   @Override

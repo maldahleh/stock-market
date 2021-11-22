@@ -60,20 +60,4 @@ public class Transaction {
     long elapsedMinutes = Duration.between(date, Instant.now()).toMinutes();
     return elapsedMinutes >= minutes;
   }
-
-  public static Transaction buildSale(UUID uuid, String symbol, int quantity, BigDecimal price,
-      BigDecimal brokerFees, BigDecimal net, BigDecimal grandTotal) {
-    return Transaction.builder()
-        .uuid(uuid)
-        .type(TransactionType.SALE)
-        .date(Instant.now())
-        .symbol(symbol)
-        .quantity(quantity)
-        .singlePrice(price)
-        .brokerFee(brokerFees)
-        .grandTotal(grandTotal)
-        .earnings(net)
-        .sold(false)
-        .build();
-  }
 }

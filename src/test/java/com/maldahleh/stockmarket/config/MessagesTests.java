@@ -619,15 +619,16 @@ class MessagesTests {
       // GIVEN
       Player player = mock(Player.class);
       String company = "Boeing";
-      Transaction transaction = Transaction.buildSale(
-          UUID.randomUUID(),
-          "BA",
-          2,
-          BigDecimal.valueOf(5),
-          BigDecimal.TEN,
-          BigDecimal.valueOf(100),
-          BigDecimal.valueOf(20)
-      );
+      Transaction transaction = Transaction.builder()
+          .uuid(UUID.randomUUID())
+          .type(TransactionType.SALE)
+          .symbol("BA")
+          .quantity(2)
+          .singlePrice(BigDecimal.valueOf(5))
+          .brokerFee(BigDecimal.TEN)
+          .grandTotal(BigDecimal.valueOf(100))
+          .earnings(BigDecimal.valueOf(20))
+          .build();
 
       when(settings.format(transaction.getSinglePrice()))
           .thenReturn("5.00");
