@@ -15,7 +15,6 @@ import com.maldahleh.stockmarket.config.Settings;
 import com.maldahleh.stockmarket.players.listeners.PlayerListener;
 import com.maldahleh.stockmarket.players.player.StockPlayer;
 import com.maldahleh.stockmarket.players.player.data.StockData;
-import com.maldahleh.stockmarket.players.utils.TransactionUtils;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
@@ -265,8 +264,18 @@ class PlayerManagerTests {
 
   private List<Transaction> buildTransactionList() {
     return List.of(
-        TransactionUtils.buildTransaction(TransactionType.PURCHASE, 3, BigDecimal.TEN),
-        TransactionUtils.buildTransaction(TransactionType.SALE, 2, BigDecimal.ONE)
+        Transaction.builder()
+            .symbol("BA")
+            .type(TransactionType.PURCHASE)
+            .quantity(3)
+            .stockValue(BigDecimal.TEN)
+            .build(),
+        Transaction.builder()
+            .symbol("BA")
+            .type(TransactionType.SALE)
+            .quantity(2)
+            .stockValue(BigDecimal.ONE)
+            .build()
     );
   }
 }
