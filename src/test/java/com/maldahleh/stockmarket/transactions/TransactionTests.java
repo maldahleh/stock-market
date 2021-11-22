@@ -44,7 +44,7 @@ class TransactionTests {
     assertEquals(fees, transaction.getBrokerFee());
     assertEquals(grandTotal, transaction.getGrandTotal());
     assertEquals(BigDecimal.valueOf(2), transaction.getStockValue());
-    assertEquals(TransactionType.PURCHASE, transaction.getTransactionType());
+    assertEquals(TransactionType.PURCHASE, transaction.getType());
     assertNull(transaction.getEarnings());
     assertNotNull(transaction.getTransactionDate());
   }
@@ -80,7 +80,7 @@ class TransactionTests {
     assertEquals(fees, transaction.getBrokerFee());
     assertEquals(grandTotal, transaction.getGrandTotal());
     assertEquals(BigDecimal.valueOf(2), transaction.getStockValue());
-    assertEquals(TransactionType.SALE, transaction.getTransactionType());
+    assertEquals(TransactionType.SALE, transaction.getType());
     assertEquals(net, transaction.getEarnings());
     assertNotNull(transaction.getTransactionDate());
   }

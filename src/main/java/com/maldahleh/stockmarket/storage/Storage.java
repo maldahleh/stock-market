@@ -126,7 +126,7 @@ public abstract class Storage extends StorageStatements {
   }
 
   private String getActionQuery(Transaction transaction) {
-    if (transaction.getTransactionType() == TransactionType.SALE) {
+    if (transaction.getType() == TransactionType.SALE) {
       return getSaleQuery();
     } else {
       return getPurchaseQuery();

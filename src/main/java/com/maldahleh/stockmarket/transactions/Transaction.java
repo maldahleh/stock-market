@@ -18,7 +18,7 @@ public class Transaction {
   @Setter
   private Integer id;
   private final UUID uuid;
-  private final TransactionType transactionType;
+  private final TransactionType type;
   @Builder.Default
   private final Instant transactionDate = Instant.now();
   private final String symbol;
@@ -65,7 +65,7 @@ public class Transaction {
       BigDecimal brokerFees, BigDecimal grandTotal) {
     return Transaction.builder()
         .uuid(uuid)
-        .transactionType(TransactionType.PURCHASE)
+        .type(TransactionType.PURCHASE)
         .transactionDate(Instant.now())
         .symbol(symbol)
         .quantity(quantity)
@@ -80,7 +80,7 @@ public class Transaction {
       BigDecimal brokerFees, BigDecimal net, BigDecimal grandTotal) {
     return Transaction.builder()
         .uuid(uuid)
-        .transactionType(TransactionType.SALE)
+        .type(TransactionType.SALE)
         .transactionDate(Instant.now())
         .symbol(symbol)
         .quantity(quantity)

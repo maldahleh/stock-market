@@ -43,7 +43,7 @@ public class TransactionInventory extends PagedInventory<UUID, Instant, Transact
         Map.of(
             "<date>", formatInstant(value.getTransactionDate()),
             "<symbol>", value.getSymbol().toUpperCase(),
-            "<transaction-type>", value.getTransactionType(),
+            "<transaction-type>", value.getType(),
             "<quantity>", value.getQuantity(),
             "<stock-value>", settings.format(value.getStockValue()),
             "<broker-fees>", settings.format(value.getBrokerFee()),

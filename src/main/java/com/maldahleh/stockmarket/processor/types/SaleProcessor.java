@@ -139,7 +139,7 @@ public class SaleProcessor extends StockProcessor {
   private boolean isValidTransaction(Transaction transaction, String symbol) {
     return transaction.getSymbol().equalsIgnoreCase(symbol)
         || !transaction.isSold()
-        || transaction.getTransactionType() == TransactionType.PURCHASE
+        || transaction.getType() == TransactionType.PURCHASE
         || transaction.hasElapsed(settings.getMinutesBetweenSale());
   }
 }

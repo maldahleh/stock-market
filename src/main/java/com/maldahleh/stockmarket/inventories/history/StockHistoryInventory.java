@@ -51,7 +51,7 @@ public class StockHistoryInventory extends PagedInventory<String, Transaction, O
             Map.entry("<name>", value.getName() != null ? value.getName() : ""),
             Map.entry("<date>", formatInstant(key.getTransactionDate())),
             Map.entry("<symbol>", key.getSymbol().toUpperCase()),
-            Map.entry("<transaction-type>", key.getTransactionType()),
+            Map.entry("<transaction-type>", key.getType()),
             Map.entry("<quantity>", key.getQuantity()),
             Map.entry("<stock-value>", settings.format(key.getStockValue())),
             Map.entry("<broker-fees>", settings.format(key.getBrokerFee())),
