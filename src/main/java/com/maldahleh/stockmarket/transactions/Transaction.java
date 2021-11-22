@@ -19,7 +19,8 @@ public class Transaction {
   private Integer id;
   private final UUID uuid;
   private final TransactionType transactionType;
-  private final Instant transactionDate;
+  @Builder.Default
+  private final Instant transactionDate = Instant.now();
   private final String symbol;
   private final int quantity;
   private final BigDecimal singlePrice;
@@ -28,8 +29,10 @@ public class Transaction {
 
   private BigDecimal stockValue;
   private BigDecimal grandTotal;
+
   @Setter
-  private boolean sold;
+  @Builder.Default
+  private boolean sold = false;
 
   public BigDecimal getStockValue() {
     if (stockValue != null) {
