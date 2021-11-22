@@ -26,14 +26,15 @@ class TransactionTests {
     BigDecimal grandTotal = BigDecimal.valueOf(11);
 
     // WHEN
-    Transaction transaction = Transaction.buildPurchase(
-        uuid,
-        symbol,
-        quantity,
-        price,
-        fees,
-        grandTotal
-    );
+    Transaction transaction = Transaction.builder()
+        .uuid(uuid)
+        .type(TransactionType.PURCHASE)
+        .symbol(symbol)
+        .quantity(quantity)
+        .singlePrice(price)
+        .brokerFee(fees)
+        .grandTotal(grandTotal)
+        .build();
 
     // THEN
     assertFalse(transaction.isSold());
@@ -88,14 +89,15 @@ class TransactionTests {
   @Test
   void markSold() {
     // GIVEN
-    Transaction transaction = Transaction.buildPurchase(
-        UUID.randomUUID(),
-        "BA",
-        2,
-        BigDecimal.ONE,
-        BigDecimal.TEN,
-        BigDecimal.valueOf(12)
-    );
+    Transaction transaction = Transaction.builder()
+        .uuid(UUID.randomUUID())
+        .type(TransactionType.PURCHASE)
+        .symbol("BA")
+        .quantity(2)
+        .singlePrice(BigDecimal.ONE)
+        .brokerFee(BigDecimal.TEN)
+        .grandTotal(BigDecimal.valueOf(12))
+        .build();
 
     // WHEN
     transaction.setSold(true);
@@ -109,14 +111,15 @@ class TransactionTests {
     // GIVEN
     int id = 1;
 
-    Transaction transaction = Transaction.buildPurchase(
-        UUID.randomUUID(),
-        "BA",
-        2,
-        BigDecimal.ONE,
-        BigDecimal.TEN,
-        BigDecimal.valueOf(12)
-    );
+    Transaction transaction = Transaction.builder()
+        .uuid(UUID.randomUUID())
+        .type(TransactionType.PURCHASE)
+        .symbol("BA")
+        .quantity(2)
+        .singlePrice(BigDecimal.ONE)
+        .brokerFee(BigDecimal.TEN)
+        .grandTotal(BigDecimal.valueOf(12))
+        .build();
 
     // WHEN
     transaction.setId(id);
@@ -128,14 +131,15 @@ class TransactionTests {
   @Test
   void zeroMinutesElapsed() {
     // GIVEN
-    Transaction transaction = Transaction.buildPurchase(
-        UUID.randomUUID(),
-        "BA",
-        2,
-        BigDecimal.ONE,
-        BigDecimal.TEN,
-        BigDecimal.valueOf(12)
-    );
+    Transaction transaction = Transaction.builder()
+        .uuid(UUID.randomUUID())
+        .type(TransactionType.PURCHASE)
+        .symbol("BA")
+        .quantity(2)
+        .singlePrice(BigDecimal.ONE)
+        .brokerFee(BigDecimal.TEN)
+        .grandTotal(BigDecimal.valueOf(12))
+        .build();
 
     // WHEN
     boolean elapsed = transaction.hasElapsed(0);
@@ -147,14 +151,15 @@ class TransactionTests {
   @Test
   void timeHasNotElapsed() {
     // GIVEN
-    Transaction transaction = Transaction.buildPurchase(
-        UUID.randomUUID(),
-        "BA",
-        2,
-        BigDecimal.ONE,
-        BigDecimal.TEN,
-        BigDecimal.valueOf(12)
-    );
+    Transaction transaction = Transaction.builder()
+        .uuid(UUID.randomUUID())
+        .type(TransactionType.PURCHASE)
+        .symbol("BA")
+        .quantity(2)
+        .singlePrice(BigDecimal.ONE)
+        .brokerFee(BigDecimal.TEN)
+        .grandTotal(BigDecimal.valueOf(12))
+        .build();
 
     // WHEN
     boolean elapsed = transaction.hasElapsed(5);

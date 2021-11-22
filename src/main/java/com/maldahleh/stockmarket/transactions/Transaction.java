@@ -61,21 +61,6 @@ public class Transaction {
     return elapsedMinutes >= minutes;
   }
 
-  public static Transaction buildPurchase(UUID uuid, String symbol, int quantity, BigDecimal price,
-      BigDecimal brokerFees, BigDecimal grandTotal) {
-    return Transaction.builder()
-        .uuid(uuid)
-        .type(TransactionType.PURCHASE)
-        .date(Instant.now())
-        .symbol(symbol)
-        .quantity(quantity)
-        .singlePrice(price)
-        .brokerFee(brokerFees)
-        .grandTotal(grandTotal)
-        .sold(false)
-        .build();
-  }
-
   public static Transaction buildSale(UUID uuid, String symbol, int quantity, BigDecimal price,
       BigDecimal brokerFees, BigDecimal net, BigDecimal grandTotal) {
     return Transaction.builder()

@@ -10,7 +10,9 @@ import com.maldahleh.stockmarket.processor.model.ProcessorContext;
 import com.maldahleh.stockmarket.stocks.StockManager;
 import com.maldahleh.stockmarket.storage.Storage;
 import com.maldahleh.stockmarket.transactions.Transaction;
+import com.maldahleh.stockmarket.transactions.types.TransactionType;
 import java.math.BigDecimal;
+import java.time.Instant;
 import org.bukkit.event.Event;
 
 public class PurchaseProcessor extends StockProcessor {
@@ -43,14 +45,15 @@ public class PurchaseProcessor extends StockProcessor {
 
   @Override
   protected Transaction buildTransaction(ProcessorContext context) {
-    return Transaction.buildPurchase(
-        context.getPlayer().getUniqueId(),
-        context.getStock().getSymbol(),
-        context.getQuantity(),
-        context.getServerPrice(),
-        context.getBrokerFees(),
-        context.getGrandTotal()
-    );
+    return Transaction.builder()
+        .uuid(context.getPlayer().getUniqueId())
+        .type(TransactionType.PURCHASE)
+        .symbol(context.getStock().getSymbol())
+        .quantity(context.getQuantity())
+        .singlePrice(context.getServerPrice())
+        .brokerFee(context.getBrokerFees())
+        .grandTotal(context.getGrandTotal())
+        .build();
   }
 
   @Override
