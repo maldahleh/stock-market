@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 public class HelpCommand extends NoPermissionCommand {
 
-  protected HelpCommand(Messages messages) {
+  public HelpCommand(Messages messages) {
     super(messages);
   }
 

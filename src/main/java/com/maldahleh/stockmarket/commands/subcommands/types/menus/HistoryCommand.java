@@ -4,14 +4,17 @@ import com.maldahleh.stockmarket.commands.subcommands.common.BaseCommand;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
-@RequiredArgsConstructor
 public class HistoryCommand extends BaseCommand {
 
   private final InventoryManager inventoryManager;
-  private final Messages messages;
+
+  public HistoryCommand(InventoryManager inventoryManager, Messages messages) {
+    super(messages);
+
+    this.inventoryManager = inventoryManager;
+  }
 
   @Override
   public void onCommand(Player player, String[] args) {
