@@ -57,4 +57,4 @@ pending:
   history: "&eGenerating history..."
   history-symbol: "&eGenerating symbol history..."
   buy: "&eProcessing purchase..."
-  sale: "&eProcessing sale..."
+  sell: "&eProcessing sale..."
