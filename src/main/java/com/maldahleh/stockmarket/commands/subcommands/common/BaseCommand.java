@@ -1,10 +1,15 @@
 package com.maldahleh.stockmarket.commands.subcommands.common;
 
 import com.maldahleh.stockmarket.commands.subcommands.Subcommand;
+import com.maldahleh.stockmarket.config.Messages;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
+@RequiredArgsConstructor
 public abstract class BaseCommand implements Subcommand {
+
+  protected final Messages messages;
 
   @Override
   public int minArgs() {

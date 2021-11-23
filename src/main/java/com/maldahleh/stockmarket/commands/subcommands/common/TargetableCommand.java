@@ -5,13 +5,11 @@ import com.maldahleh.stockmarket.inventories.InventoryManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-@RequiredArgsConstructor
 public abstract class TargetableCommand extends BaseCommand {
 
   private static final String OTHER_PERM_SUFFIX = ".other";
@@ -19,7 +17,13 @@ public abstract class TargetableCommand extends BaseCommand {
 
   private final Plugin plugin;
   protected final InventoryManager inventoryManager;
-  protected final Messages messages;
+
+  protected TargetableCommand(Plugin plugin, InventoryManager inventoryManager, Messages messages) {
+    super(messages);
+
+    this.plugin = plugin;
+    this.inventoryManager = inventoryManager;
+  }
 
   public abstract void callerAction(Player caller);
 

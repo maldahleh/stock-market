@@ -3,17 +3,20 @@ package com.maldahleh.stockmarket.commands.subcommands.types.menus;
 import com.maldahleh.stockmarket.commands.subcommands.common.BaseCommand;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
-@RequiredArgsConstructor
 public class CompareCommand extends BaseCommand {
 
   private static final String SEPARATOR = ",";
   private static final int MAX_SYMBOLS = 3;
 
   private final InventoryManager inventoryManager;
-  private final Messages messages;
+
+  public CompareCommand(InventoryManager inventoryManager, Messages messages) {
+    super(messages);
+
+    this.inventoryManager = inventoryManager;
+  }
 
   @Override
   public void onCommand(Player player, String[] args) {

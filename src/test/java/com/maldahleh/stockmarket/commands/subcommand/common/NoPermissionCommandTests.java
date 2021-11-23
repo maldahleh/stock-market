@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 
 import com.maldahleh.stockmarket.commands.subcommands.common.NoPermissionCommand;
+import com.maldahleh.stockmarket.config.Messages;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +17,7 @@ class NoPermissionCommandTests {
     Player player = mock(Player.class);
 
     // WHEN
-    NoPermissionCommand noPermissionCommand = new NoPermissionCommand() {
+    NoPermissionCommand noPermissionCommand = new NoPermissionCommand(mock(Messages.class)) {
       @Override
       public void onCommand(Player player, String[] args) {
         // implementation not tested
