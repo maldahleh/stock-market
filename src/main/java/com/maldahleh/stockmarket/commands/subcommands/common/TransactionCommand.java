@@ -32,8 +32,9 @@ public abstract class TransactionCommand extends NoPermissionCommand {
       return;
     }
 
-    String symbol = args[1];
     sendPending(player);
+
+    String symbol = args[1];
     stockProcessor.processTransaction(player, symbol, quantity);
   }
 
