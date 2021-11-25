@@ -3,7 +3,6 @@ package com.maldahleh.stockmarket.commands.subcommands.types.menus;
 import com.maldahleh.stockmarket.commands.subcommands.common.BaseCommand;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
 public class LookupCommand extends BaseCommand {
@@ -18,7 +17,7 @@ public class LookupCommand extends BaseCommand {
 
   @Override
   public void onCommand(Player player, String[] args) {
-    messages.sendPendingLookup(player);
+    sendPending(player);
     inventoryManager.openLookupInventory(player, args[1]);
   }
 

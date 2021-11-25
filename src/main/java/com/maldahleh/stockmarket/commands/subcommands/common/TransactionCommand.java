@@ -24,8 +24,6 @@ public abstract class TransactionCommand extends NoPermissionCommand {
     this.stockProcessor = stockProcessor;
   }
 
-  public abstract void sendTransactionMessage(Player player);
-
   @Override
   public void onCommand(Player player, String[] args) {
     int quantity = determineQuantity(args);
@@ -35,7 +33,7 @@ public abstract class TransactionCommand extends NoPermissionCommand {
     }
 
     String symbol = args[1];
-    sendTransactionMessage(player);
+    sendPending(player);
     stockProcessor.processTransaction(player, symbol, quantity);
   }
 

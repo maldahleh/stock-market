@@ -8,6 +8,8 @@ import org.bukkit.entity.Player;
 
 public class HistoryCommand extends BaseCommand {
 
+  private static final String SYMBOL_SUFFIX = "-symbol";
+
   private final InventoryManager inventoryManager;
 
   public HistoryCommand(InventoryManager inventoryManager, Messages messages) {
@@ -19,10 +21,10 @@ public class HistoryCommand extends BaseCommand {
   @Override
   public void onCommand(Player player, String[] args) {
     if (args.length == 1) {
-      messages.sendPendingHistory(player);
+      sendPending(player);
       inventoryManager.openStockHistoryInventory(player);
     } else {
-      messages.sendPendingHistorySymbol(player);
+      messages.sendPending(player, commandName() + SYMBOL_SUFFIX);
       inventoryManager.openStockHistoryInventory(player, args[1]);
     }
   }
@@ -39,6 +41,6 @@ public class HistoryCommand extends BaseCommand {
 
   @Override
   public List<String> commandHelpKeys(Player player) {
-    return List.of("history", "history-symbol");
+    return List.of(commandName(), commandName() + SYMBOL_SUFFIX);
   }
 }

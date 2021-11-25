@@ -32,6 +32,7 @@ public abstract class TargetableCommand extends BaseCommand {
   @Override
   public void onCommand(Player player, String[] args) {
     if (args.length == 1) {
+      sendPending(player);
       callerAction(player);
     } else {
       handleTargetedPlayer(player, args[1]);
@@ -58,6 +59,10 @@ public abstract class TargetableCommand extends BaseCommand {
     return hasOtherPermission(player);
   }
 
+  public void sendPendingOther(Player player) {
+    messages.sendPending(player, commandName() + OTHER_HELP_SUFFIX);
+  }
+
   private boolean hasOtherPermission(Player player) {
     String otherPermission = buildOtherPermission();
     return player.hasPermission(otherPermission);
@@ -72,7 +77,7 @@ public abstract class TargetableCommand extends BaseCommand {
 
     Player targetPlayer = Bukkit.getPlayer(target);
     if (targetPlayer != null) {
-      targetAction(executor, targetPlayer.getUniqueId());
+      runForTarget(executor, targetPlayer.getUniqueId());
       return;
     }
 
@@ -82,8 +87,13 @@ public abstract class TargetableCommand extends BaseCommand {
             () -> {
               OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(target);
 
-              targetAction(executor, offlinePlayer.getUniqueId());
+              runForTarget(executor, offlinePlayer.getUniqueId());
             });
+  }
+
+  private void runForTarget(Player executor, UUID uuid) {
+    sendPendingOther(executor);
+    targetAction(executor, uuid);
   }
 
   private String buildOtherPermission() {

@@ -15,13 +15,11 @@ public class PortfolioCommand extends TargetableCommand {
 
   @Override
   public void callerAction(Player caller) {
-    messages.sendPendingPortfolio(caller);
     inventoryManager.openPortfolioInventory(caller);
   }
 
   @Override
   public void targetAction(Player caller, UUID target) {
-    messages.sendPendingPortfolioOther(caller);
     inventoryManager.openPortfolioInventory(caller, target);
   }
 

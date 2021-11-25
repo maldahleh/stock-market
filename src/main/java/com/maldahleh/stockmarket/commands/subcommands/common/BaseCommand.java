@@ -40,4 +40,9 @@ public abstract class BaseCommand implements Subcommand {
   public boolean shouldTabCompleterReturnPlayerList(Player player) {
     return false;
   }
+
+  @Override
+  public void sendPending(Player player) {
+    messages.sendPending(player, commandName());
+  }
 }

@@ -80,44 +80,8 @@ public class Messages {
     sender.sendMessage(configFile.getString("player-only"));
   }
 
-  public void sendPendingLookup(Player player) {
-    player.sendMessage(configFile.getString("pending.lookup"));
-  }
-
-  public void sendPendingCompare(Player player) {
-    player.sendMessage(configFile.getString("pending.compare"));
-  }
-
-  public void sendPendingPortfolio(Player player) {
-    player.sendMessage(configFile.getString("pending.portfolio"));
-  }
-
-  public void sendPendingPortfolioOther(Player player) {
-    player.sendMessage(configFile.getString("pending.portfolio-other"));
-  }
-
-  public void sendPendingTransactions(Player player) {
-    player.sendMessage(configFile.getString("pending.transactions"));
-  }
-
-  public void sendPendingTransactionsOther(Player player) {
-    player.sendMessage(configFile.getString("pending.transactions-other"));
-  }
-
-  public void sendPendingHistory(Player player) {
-    player.sendMessage(configFile.getString("pending.history"));
-  }
-
-  public void sendPendingHistorySymbol(Player player) {
-    player.sendMessage(configFile.getString("pending.history-symbol"));
-  }
-
-  public void sendPendingBuy(Player player) {
-    player.sendMessage(configFile.getString("pending.buy"));
-  }
-
-  public void sendPendingSale(Player player) {
-    player.sendMessage(configFile.getString("pending.sale"));
+  public void sendPending(Player player, String commandName) {
+    player.sendMessage(configFile.getString("pending." + commandName));
   }
 
   public void sendBoughtStockMessage(Player player, String company, Transaction transaction) {

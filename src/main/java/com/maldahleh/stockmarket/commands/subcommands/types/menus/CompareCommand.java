@@ -31,7 +31,7 @@ public class CompareCommand extends BaseCommand {
       return;
     }
 
-    messages.sendPendingCompare(player);
+    sendPending(player);
     inventoryManager.openCompareInventory(player, symbols);
   }
 

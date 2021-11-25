@@ -20,4 +20,6 @@ public interface Subcommand {
   boolean canPlayerExecute(Player player);
 
   boolean shouldTabCompleterReturnPlayerList(Player player);
+
+  void sendPending(Player player);
 }
