@@ -90,7 +90,7 @@ class StockMarketCommandTests {
 
     @BeforeEach
     void beforeEach() {
-      subcommand = spy(new BaseCommand() {
+      subcommand = spy(new BaseCommand(mock(Messages.class)) {
         @Override
         public void onCommand(Player player, String[] args) {
           // implementation not tested

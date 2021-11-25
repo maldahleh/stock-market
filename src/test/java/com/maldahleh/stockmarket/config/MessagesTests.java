@@ -386,8 +386,8 @@ class MessagesTests {
 
         List<Subcommand> subcommandList = List.of(
             new HelpCommand(messages),
-            new TutorialCommand(inventoryManager),
-            new ListCommand(inventoryManager),
+            new TutorialCommand(inventoryManager, messages),
+            new ListCommand(inventoryManager, messages),
             new LookupCommand(inventoryManager, messages),
             new CompareCommand(inventoryManager, messages),
             new PortfolioCommand(stockMarket, inventoryManager, messages),

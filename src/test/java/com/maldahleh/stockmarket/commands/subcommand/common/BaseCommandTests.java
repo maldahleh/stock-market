@@ -1,11 +1,13 @@
 package com.maldahleh.stockmarket.commands.subcommand.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.maldahleh.stockmarket.commands.subcommands.common.BaseCommand;
+import com.maldahleh.stockmarket.config.Messages;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,7 +21,7 @@ class BaseCommandTests {
     Player player = mock(Player.class);
 
     // WHEN
-    BaseCommand baseCommand = new BaseCommand() {
+    BaseCommand baseCommand = new BaseCommand(mock(Messages.class)) {
       @Override
       public void onCommand(Player player, String[] args) {
         // implementation not tested
@@ -38,6 +40,8 @@ class BaseCommandTests {
 
     assertEquals(1, baseCommand.commandHelpKeys(player).size());
     assertEquals("test", baseCommand.commandHelpKeys(player).get(0));
+
+    assertFalse(baseCommand.shouldTabCompleterReturnPlayerList(player));
   }
 
   @Nested
@@ -48,7 +52,7 @@ class BaseCommandTests {
     void hasPermission() {
       // GIVEN
       Player player = mock(Player.class);
-      BaseCommand baseCommand = new BaseCommand() {
+      BaseCommand baseCommand = new BaseCommand(mock(Messages.class)) {
         @Override
         public void onCommand(Player player, String[] args) {
           // implementation not tested
@@ -74,7 +78,7 @@ class BaseCommandTests {
     void noPermissionCommand() {
       // GIVEN
       Player player = mock(Player.class);
-      BaseCommand baseCommand = new BaseCommand() {
+      BaseCommand baseCommand = new BaseCommand(mock(Messages.class)) {
         @Override
         public void onCommand(Player player, String[] args) {
           // implementation not tested

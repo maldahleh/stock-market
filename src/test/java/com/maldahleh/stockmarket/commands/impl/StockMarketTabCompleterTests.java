@@ -207,7 +207,7 @@ class StockMarketTabCompleterTests {
     }
 
     private Subcommand buildBase() {
-      return new BaseCommand() {
+      return new BaseCommand(mock(Messages.class)) {
         @Override
         public void onCommand(Player player, String[] args) {
           // implementation not tested
@@ -369,7 +369,7 @@ class StockMarketTabCompleterTests {
     }
 
     private Subcommand buildSubcommand(String commandName, String permission) {
-      return new BaseCommand() {
+      return new BaseCommand(mock(Messages.class)) {
         @Override
         public void onCommand(Player player, String[] args) {
           // implementation not tested
