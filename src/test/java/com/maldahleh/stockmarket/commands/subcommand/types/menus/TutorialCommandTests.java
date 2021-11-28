@@ -1,6 +1,7 @@
 package com.maldahleh.stockmarket.commands.subcommand.types.menus;
 
 import com.maldahleh.stockmarket.commands.subcommands.types.menus.TutorialCommand;
+import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +20,7 @@ class TutorialCommandTests {
     void setup() {
         inventoryManager = mock(InventoryManager.class);
 
-        command = new TutorialCommand(inventoryManager);
+        command = new TutorialCommand(inventoryManager, mock(Messages.class));
     }
 
     @Test

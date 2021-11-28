@@ -26,11 +26,6 @@ class TransactionCommandTests {
     // WHEN
     TransactionCommand transactionCommand = new TransactionCommand(stockProcessor, messages) {
       @Override
-      public void sendTransactionMessage(Player player) {
-        // implementation not tested
-      }
-
-      @Override
       public String commandName() {
         return "transaction";
       }
@@ -58,11 +53,6 @@ class TransactionCommandTests {
 
     // WHEN
     TransactionCommand transactionCommand = new TransactionCommand(stockProcessor, messages) {
-      @Override
-      public void sendTransactionMessage(Player player) {
-        // implementation not tested
-      }
-
       @Override
       public String commandName() {
         return "transaction";
@@ -93,11 +83,6 @@ class TransactionCommandTests {
     TransactionCommand transactionCommand = spy(
         new TransactionCommand(stockProcessor, messages) {
           @Override
-          public void sendTransactionMessage(Player player) {
-            // implementation not tested
-          }
-
-          @Override
           public String commandName() {
             return "transaction";
           }
@@ -114,8 +99,8 @@ class TransactionCommandTests {
     verify(stockProcessor)
         .processTransaction(player, "BA", 1);
 
-    verify(transactionCommand)
-        .sendTransactionMessage(player);
+    verify(messages)
+        .sendPending(player, "transaction");
   }
 
   @Test
@@ -130,11 +115,6 @@ class TransactionCommandTests {
     // WHEN
     TransactionCommand transactionCommand = spy(
         new TransactionCommand(stockProcessor, messages) {
-          @Override
-          public void sendTransactionMessage(Player player) {
-            // implementation not tested
-          }
-
           @Override
           public String commandName() {
             return "transaction";
@@ -152,7 +132,7 @@ class TransactionCommandTests {
     verify(stockProcessor)
         .processTransaction(player, "BA", 5);
 
-    verify(transactionCommand)
-        .sendTransactionMessage(player);
+    verify(messages)
+        .sendPending(player, "transaction");
   }
 }

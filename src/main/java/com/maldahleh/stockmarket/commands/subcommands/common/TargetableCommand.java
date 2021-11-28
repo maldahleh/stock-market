@@ -5,13 +5,11 @@ import com.maldahleh.stockmarket.inventories.InventoryManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-@RequiredArgsConstructor
 public abstract class TargetableCommand extends BaseCommand {
 
   private static final String OTHER_PERM_SUFFIX = ".other";
@@ -19,7 +17,13 @@ public abstract class TargetableCommand extends BaseCommand {
 
   private final Plugin plugin;
   protected final InventoryManager inventoryManager;
-  protected final Messages messages;
+
+  protected TargetableCommand(Plugin plugin, InventoryManager inventoryManager, Messages messages) {
+    super(messages);
+
+    this.plugin = plugin;
+    this.inventoryManager = inventoryManager;
+  }
 
   public abstract void callerAction(Player caller);
 
@@ -28,6 +32,7 @@ public abstract class TargetableCommand extends BaseCommand {
   @Override
   public void onCommand(Player player, String[] args) {
     if (args.length == 1) {
+      sendPending(player);
       callerAction(player);
     } else {
       handleTargetedPlayer(player, args[1]);
@@ -54,6 +59,10 @@ public abstract class TargetableCommand extends BaseCommand {
     return hasOtherPermission(player);
   }
 
+  public void sendPendingOther(Player player) {
+    messages.sendPending(player, commandName() + OTHER_HELP_SUFFIX);
+  }
+
   private boolean hasOtherPermission(Player player) {
     String otherPermission = buildOtherPermission();
     return player.hasPermission(otherPermission);
@@ -68,7 +77,7 @@ public abstract class TargetableCommand extends BaseCommand {
 
     Player targetPlayer = Bukkit.getPlayer(target);
     if (targetPlayer != null) {
-      targetAction(executor, targetPlayer.getUniqueId());
+      runForTarget(executor, targetPlayer.getUniqueId());
       return;
     }
 
@@ -78,8 +87,13 @@ public abstract class TargetableCommand extends BaseCommand {
             () -> {
               OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(target);
 
-              targetAction(executor, offlinePlayer.getUniqueId());
+              runForTarget(executor, offlinePlayer.getUniqueId());
             });
+  }
+
+  private void runForTarget(Player executor, UUID uuid) {
+    sendPendingOther(executor);
+    targetAction(executor, uuid);
   }
 
   private String buildOtherPermission() {

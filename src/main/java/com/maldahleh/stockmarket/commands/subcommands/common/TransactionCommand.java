@@ -2,10 +2,8 @@ package com.maldahleh.stockmarket.commands.subcommands.common;
 
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.processor.StockProcessor;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
-@RequiredArgsConstructor
 public abstract class TransactionCommand extends NoPermissionCommand {
 
   /**
@@ -19,9 +17,12 @@ public abstract class TransactionCommand extends NoPermissionCommand {
   private static final int DEFAULT_QUANTITY = 1;
 
   protected final StockProcessor stockProcessor;
-  protected final Messages messages;
 
-  public abstract void sendTransactionMessage(Player player);
+  protected TransactionCommand(StockProcessor stockProcessor, Messages messages) {
+    super(messages);
+
+    this.stockProcessor = stockProcessor;
+  }
 
   @Override
   public void onCommand(Player player, String[] args) {
@@ -31,8 +32,9 @@ public abstract class TransactionCommand extends NoPermissionCommand {
       return;
     }
 
+    sendPending(player);
+
     String symbol = args[1];
-    sendTransactionMessage(player);
     stockProcessor.processTransaction(player, symbol, quantity);
   }
 

@@ -105,6 +105,9 @@ class TargetableCommandTests {
       targetableCommand.onCommand(player, args);
 
       // THEN
+      verify(messages)
+          .sendPending(player, "test");
+
       verify(targetableCommand)
           .callerAction(player);
     }
@@ -154,6 +157,9 @@ class TargetableCommandTests {
         targetableCommand.onCommand(player, args);
 
         // THEN
+        verify(messages)
+            .sendPending(player, "test-other");
+
         verify(targetableCommand)
             .targetAction(player, uuid);
       }
@@ -192,6 +198,9 @@ class TargetableCommandTests {
         SchedulerUtils.interceptAsyncRun(plugin, scheduler);
 
         // THEN
+        verify(messages)
+            .sendPending(player, "test-other");
+
         verify(targetableCommand)
             .targetAction(player, uuid);
       }

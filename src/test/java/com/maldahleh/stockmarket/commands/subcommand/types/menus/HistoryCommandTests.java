@@ -55,7 +55,7 @@ class HistoryCommandTests {
 
         // THEN
         verify(messages)
-                .sendPendingHistory(player);
+                .sendPending(player, "history");
 
         verify(inventoryManager)
                 .openStockHistoryInventory(player);
@@ -72,7 +72,7 @@ class HistoryCommandTests {
 
         // THEN
         verify(messages)
-                .sendPendingHistorySymbol(player);
+                .sendPending(player, "history-symbol");
 
         verify(inventoryManager)
                 .openStockHistoryInventory(player, "BA");

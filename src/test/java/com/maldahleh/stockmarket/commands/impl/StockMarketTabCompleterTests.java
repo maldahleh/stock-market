@@ -30,6 +30,7 @@ class StockMarketTabCompleterTests {
 
   private Command command;
   private CommandManager commandManager;
+  private Messages messages;
 
   private StockMarketTabCompleter stockMarketTabCompleter;
 
@@ -37,6 +38,7 @@ class StockMarketTabCompleterTests {
   void setup() {
     this.command = mock(Command.class);
     this.commandManager = mock(CommandManager.class);
+    this.messages = mock(Messages.class);
 
     this.stockMarketTabCompleter = new StockMarketTabCompleter(commandManager);
   }
@@ -207,7 +209,7 @@ class StockMarketTabCompleterTests {
     }
 
     private Subcommand buildBase() {
-      return new BaseCommand() {
+      return new BaseCommand(messages) {
         @Override
         public void onCommand(Player player, String[] args) {
           // implementation not tested
@@ -226,8 +228,7 @@ class StockMarketTabCompleterTests {
     }
 
     private Subcommand buildTargeted(String commandName, String permission) {
-      return new TargetableCommand(mock(Plugin.class), mock(InventoryManager.class),
-          mock(Messages.class)) {
+      return new TargetableCommand(mock(Plugin.class), mock(InventoryManager.class), messages) {
         @Override
         public void callerAction(Player caller) {
           // implementation not tested
@@ -369,7 +370,7 @@ class StockMarketTabCompleterTests {
     }
 
     private Subcommand buildSubcommand(String commandName, String permission) {
-      return new BaseCommand() {
+      return new BaseCommand(messages) {
         @Override
         public void onCommand(Player player, String[] args) {
           // implementation not tested

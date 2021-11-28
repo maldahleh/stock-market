@@ -15,13 +15,11 @@ public class TransactionsCommand extends TargetableCommand {
 
   @Override
   public void callerAction(Player caller) {
-    messages.sendPendingTransactions(caller);
     inventoryManager.openTransactionInventory(caller);
   }
 
   @Override
   public void targetAction(Player caller, UUID target) {
-    messages.sendPendingTransactionsOther(caller);
     inventoryManager.openTransactionInventory(caller, target);
   }
 

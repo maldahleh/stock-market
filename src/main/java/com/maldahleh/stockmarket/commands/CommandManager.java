@@ -51,8 +51,8 @@ public class CommandManager {
 
     registerSubcommands(
         new HelpCommand(messages),
-        new TutorialCommand(inventoryManager),
-        new ListCommand(inventoryManager),
+        new TutorialCommand(inventoryManager, messages),
+        new ListCommand(inventoryManager, messages),
         new LookupCommand(inventoryManager, messages),
         new CompareCommand(inventoryManager, messages),
         new PortfolioCommand(plugin, inventoryManager, messages),

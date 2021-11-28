@@ -79,7 +79,7 @@ class CompareCommandTests {
 
         // THEN
         verify(messages)
-                .sendPendingCompare(player);
+                .sendPending(player, "compare");
         verify(inventoryManager)
                 .openCompareInventory(player, "test", "test2", "test3");
     }

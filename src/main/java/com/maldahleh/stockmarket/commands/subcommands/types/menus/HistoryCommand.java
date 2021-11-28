@@ -4,22 +4,27 @@ import com.maldahleh.stockmarket.commands.subcommands.common.BaseCommand;
 import com.maldahleh.stockmarket.config.Messages;
 import com.maldahleh.stockmarket.inventories.InventoryManager;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
-@RequiredArgsConstructor
 public class HistoryCommand extends BaseCommand {
 
+  private static final String SYMBOL_SUFFIX = "-symbol";
+
   private final InventoryManager inventoryManager;
-  private final Messages messages;
+
+  public HistoryCommand(InventoryManager inventoryManager, Messages messages) {
+    super(messages);
+
+    this.inventoryManager = inventoryManager;
+  }
 
   @Override
   public void onCommand(Player player, String[] args) {
     if (args.length == 1) {
-      messages.sendPendingHistory(player);
+      sendPending(player);
       inventoryManager.openStockHistoryInventory(player);
     } else {
-      messages.sendPendingHistorySymbol(player);
+      messages.sendPending(player, commandName() + SYMBOL_SUFFIX);
       inventoryManager.openStockHistoryInventory(player, args[1]);
     }
   }
@@ -36,6 +41,6 @@ public class HistoryCommand extends BaseCommand {
 
   @Override
   public List<String> commandHelpKeys(Player player) {
-    return List.of("history", "history-symbol");
+    return List.of(commandName(), commandName() + SYMBOL_SUFFIX);
   }
 }

@@ -3,14 +3,17 @@ package com.maldahleh.stockmarket.commands.subcommands.types.broker;
 import com.maldahleh.stockmarket.brokers.BrokerManager;
 import com.maldahleh.stockmarket.commands.subcommands.common.BaseCommand;
 import com.maldahleh.stockmarket.config.Messages;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
-@RequiredArgsConstructor
 public class SpawnSimpleBrokerCommand extends BaseCommand {
 
   private final BrokerManager brokerManager;
-  private final Messages messages;
+
+  public SpawnSimpleBrokerCommand(BrokerManager brokerManager, Messages messages) {
+    super(messages);
+
+    this.brokerManager = brokerManager;
+  }
 
   @Override
   public void onCommand(Player player, String[] args) {
