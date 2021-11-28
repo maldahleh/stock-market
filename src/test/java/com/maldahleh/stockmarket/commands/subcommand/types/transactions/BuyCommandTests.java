@@ -13,14 +13,12 @@ import static org.mockito.Mockito.*;
 
 class BuyCommandTests {
 
-    private Messages messages;
-
     private BuyCommand command;
 
     @BeforeEach
     void setup() {
         PurchaseProcessor purchaseProcessor = mock(PurchaseProcessor.class);
-        messages = mock(Messages.class);
+        Messages messages = mock(Messages.class);
 
         command = new BuyCommand(purchaseProcessor, messages);
     }
@@ -38,18 +36,5 @@ class BuyCommandTests {
 
         assertEquals(1, command.commandHelpKeys(player).size());
         assertEquals("buy", command.commandHelpKeys(player).get(0));
-    }
-
-    @Test
-    void processTransaction() {
-        // GIVEN
-        Player player = mock(Player.class);
-
-        // WHEN
-        command.sendTransactionMessage(player);
-
-        // THEN
-        verify(messages)
-                .sendPendingBuy(player);
     }
 }

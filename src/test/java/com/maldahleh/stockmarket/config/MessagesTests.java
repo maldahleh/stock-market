@@ -238,7 +238,7 @@ class MessagesTests {
       Player player = mock(Player.class);
 
       // WHEN
-      messages.sendPendingLookup(player);
+      messages.sendPending(player, "lookup");
 
       // THEN
       verify(player)
@@ -251,7 +251,7 @@ class MessagesTests {
       Player player = mock(Player.class);
 
       // WHEN
-      messages.sendPendingCompare(player);
+      messages.sendPending(player, "compare");
 
       // THEN
       verify(player)
@@ -264,7 +264,7 @@ class MessagesTests {
       Player player = mock(Player.class);
 
       // WHEN
-      messages.sendPendingPortfolio(player);
+      messages.sendPending(player, "portfolio");
 
       // THEN
       verify(player)
@@ -277,7 +277,7 @@ class MessagesTests {
       Player player = mock(Player.class);
 
       // WHEN
-      messages.sendPendingPortfolioOther(player);
+      messages.sendPending(player, "portfolio-other");
 
       // THEN
       verify(player)
@@ -290,7 +290,7 @@ class MessagesTests {
       Player player = mock(Player.class);
 
       // WHEN
-      messages.sendPendingTransactions(player);
+      messages.sendPending(player, "transactions");
 
       // THEN
       verify(player)
@@ -303,7 +303,7 @@ class MessagesTests {
       Player player = mock(Player.class);
 
       // WHEN
-      messages.sendPendingTransactionsOther(player);
+      messages.sendPending(player, "transactions-other");
 
       // THEN
       verify(player)
@@ -316,7 +316,7 @@ class MessagesTests {
       Player player = mock(Player.class);
 
       // WHEN
-      messages.sendPendingHistory(player);
+      messages.sendPending(player, "history");
 
       // THEN
       verify(player)
@@ -329,7 +329,7 @@ class MessagesTests {
       Player player = mock(Player.class);
 
       // WHEN
-      messages.sendPendingHistorySymbol(player);
+      messages.sendPending(player, "history-symbol");
 
       // THEN
       verify(player)
@@ -342,7 +342,7 @@ class MessagesTests {
       Player player = mock(Player.class);
 
       // WHEN
-      messages.sendPendingBuy(player);
+      messages.sendPending(player, "buy");
 
       // THEN
       verify(player)
@@ -355,7 +355,7 @@ class MessagesTests {
       Player player = mock(Player.class);
 
       // WHEN
-      messages.sendPendingSale(player);
+      messages.sendPending(player, "sell");
 
       // THEN
       verify(player)

@@ -51,7 +51,7 @@ class LookupCommandTests {
 
         // THEN
         verify(messages)
-                .sendPendingLookup(player);
+                .sendPending(player, "lookup");
 
         verify(inventoryManager)
                 .openLookupInventory(player, "BA");

@@ -17,15 +17,14 @@ import static org.mockito.Mockito.*;
 class PortfolioCommandTests {
 
     private InventoryManager inventoryManager;
-    private Messages messages;
 
     private PortfolioCommand command;
 
     @BeforeEach
     void setup() {
         Plugin plugin = mock(Plugin.class);
+        Messages messages = mock(Messages.class);
         inventoryManager = mock(InventoryManager.class);
-        messages = mock(Messages.class);
 
         command = new PortfolioCommand(plugin, inventoryManager, messages);
     }
@@ -77,9 +76,6 @@ class PortfolioCommandTests {
         command.callerAction(player);
 
         // THEN
-        verify(messages)
-                .sendPendingPortfolio(player);
-
         verify(inventoryManager)
                 .openPortfolioInventory(player);
     }
@@ -94,9 +90,6 @@ class PortfolioCommandTests {
         command.targetAction(player, targetUUID);
 
         // THEN
-        verify(messages)
-                .sendPendingPortfolioOther(player);
-
         verify(inventoryManager)
                 .openPortfolioInventory(player, targetUUID);
     }

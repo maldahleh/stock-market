@@ -17,15 +17,14 @@ import static org.mockito.Mockito.*;
 class TransactionsCommandTests {
 
     private InventoryManager inventoryManager;
-    private Messages messages;
 
     private TransactionsCommand command;
 
     @BeforeEach
     void setup() {
         Plugin plugin = mock(Plugin.class);
+        Messages messages = mock(Messages.class);
         inventoryManager = mock(InventoryManager.class);
-        messages = mock(Messages.class);
 
         command = new TransactionsCommand(plugin, inventoryManager, messages);
     }
@@ -77,9 +76,6 @@ class TransactionsCommandTests {
         command.callerAction(player);
 
         // THEN
-        verify(messages)
-                .sendPendingTransactions(player);
-
         verify(inventoryManager)
                 .openTransactionInventory(player);
     }
@@ -94,9 +90,6 @@ class TransactionsCommandTests {
         command.targetAction(player, targetUUID);
 
         // THEN
-        verify(messages)
-                .sendPendingTransactionsOther(player);
-
         verify(inventoryManager)
                 .openTransactionInventory(player, targetUUID);
     }
