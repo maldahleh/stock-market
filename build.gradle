@@ -25,7 +25,7 @@ dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7.1'
     compileOnly 'net.citizensnpcs:citizensapi:2.0.28-SNAPSHOT'
-    compileOnly 'me.clip:placeholderapi:2.10.10'
+    compileOnly 'me.clip:placeholderapi:2.11.1'
 
     testImplementation 'nl.jqno.equalsverifier:equalsverifier:3.8.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
