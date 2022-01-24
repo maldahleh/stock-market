@@ -20,7 +20,7 @@ dependencies {
     library 'com.google.code.gson:gson:2.8.9'
     bukkitLibrary 'com.google.code.gson:gson:2.8.9'
 
-    implementation 'de.sfuhrm:YahooFinanceAPI:3.16.2'
+    implementation 'de.sfuhrm:YahooFinanceAPI:3.16.3'
     implementation 'com.zaxxer:HikariCP:5.0.1'
     compileOnly 'org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7.1'
