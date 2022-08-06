@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'jacoco'
-    id 'io.freefair.lombok' version '6.4.2'
+    id 'io.freefair.lombok' version '6.5.0.3'
     id 'net.minecrell.plugin-yml.bukkit' version '0.5.2'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
