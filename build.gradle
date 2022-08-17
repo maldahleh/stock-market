@@ -24,7 +24,7 @@ dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7.1'
     compileOnly 'net.citizensnpcs:citizensapi:2.0.28-SNAPSHOT'
-    compileOnly 'me.clip:placeholderapi:2.11.1'
+    compileOnly 'me.clip:placeholderapi:2.11.2'
 
     testImplementation 'nl.jqno.equalsverifier:equalsverifier:3.10.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
@@ -35,7 +35,7 @@ dependencies {
     testImplementation 'org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT'
     testImplementation 'com.github.MilkBowl:VaultAPI:1.7.1'
     testImplementation 'net.citizensnpcs:citizensapi:2.0.28-SNAPSHOT'
-    testImplementation 'me.clip:placeholderapi:2.11.1'
+    testImplementation 'me.clip:placeholderapi:2.11.2'
 }
 
 group = 'com.maldahleh'
