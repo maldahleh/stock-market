@@ -23,7 +23,7 @@ dependencies {
     implementation 'com.zaxxer:HikariCP:5.0.1'
     compileOnly 'org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7.1'
-    compileOnly 'net.citizensnpcs:citizensapi:2.0.30-SNAPSHOT'
+    compileOnly 'net.citizensnpcs:citizensapi:2.0.32-SNAPSHOT'
     compileOnly 'me.clip:placeholderapi:2.11.2'
 
     testImplementation 'nl.jqno.equalsverifier:equalsverifier:3.12'
@@ -34,7 +34,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-inline:4.9.0'
     testImplementation 'org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT'
     testImplementation 'com.github.MilkBowl:VaultAPI:1.7.1'
-    testImplementation 'net.citizensnpcs:citizensapi:2.0.30-SNAPSHOT'
+    testImplementation 'net.citizensnpcs:citizensapi:2.0.32-SNAPSHOT'
     testImplementation 'me.clip:placeholderapi:2.11.2'
 }
 
