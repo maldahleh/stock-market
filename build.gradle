@@ -16,8 +16,8 @@ repositories {
 }
 
 dependencies {
-    library 'com.google.code.gson:gson:2.10'
-    bukkitLibrary 'com.google.code.gson:gson:2.10'
+    library 'com.google.code.gson:gson:2.10.1'
+    bukkitLibrary 'com.google.code.gson:gson:2.10.1'
 
     implementation 'de.sfuhrm:YahooFinanceAPI:3.16.3'
     implementation 'com.zaxxer:HikariCP:5.0.1'
