@@ -1,9 +1,9 @@
 plugins {
     id 'java'
     id 'jacoco'
-    id 'io.freefair.lombok' version '6.5.1'
-    id 'net.minecrell.plugin-yml.bukkit' version '0.5.2'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'io.freefair.lombok' version '8.0.1'
+    id 'net.minecrell.plugin-yml.bukkit' version '0.6.0'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 repositories {
@@ -16,26 +16,26 @@ repositories {
 }
 
 dependencies {
-    library 'com.google.code.gson:gson:2.10'
-    bukkitLibrary 'com.google.code.gson:gson:2.10'
+    library 'com.google.code.gson:gson:2.10.1'
+    bukkitLibrary 'com.google.code.gson:gson:2.10.1'
 
-    implementation 'de.sfuhrm:YahooFinanceAPI:3.16.3'
+    implementation 'de.sfuhrm:YahooFinanceAPI:3.16.4'
     implementation 'com.zaxxer:HikariCP:5.0.1'
-    compileOnly 'org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7.1'
-    compileOnly 'net.citizensnpcs:citizensapi:2.0.30-SNAPSHOT'
-    compileOnly 'me.clip:placeholderapi:2.11.2'
+    compileOnly 'net.citizensnpcs:citizensapi:2.0.32-SNAPSHOT'
+    compileOnly 'me.clip:placeholderapi:2.11.3'
 
-    testImplementation 'nl.jqno.equalsverifier:equalsverifier:3.12'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.1'
-    testImplementation 'org.mockito:mockito-core:4.9.0'
-    testImplementation 'org.mockito:mockito-inline:4.9.0'
-    testImplementation 'org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT'
+    testImplementation 'nl.jqno.equalsverifier:equalsverifier:3.14.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.3'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.3'
+    testImplementation 'org.mockito:mockito-core:5.4.0'
+    testImplementation 'org.mockito:mockito-inline:5.4.0'
+    testImplementation 'org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT'
     testImplementation 'com.github.MilkBowl:VaultAPI:1.7.1'
-    testImplementation 'net.citizensnpcs:citizensapi:2.0.30-SNAPSHOT'
-    testImplementation 'me.clip:placeholderapi:2.11.2'
+    testImplementation 'net.citizensnpcs:citizensapi:2.0.32-SNAPSHOT'
+    testImplementation 'me.clip:placeholderapi:2.11.3'
 }
 
 group = 'com.maldahleh'
