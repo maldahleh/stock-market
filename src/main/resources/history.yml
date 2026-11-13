@@ -1,17 +1,15 @@
-name: "&6Stocks &8- &eHistory"
+name: "&6Stocks &8- &eRecent Trades <symbol>"
 size: 45
 base-item:
   material: "BOOK"
   name: "&6&l<symbol> &e&l(&6&l<date>&e&l)"
   lore:
-    - "&6Purchaser: &e<name>"
-    - "&6Transaction Type: &e<transaction-type>"
-    - "&6Quantity: &e<quantity>"
-    - "&6Stock Value: &e<stock-value> <server-currency>"
-    - "&6Broker Fees: &e<broker-fees> <server-currency>"
-    - "&6Grand Total: &e<grand-total> <server-currency>"
-    - "&6Net: &e<earnings>"
-    - "&6Sold: &e<sold>"
+    - "&6Player: &e<name>"
+    - "&6Type: &e<transaction-type>"
+    - "&6Shares: &e<quantity>"
+    - "&6Price: &e<price>"
+    - "&6Fees: &e<broker-fees>"
+    - "&6Money: &e<cash>"
 previous-page:
   slot: 36
   previous-page:

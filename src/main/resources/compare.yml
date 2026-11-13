@@ -13,18 +13,15 @@ items:
       - "&e<exchange>"
   2:
     material: "BOOK"
-    name: "&6&lMarket Cap"
+    name: "&6&lYou Own"
     lore:
-      - "&e<cap> <market-currency>"
+      - "&e<owned> shares"
   3:
     material: "DIAMOND"
     name: "&6&lServer Price"
     lore:
-      - "&e<server-price> <server-currency>"
-      - "&6+ Broker Flat Rate"
-      - "&e<broker-flat>"
-      - "&6+ Broker Percent Rate"
-      - "&e<broker-percent>%"
+      - "&e<server-price> &6per share"
+      - "&6+ Broker fee: &e<broker-flat> &6+ &e<broker-percent>%"
   4:
     material: "BOOK"
     name: "&6&lMarket Price"
@@ -44,16 +41,13 @@ items:
     material: "DIAMOND"
     name: "&6&lServer Price"
     lore:
-      - "&e<server-price> <server-currency>"
-      - "&6+ Broker Flat Rate"
-      - "&e<broker-flat>"
-      - "&6+ Broker Percent Rate"
-      - "&e<broker-percent>%"
+      - "&e<server-price> &6per share"
+      - "&6+ Broker fee: &e<broker-flat> &6+ &e<broker-percent>%"
   6:
     material: "BOOK"
-    name: "&6&lAnnual Yield"
+    name: "&6&lLast Trade"
     lore:
-      - "&e<yield>%"
+      - "&e<last-trade>"
   7:
     material: "BOOK"
     name: "&6&lCurrency"

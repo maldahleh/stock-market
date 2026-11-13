@@ -1,26 +1,78 @@
-locale: "en-US"
-sql:
-  enabled: false
-  ip: "localhost"
-  port: 3306
-  database: "database"
-  username: "username"
-  password: "password"
-broker:
-  disable-commands: false
-  charge-fees-on-sale: false
-  flat-fee: 10.50
-  percent-fee: 0.20
-  names:
-    simple: "&8&lStock Broker"
-cache:
-  expire-minutes: 5
-unknown-data: "N/A"
-transaction-cooldown-seconds: 2
-minutes-between-sale: 5
-minimum-price: 5.0
+# StockMarket uses real prices from Alpaca (https://alpaca.markets).
+# 1. Sign up for a free account and open the paper trading dashboard (no real money needed).
+# 2. Create an API key there and paste both parts below.
+# The free plan is plenty for one server. Its terms are between you and Alpaca: read them,
+# including what they say about showing data to other people.
+alpaca:
+  key-id: ""
+  secret: ""
+  # "iex": real-time prices from the IEX exchange (free plan).
+  # "sip": real-time prices from every US exchange (paid plan only).
+  feed: "iex"
+  # true if the key above is for a live (not paper) Alpaca account.
+  live-account: false
+
+# How server money relates to market prices: server price = market price × multiplier.
 price-multiplier: 20
-allowed-currencies:
-  - "USD"
-  - "CAD"
-allowed-exchanges: []
+
+fees:
+  # Charged on each trade, in server money.
+  flat: 10.50
+  # Percent of the trade's value, e.g. 0.5 means 0.5%.
+  percent: 0.5
+  on-buy: true
+  on-sell: true
+
+trading:
+  # Stocks can only be traded while the US market is open (9:30 to 4:00 New York time).
+  # A price this many minutes old or older is too stale to trade on.
+  max-price-age-minutes: 15
+  # Stocks cheaper than this market price (in USD) can't be traded.
+  minimum-price: 5.0
+  max-shares-per-trade: 10000
+  cooldown-seconds: 2
+  # Trades worth at least this much server money need a confirmation click. 0 turns it off.
+  # Selling all shares of a stock always asks first.
+  confirm-above: 10000
+  # Shares bought with shift-click in menus.
+  bulk-amount: 5
+  # Crypto pairs like BTC/USD trade around the clock.
+  allow-crypto: true
+  # Alpaca exchange codes that can't be traded.
+  blocked-exchanges:
+    - "OTC"
+
+# How long a price is reused for menus and placeholders. Trades always fetch a fresh price.
+cache-seconds: 60
+
+# Splits, mergers, renames, delistings and dividends are checked this often and applied to
+# holdings. Open orders on a stock are cancelled when a split, merger or rename hits it.
+corporate-actions-check-minutes: 60
+# Pay real cash dividends (times the price multiplier) to players who held shares before the
+# ex-dividend date.
+dividends: true
+
+orders:
+  # Limit orders and stop-losses. Prices are server prices, as shown in the menus.
+  max-open-per-player: 10
+  expire-days: 30
+  check-seconds: 60
+
+broker:
+  # When true, players must use a broker villager instead of commands.
+  disable-commands: false
+  name: "&8&lStock Broker"
+
+storage:
+  # "sqlite" stores data in this folder. "mysql" uses the settings below.
+  type: "sqlite"
+  mysql:
+    host: "localhost"
+    port: 3306
+    database: "stockmarket"
+    username: "username"
+    password: "password"
+
+locale: "en-US"
+date-format: "yyyy-MM-dd HH:mm"
+unknown-data: "N/A"

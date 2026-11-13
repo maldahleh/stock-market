@@ -1,0 +1,36 @@
+name: StockMarket
+version: '${version}'
+main: com.maldahleh.stockmarket.StockMarketPlugin
+api-version: '1.21'
+author: maldahleh
+description: Buy and sell real stocks and crypto with in-game money.
+depend: [Vault]
+softdepend: [PlaceholderAPI]
+commands:
+  stockmarket:
+    description: Use the stock market
+    aliases: [sm, stocks, stock]
+permissions:
+  stockmarket.use:
+    default: true
+    children:
+      stockmarket.list: true
+      stockmarket.tutorial: true
+      stockmarket.lookup: true
+      stockmarket.compare: true
+      stockmarket.portfolio: true
+      stockmarket.transactions: true
+      stockmarket.history: true
+      stockmarket.buy: true
+      stockmarket.sell: true
+      stockmarket.orders: true
+  stockmarket.portfolio.other:
+    default: op
+  stockmarket.transactions.other:
+    default: op
+  stockmarket.spawnbroker:
+    default: op
+  stockmarket.commandbypass:
+    default: op
+  stockmarket.reload:
+    default: op

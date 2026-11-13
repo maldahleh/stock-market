@@ -1,34 +1,24 @@
 package com.maldahleh.stockmarket.events;
 
 import java.math.BigDecimal;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-@Getter
-@RequiredArgsConstructor
-public class StockPurchaseEvent extends Event {
+public class StockPurchaseEvent extends StockTradeEvent {
 
-  private static final HandlerList HANDLER_LIST = new HandlerList();
+  private static final HandlerList HANDLERS = new HandlerList();
 
-  private final Player player;
-  private final String stockSymbol;
-  private final int quantity;
-  private final BigDecimal stockValue;
-  private final BigDecimal brokerFees;
-  private final BigDecimal grandTotal;
-
-  @NonNull
-  @Override
-  public HandlerList getHandlers() {
-    return HANDLER_LIST;
+  public StockPurchaseEvent(Player player, String symbol, long shares, BigDecimal price,
+      BigDecimal fees, BigDecimal total) {
+    super(player, symbol, shares, price, fees, total);
   }
 
-  @SuppressWarnings({"unused", "java:S4144"})
+  @Override
+  public HandlerList getHandlers() {
+    return HANDLERS;
+  }
+
   public static HandlerList getHandlerList() {
-    return HANDLER_LIST;
+    return HANDLERS;
   }
 }

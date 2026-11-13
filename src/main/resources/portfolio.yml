@@ -1,13 +1,16 @@
-name: "&6Stocks &8- &ePortfolio"
+name: "&6Stocks &8- &e<player>'s Portfolio"
 size: 45
 base-item:
   material: "BOOK"
   name: "&6&l<symbol> &e&l(&6&l<name>&e&l)"
   lore:
-    - "&6Quantity: &e<quantity>"
-    - "&6Purchase Value: &e<purchase-value> <server-currency>"
-    - "&6Current Value: &e<current-value> <server-currency>"
-    - "&6Net: &e<net>"
+    - "&6Shares: &e<quantity>"
+    - "&6Paid: &e<purchase-value> &7(<average-cost> each)"
+    - "&6Worth now: &e<current-value>"
+    - "&6Gain or loss: &e<net>"
+    - "&6Today: &e<change-close>"
+    - ""
+    - "&7Click to look up"
 previous-page:
   slot: 36
   previous-page:
@@ -75,8 +78,8 @@ extra-items:
     name: "&6&lStats"
     lore:
       - "&6Current Value:"
-      - "&e<current-value> <server-currency>"
+      - "&e<current-value>"
       - "&6Purchase Value:"
-      - "&e<purchase-value> <server-currency>"
+      - "&e<purchase-value>"
       - "&6Net:"
-      - "&e<net-value> <server-currency>"
+      - "&e<net-value> &7(<net-percent>)"
