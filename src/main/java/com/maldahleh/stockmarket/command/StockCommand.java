@@ -250,8 +250,7 @@ public class StockCommand implements TabExecutor {
       return;
     }
     if (placement instanceof Placement.Placed placed) {
-      messages.send(player, "orders.placed." + placed.order().type().name(),
-          StockMarketPlugin.orderValues(placed.order(), s.formats()));
+      reportPlaced(player, placed, s);
       return;
     }
     String problem = ((Placement.Rejected) placement).problem().name();
@@ -262,7 +261,38 @@ public class StockCommand implements TabExecutor {
         "<owned>", s.formats().quantity(request.symbol(), s.portfolios()
             .get(player.getUniqueId(), request.symbol()).map(Holding::shares).orElse(0L)),
         "<max>", s.formats().number(s.trader().rules().maxSharesPerTrade()),
-        "<max-orders>", String.valueOf(s.orders().maxOpenPerPlayer())));
+        "<max-orders>", String.valueOf(s.orders().maxOpenPerPlayer()),
+        "<minimum>", s.formats().usd(s.trader().rules().minimumPrice())));
+  }
+
+  private void reportPlaced(Player player, Placement.Placed placed, Services s) {
+    Order order = placed.order();
+    Map<String, String> values = new java.util.HashMap<>(
+        StockMarketPlugin.orderValues(order, s.formats()));
+    BigDecimal now = placed.currentPrice();
+    values.put("<current>", s.formats().money(now));
+    messages.send(player, "orders.placed." + order.type().name(), values);
+    if (now == null) {
+      return;
+    }
+    if (order.type().triggeredBy(now, order.target())) {
+      messages.send(player, "orders.fills-now", values);
+    } else if (looksLikeDollars(order.target(), now, s.trader().rules().priceMultiplier())) {
+      values.put("<multiplier>", s.trader().rules().priceMultiplier().stripTrailingZeros()
+          .toPlainString());
+      messages.send(player, "orders.server-prices", values);
+    }
+  }
+
+  /** True if the target is about the real US-dollar price, i.e. off by the multiplier. */
+  private static boolean looksLikeDollars(BigDecimal target, BigDecimal now,
+      BigDecimal multiplier) {
+    if (multiplier.compareTo(BigDecimal.valueOf(2)) < 0) {
+      return false;
+    }
+    BigDecimal asServer = target.multiply(multiplier);
+    return asServer.compareTo(now.multiply(BigDecimal.valueOf(0.5))) > 0
+        && asServer.compareTo(now.multiply(BigDecimal.valueOf(1.5))) < 0;
   }
 
   /** Lists the player's open orders in chat; used by the list menu too. */

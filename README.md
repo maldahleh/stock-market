@@ -15,8 +15,8 @@ risk-free way to learn how the stock market works.
 - **No trading on old prices.** Stocks trade only while the US market is open, and every trade
   fetches a fresh price. A price older than `max-price-age-minutes` is refused. This stops players
   from buying on news they've already seen. When the market is closed, players are told when
-  it reopens. Selling is always allowed, even below the minimum price, so holders of a falling
-  stock can get out.
+  it reopens. Selling is allowed even below the minimum price, so holders of a falling stock can
+  get out (as long as the sale is worth more than the fees).
 - **Real dividends.** Cash dividends are paid (times the price multiplier) on the real
   payable date to players who held shares before the ex-dividend date, the same rule a real
   broker uses. Buying after the ex-date doesn't qualify.
@@ -125,7 +125,8 @@ sells the same, and shift-right sells everything you own after a confirmation. T
 row opens your portfolio, orders, trades, the server's trades and the tutorial, so players can
 get around without commands.
 
-Crypto can be bought in fractions: `/stocks buy BTC/USD 0.015`. Crypto has no minimum price.
+Crypto can be bought in fractions: `/stocks buy BTC/USD 0.015`. Crypto has no minimum price,
+and the list includes Bitcoin, Ethereum, Solana and Dogecoin by default.
 
 Anything that happens while a player is offline (orders filling or being cancelled, dividends,
 splits) is shown under "While you were away" when they next join.

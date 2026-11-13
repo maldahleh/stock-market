@@ -39,6 +39,7 @@ public sealed interface TradeResult {
     MARKET_CLOSED,
     STALE_PRICE,
     PRICE_TOO_LOW,
+    FEES_TOO_HIGH,
     INSUFFICIENT_FUNDS,
     INSUFFICIENT_SHARES,
     PRICE_MOVED,

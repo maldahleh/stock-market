@@ -50,7 +50,8 @@ public class OrderBook {
   /** Failures that mean the order can never fill as placed. */
   private static final Set<Reason> FATAL = EnumSet.of(Reason.INSUFFICIENT_FUNDS,
       Reason.INSUFFICIENT_SHARES, Reason.NOT_TRADABLE, Reason.INVALID_SYMBOL,
-      Reason.CRYPTO_DISABLED, Reason.TOO_MANY_SHARES, Reason.INVALID_QUANTITY);
+      Reason.CRYPTO_DISABLED, Reason.TOO_MANY_SHARES, Reason.INVALID_QUANTITY,
+      Reason.PRICE_TOO_LOW, Reason.FEES_TOO_HIGH);
 
   private final MarketData market;
   private final Database database;
@@ -104,13 +105,38 @@ public class OrderBook {
     if (problem != null) {
       return rejected(problem);
     }
+    CompletableFuture<Map<String, Quote>> quote = market.quotes(List.of(symbol))
+        .exceptionally(error -> Map.of());
     return market.asset(symbol)
-        .handleAsync((asset, error) -> error != null ? Problem.DATA_UNAVAILABLE
-            : assetProblem(asset), serverThread)
-        .thenCompose(assetProblem -> assetProblem != null ? rejected(assetProblem)
+        .thenCombine(quote, (asset, quotes) -> new Checked(asset, quotes.get(symbol)))
+        .handleAsync((checked, error) -> {
+          if (error != null) {
+            return new Checked(null, null, Problem.DATA_UNAVAILABLE);
+          }
+          Problem found = assetProblem(checked.asset());
+          if (found == null && type.buying() && belowMinimum(symbol, checked.quote())) {
+            found = Problem.PRICE_TOO_LOW;
+          }
+          return new Checked(checked.asset(), checked.quote(), found);
+        }, serverThread)
+        .thenCompose(checked -> checked.problem() != null ? rejected(checked.problem())
             : save(new Order(0, owner, symbol, type, shares,
                 target.setScale(2, java.math.RoundingMode.HALF_UP), clock.instant(),
-                clock.instant().plus(lifetime))));
+                clock.instant().plus(lifetime)), checked.quote()));
+  }
+
+  /** What placement learned about the symbol. */
+  private record Checked(Optional<Asset> asset, Quote quote, Problem problem) {
+
+    Checked(Optional<Asset> asset, Quote quote) {
+      this(asset, quote, null);
+    }
+  }
+
+  /** Stocks below the minimum price can't be bought, so a buy order for one never could fill. */
+  private boolean belowMinimum(String symbol, Quote quote) {
+    return quote != null && AssetClass.of(symbol) == AssetClass.STOCK
+        && quote.price().compareTo(rules.minimumPrice()) < 0;
   }
 
   /** Checks that need no market data. Null means the request is fine so far. */
@@ -149,7 +175,7 @@ public class OrderBook {
     return !a.tradable() || blocked ? Problem.NOT_TRADABLE : null;
   }
 
-  private CompletableFuture<Placement> save(Order order) {
+  private CompletableFuture<Placement> save(Order order, Quote quote) {
     return CompletableFuture.supplyAsync(() -> {
       try {
         return database.insertOrder(order);
@@ -162,7 +188,8 @@ public class OrderBook {
         return (Placement) new Placement.Rejected(Problem.STORAGE_ERROR);
       }
       open.put(saved.id(), saved);
-      return new Placement.Placed(saved);
+      return new Placement.Placed(saved,
+          quote == null ? null : rules.serverPrice(quote.price()));
     }, serverThread);
   }
 
@@ -287,7 +314,8 @@ public class OrderBook {
       } else if (result instanceof Failure failure && FATAL.contains(failure.reason())) {
         close(order, switch (failure.reason()) {
           case INSUFFICIENT_FUNDS -> CancelCause.NOT_ENOUGH_MONEY;
-          case INSUFFICIENT_SHARES -> CancelCause.NOT_ENOUGH_SHARES;
+          case INSUFFICIENT_SHARES, FEES_TOO_HIGH -> CancelCause.NOT_ENOUGH_SHARES;
+          case PRICE_TOO_LOW -> CancelCause.BELOW_MINIMUM;
           default -> CancelCause.NOT_TRADABLE;
         }, true);
       }
@@ -334,11 +362,13 @@ public class OrderBook {
     NOT_ENOUGH_MONEY,
     NOT_ENOUGH_SHARES,
     NOT_TRADABLE,
+    BELOW_MINIMUM,
     CORPORATE_ACTION
   }
 
   public sealed interface Placement {
-    record Placed(Order order) implements Placement {}
+    /** @param currentPrice the server price when the order was placed, or null if unknown */
+    record Placed(Order order, BigDecimal currentPrice) implements Placement {}
 
     record Rejected(Problem problem) implements Placement {}
   }
@@ -352,6 +382,7 @@ public class OrderBook {
     INVALID_SYMBOL,
     NOT_TRADABLE,
     CRYPTO_DISABLED,
+    PRICE_TOO_LOW,
     DATA_UNAVAILABLE,
     STORAGE_ERROR
   }

@@ -77,7 +77,7 @@ class OrderBookTest {
     };
     MarketData market = new MarketData(provider, DIRECT, Duration.ofNanos(1));
     PluginContext context = new PluginContext(DIRECT, DIRECT, DIRECT, clock,
-        Logger.getAnonymousLogger());
+        Logger.getAnonymousLogger(), id -> null);
     trades = new TradeService(market, database, portfolios, wallet, rules, context);
     book = new OrderBook(market, database, portfolios, trades, rules,
         new OrderBook.Limits(3, Duration.ofDays(30)),
@@ -207,5 +207,21 @@ class OrderBookTest {
     assertTrue(book.cancelAny(order.id()));
     assertEquals(List.of(CancelCause.BY_MODERATOR), cancelled);
     assertEquals(0, book.openCount());
+  }
+
+  @Test
+  void placementReportsTheCurrentPrice() {
+    Placement placement = book.place(P, OrderType.LIMIT_BUY, "AAPL", 1, new BigDecimal("90"))
+        .join();
+    Placement.Placed placed = assertInstanceOf(Placement.Placed.class, placement);
+    assertEquals(0, new BigDecimal("100.00").compareTo(placed.currentPrice()));
+  }
+
+  @Test
+  void buyOrdersBelowTheMinimumPriceAreRefused() {
+    provider.price("PENNY", "0.50", now);
+    assertEquals(Problem.PRICE_TOO_LOW, assertInstanceOf(Placement.Rejected.class,
+        book.place(P, OrderType.LIMIT_BUY, "PENNY", 10, new BigDecimal("0.40")).join())
+        .problem());
   }
 }

@@ -252,5 +252,6 @@ Branch `real-market`, reviewed from the code and YAML only. Nothing has been run
 - Second round: U14, U15, U16 (market status in menus), U17, U18, U19, U20, U21, U22, U23, U24,
   U25, U26, U27, U28 (without the request budget, which comes with Tiingo), U29, U30, U31, U32,
   U33.
-- Still open: U1 is done; U2, U3, U9 and U11 come with the Tiingo switch; U5, U8, U10, U12
-  (crypto list slots) and U13 remain.
+- Third round: U5, U8, U10, U12 and U13, plus player names in the "pay it by hand" console
+  warnings.
+- Still open: U2, U3, U9 and U11, which come with the Tiingo switch.

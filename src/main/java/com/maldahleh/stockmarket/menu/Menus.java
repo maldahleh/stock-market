@@ -106,9 +106,15 @@ public class Menus {
   // Static menus
 
   public void openTutorial(Player player) {
+    Map<String, String> values = Map.of(
+        "<multiplier>", rules.priceMultiplier().stripTrailingZeros().toPlainString(),
+        "<broker-flat>", formats.money(rules.flatFee()),
+        "<broker-percent>", rules.percentFee().stripTrailingZeros().toPlainString(),
+        "<example>", formats.money(BigDecimal.valueOf(150).multiply(rules.priceMultiplier())
+            .setScale(0, java.math.RoundingMode.HALF_UP)).replaceAll("[^0-9.,]", ""));
     MenuHolder menu = new MenuHolder(tutorial.getInt("size", 9),
         Text.color(tutorial.getString("name", "")));
-    forEachItem(tutorial, (slot, item) -> menu.set(slot, item.build(Map.of())));
+    forEachItem(tutorial, (slot, item) -> menu.set(slot, item.build(values)));
     player.openInventory(menu.getInventory());
   }
 
@@ -124,6 +130,9 @@ public class Menus {
     }).thenCombine(clock(), ListData::new).thenAcceptAsync(data -> {
       if (!player.isOnline()) {
         return;
+      }
+      if (data.quotes().isEmpty() && !symbols.isEmpty()) {
+        messages.send(player, "prices-unavailable");
       }
       String status = marketStatus("AAPL", data.clock());
       MenuHolder menu = new MenuHolder(list.getInt("size", 36),
@@ -171,15 +180,16 @@ public class Menus {
   /** @param back reopens the menu the player came from; null hides the Back button */
   public void openLookup(Player player, String rawSymbol, Runnable back) {
     String symbol = rawSymbol.toUpperCase();
-    load(symbol).thenAcceptAsync(data -> {
+    load(symbol).thenAcceptAsync(loaded -> {
       if (!player.isOnline()) {
         return;
       }
-      if (data.isEmpty()) {
-        messages.send(player, "failures.INVALID_SYMBOL", Map.of("<symbol>", symbol));
+      if (loaded.data().isEmpty()) {
+        messages.send(player, loaded.unavailable() ? "failures.DATA_UNAVAILABLE"
+            : "failures.INVALID_SYMBOL", Map.of("<symbol>", symbol));
         return;
       }
-      showLookup(player, data.get(), back);
+      showLookup(player, loaded.data().get(), back);
     }, serverThread);
   }
 
@@ -261,19 +271,31 @@ public class Menus {
   public void openCompare(Player player, List<String> rawSymbols) {
     List<String> symbols = rawSymbols.stream().map(String::toUpperCase).distinct().toList();
     messages.send(player, "pending.compare");
-    List<CompletableFuture<Optional<StockData>>> loads = symbols.stream().map(this::load).toList();
+    List<CompletableFuture<Loaded>> loads = symbols.stream().map(this::load).toList();
     CompletableFuture.allOf(loads.toArray(CompletableFuture[]::new)).thenRunAsync(() -> {
       if (!player.isOnline()) {
         return;
       }
-      List<StockData> found = loads.stream().map(CompletableFuture::join)
-          .flatMap(Optional::stream).toList();
-      if (found.isEmpty()) {
-        messages.send(player, "no-data");
-        return;
+      List<Loaded> results = loads.stream().map(CompletableFuture::join).toList();
+      reportMissing(player, results);
+      List<StockData> found = results.stream().map(Loaded::data).flatMap(Optional::stream)
+          .toList();
+      if (!found.isEmpty()) {
+        showCompare(player, symbols, found);
       }
-      showCompare(player, symbols, found);
     }, serverThread);
+  }
+
+  /** Names the symbols compare had to leave out, and why. */
+  private void reportMissing(Player player, List<Loaded> results) {
+    List<String> unknown = results.stream()
+        .filter(r -> r.data().isEmpty() && !r.unavailable()).map(Loaded::symbol).toList();
+    if (!unknown.isEmpty()) {
+      messages.send(player, "compare-unknown", Map.of("<symbols>", String.join(", ", unknown)));
+    }
+    if (results.stream().anyMatch(Loaded::unavailable)) {
+      messages.send(player, "failures.DATA_UNAVAILABLE");
+    }
   }
 
   private void showCompare(Player player, List<String> symbols, List<StockData> found) {
@@ -295,8 +317,15 @@ public class Menus {
   private record StockData(String symbol, Asset asset, Quote quote, List<DailyBar> bars,
       MarketClock clock) {}
 
-  /** Everything a stock menu shows. Empty if the symbol isn't listed. */
-  private CompletableFuture<Optional<StockData>> load(String symbol) {
+  /**
+   * What a stock lookup found.
+   *
+   * @param unavailable true if the data couldn't be loaded, as opposed to the symbol not existing
+   */
+  private record Loaded(String symbol, Optional<StockData> data, boolean unavailable) {}
+
+  /** Everything a stock menu shows. */
+  private CompletableFuture<Loaded> load(String symbol) {
     CompletableFuture<Optional<Asset>> asset = market.asset(symbol);
     CompletableFuture<Map<String, Quote>> quote = market.quotes(List.of(symbol))
         .exceptionally(e -> Map.of());
@@ -306,10 +335,10 @@ public class Menus {
     return CompletableFuture.allOf(asset, quote, bars, marketClock).handle((ignored, error) -> {
       if (error != null) {
         logger.warning("Couldn't look up " + symbol + ": " + error.getMessage());
-        return Optional.empty();
+        return new Loaded(symbol, Optional.empty(), true);
       }
-      return asset.join().map(a -> new StockData(symbol, a, quote.join().get(symbol),
-          bars.join(), marketClock.join()));
+      return new Loaded(symbol, asset.join().map(a -> new StockData(symbol, a,
+          quote.join().get(symbol), bars.join(), marketClock.join())), false);
     });
   }
 

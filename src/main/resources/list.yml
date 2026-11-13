@@ -241,6 +241,42 @@ items:
       - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
+  31:
+    material: "GOLD_NUGGET"
+    name: "&b&lBitcoin"
+    symbol: "BTC/USD"
+    lore:
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
+      - "&6You own: &e<owned>"
+      - "&7Crypto: trades 24/7, in fractions"
+      - "&7Click for details and to trade"
+  32:
+    material: "AMETHYST_SHARD"
+    name: "&b&lEthereum"
+    symbol: "ETH/USD"
+    lore:
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
+      - "&6You own: &e<owned>"
+      - "&7Crypto: trades 24/7, in fractions"
+      - "&7Click for details and to trade"
+  33:
+    material: "PRISMARINE_CRYSTALS"
+    name: "&b&lSolana"
+    symbol: "SOL/USD"
+    lore:
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
+      - "&6You own: &e<owned>"
+      - "&7Crypto: trades 24/7, in fractions"
+      - "&7Click for details and to trade"
+  34:
+    material: "BONE"
+    name: "&b&lDogecoin"
+    symbol: "DOGE/USD"
+    lore:
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
+      - "&6You own: &e<owned>"
+      - "&7Crypto: trades 24/7, in fractions"
+      - "&7Click for details and to trade"
   36:
     material: "BUNDLE"
     name: "&6&lYour Portfolio"

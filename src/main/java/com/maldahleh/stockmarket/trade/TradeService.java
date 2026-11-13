@@ -52,6 +52,7 @@ public class TradeService {
   private final Executor databaseThread;
   private final Clock clock;
   private final Logger logger;
+  private final PluginContext context;
 
   private final Set<UUID> inFlight = ConcurrentHashMap.newKeySet();
 
@@ -66,6 +67,7 @@ public class TradeService {
     this.databaseThread = context.databaseThread();
     this.clock = context.clock();
     this.logger = context.logger();
+    this.context = context;
   }
 
   public TradeRules rules() {
@@ -134,7 +136,8 @@ public class TradeService {
       if (error != null) {
         logger.log(Level.SEVERE, "Couldn't save a purchase; refunding " + total, error);
         if (!wallet.deposit(player, total)) {
-          logger.severe("Refund of " + total + " to " + player + " failed; pay it by hand.");
+          logger.severe("Refund of " + total + " to " + context.describe(player)
+              + " failed; pay it by hand.");
         }
         return new Failure(Reason.STORAGE_ERROR);
       }
@@ -173,7 +176,7 @@ public class TradeService {
     BigDecimal fee = rules.fee(value, false);
     BigDecimal proceeds = value.subtract(fee);
     if (proceeds.signum() <= 0) {
-      return done(new Failure(Reason.PRICE_TOO_LOW));
+      return done(new Failure(Reason.FEES_TOO_HIGH));
     }
 
     LedgerEntry entry = new LedgerEntry(player, EntryType.SELL, symbol, -shares, p.price(), fee,
@@ -200,7 +203,7 @@ public class TradeService {
     }
     portfolios.put(sale.holding());
     if (!wallet.deposit(player, terms.proceeds())) {
-      logger.severe("Sold " + terms.entry().symbol() + " for " + player
+      logger.severe("Sold " + terms.entry().symbol() + " for " + context.describe(player)
           + " but the economy refused the payment of " + terms.proceeds() + "; pay it by hand.");
     }
     return new Success(terms.entry(), terms.priced().asset(), sale.holding(), terms.value(),

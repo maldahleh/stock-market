@@ -60,7 +60,7 @@ class TradeServiceTest {
   private TradeService service(Executor databaseThread, TradeRules rules) {
     return new TradeService(new MarketData(provider, DIRECT, Duration.ofMinutes(5)), database,
         portfolios, wallet, rules, new PluginContext(DIRECT, databaseThread, DIRECT,
-            Clock.fixed(NOW, ZoneOffset.UTC), Logger.getAnonymousLogger()));
+            Clock.fixed(NOW, ZoneOffset.UTC), Logger.getAnonymousLogger(), id -> null));
   }
 
   @AfterEach

@@ -2,6 +2,7 @@ package com.maldahleh.stockmarket;
 
 import com.maldahleh.stockmarket.actions.ActionService;
 import com.maldahleh.stockmarket.actions.CorporateAction;
+import com.maldahleh.stockmarket.bukkit.ActionNotices;
 import com.maldahleh.stockmarket.bukkit.Brokers;
 import com.maldahleh.stockmarket.bukkit.Formats;
 import com.maldahleh.stockmarket.bukkit.Health;
@@ -228,7 +229,7 @@ public class StockMarketPlugin extends JavaPlugin {
       }
     };
     return new PluginContext(serverThread, databaseThread, network, Clock.systemUTC(),
-        getLogger());
+        getLogger(), id -> Bukkit.getOfflinePlayer(id).getName());
   }
 
   private void start(FileConfiguration config, Portfolios portfolios,
@@ -256,7 +257,7 @@ public class StockMarketPlugin extends JavaPlugin {
     AtomicReference<OrderBook> orderBook = new AtomicReference<>();
     AtomicReference<ActionService> actionService = new AtomicReference<>();
     ActionService actions = new ActionService(market, database, portfolios, wallet, rules,
-        config.getBoolean("dividends", true), actionNotifier(formats, notices, orderBook),
+        config.getBoolean("dividends", true), actionNotifier(formats, notices, rules, orderBook),
         () -> orderBook.get().symbols(), context);
     actionService.set(actions);
     OrderBook orders = new OrderBook(market, database, portfolios, trades, rules,
@@ -288,14 +289,12 @@ public class StockMarketPlugin extends JavaPlugin {
   }
 
   private ActionService.Notifier actionNotifier(Formats formats, Notices notices,
-      AtomicReference<OrderBook> orderBook) {
+      TradeRules rules, AtomicReference<OrderBook> orderBook) {
     return new ActionService.Notifier() {
       @Override
       public void notify(UUID player, CorporateAction action, BigDecimal payout) {
-        String paid = payout.signum() > 0 ? messages.raw("corporate-action-payout")
-            .replace("<amount>", formats.money(payout)) : "";
-        notices.tell(player, "corporate-action", Map.of(
-            "<action>", ActionService.describe(action), "<payout>", paid), false);
+        ActionNotices.Notice notice = ActionNotices.of(action, payout, rules, formats, messages);
+        notices.tell(player, notice.key(), notice.values(), false);
       }
 
       @Override

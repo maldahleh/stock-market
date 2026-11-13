@@ -66,6 +66,7 @@ public class ActionService {
   private final Executor databaseThread;
   private final Clock clock;
   private final Logger logger;
+  private final PluginContext context;
 
   private final boolean dividends;
   private final Supplier<Set<String>> watchedSymbols;
@@ -90,6 +91,7 @@ public class ActionService {
     this.databaseThread = context.databaseThread();
     this.clock = context.clock();
     this.logger = context.logger();
+    this.context = context;
   }
 
   /** The moment an action took effect: market open, New York time, on its effective date. */
@@ -204,7 +206,7 @@ public class ActionService {
           for (UUID player : affected) {
             BigDecimal payout = outcome.payouts().getOrDefault(player, BigDecimal.ZERO);
             if (payout.signum() > 0 && !wallet.deposit(player, payout)) {
-              logger.severe("Couldn't pay " + payout + " to " + player + " for "
+              logger.severe("Couldn't pay " + payout + " to " + context.describe(player) + " for "
                   + describe(action) + "; pay it by hand.");
             }
             notifier.notify(player, action, payout);

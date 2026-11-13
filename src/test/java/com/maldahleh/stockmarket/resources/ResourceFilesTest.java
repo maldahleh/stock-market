@@ -81,6 +81,13 @@ class ResourceFilesTest {
         missing.add("orders.problems." + problem.name());
       }
     }
+    for (String kind : List.of("paid", "split", "split-renamed", "reverse-split",
+        "reverse-split-renamed", "rename", "buyout", "stock-merger", "spin-off", "removed",
+        "dividend")) {
+      if (!messages.contains("corporate-actions." + kind)) {
+        missing.add("corporate-actions." + kind);
+      }
+    }
     for (EntryType type : EntryType.values()) {
       if (!messages.contains("entry-types." + type.name())) {
         missing.add("entry-types." + type.name());
