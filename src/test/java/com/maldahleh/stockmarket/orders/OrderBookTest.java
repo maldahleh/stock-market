@@ -58,7 +58,7 @@ class OrderBookTest {
     database = Database.sqlite(new File(dir, "test.db"));
     // Price multiplier 1 and no fees keep the numbers readable.
     TradeRules rules = new TradeRules(BigDecimal.ONE, BigDecimal.ZERO, BigDecimal.ZERO, true,
-        true, BigDecimal.ONE, Duration.ofMinutes(15), true, Set.of(), 1000, Duration.ZERO);
+        true, BigDecimal.ONE, Duration.ofMinutes(15), true, Set.of(), 1000);
     Clock clock = new Clock() {
       @Override
       public ZoneOffset getZone() {

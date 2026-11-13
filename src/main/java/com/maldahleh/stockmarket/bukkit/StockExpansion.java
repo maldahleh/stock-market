@@ -2,6 +2,7 @@ package com.maldahleh.stockmarket.bukkit;
 
 import com.maldahleh.stockmarket.market.Asset;
 import com.maldahleh.stockmarket.market.MarketData;
+import com.maldahleh.stockmarket.market.Quantities;
 import com.maldahleh.stockmarket.market.Quote;
 import com.maldahleh.stockmarket.portfolio.Holding;
 import com.maldahleh.stockmarket.portfolio.Portfolios;
@@ -95,8 +96,8 @@ public class StockExpansion extends PlaceholderExpansion {
       if (quote.isEmpty()) {
         return formats.unknown();
       }
-      total = total.add(rules.serverPrice(quote.get().price())
-          .multiply(BigDecimal.valueOf(holding.shares())));
+      total = total.add(Quantities.value(holding.symbol(),
+          rules.serverPrice(quote.get().price()), holding.shares()));
     }
     return formats.money(total);
   }

@@ -5,6 +5,7 @@ import com.maldahleh.stockmarket.market.Asset;
 import com.maldahleh.stockmarket.market.AssetClass;
 import com.maldahleh.stockmarket.market.MarketClock;
 import com.maldahleh.stockmarket.market.MarketData;
+import com.maldahleh.stockmarket.market.Quantities;
 import com.maldahleh.stockmarket.market.Quote;
 import com.maldahleh.stockmarket.portfolio.EntryType;
 import com.maldahleh.stockmarket.portfolio.Holding;
@@ -20,8 +21,6 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.Clock;
 import java.time.Duration;
-import java.time.Instant;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -55,7 +54,6 @@ public class TradeService {
   private final Logger logger;
 
   private final Set<UUID> inFlight = ConcurrentHashMap.newKeySet();
-  private final Map<UUID, Instant> lastTrade = new ConcurrentHashMap<>();
 
   public TradeService(MarketData market, Database database, Portfolios portfolios, Wallet wallet,
       TradeRules rules, PluginContext context) {
@@ -80,7 +78,7 @@ public class TradeService {
     return buy(player, symbol, shares, null, false);
   }
 
-  /** A buy for a limit order: skips the cooldown and refuses a server price above the limit. */
+  /** A buy for a limit order: refuses a server price above the limit. */
   public CompletableFuture<TradeResult> buyAtMost(UUID player, String symbol, long shares,
       BigDecimal limit) {
     return buy(player, symbol, shares, limit, true);
@@ -91,8 +89,8 @@ public class TradeService {
   }
 
   /**
-   * A sale for an order: skips the cooldown and refuses a server price below {@code limit}. A
-   * null limit sells at the market price (stop-loss).
+   * A sale for an order: refuses a server price below {@code limit}. A null limit sells at the
+   * market price (stop-loss).
    */
   public CompletableFuture<TradeResult> sellAtLeast(UUID player, String symbol, long shares,
       BigDecimal limit) {
@@ -102,7 +100,7 @@ public class TradeService {
   private CompletableFuture<TradeResult> buy(UUID player, String rawSymbol, long shares,
       BigDecimal limit, boolean fromOrder) {
     String symbol = normalize(rawSymbol);
-    return run(player, shares, fromOrder, () -> price(symbol, true).thenComposeAsync(priced -> {
+    return run(player, symbol, shares, fromOrder, () -> price(symbol, true).thenComposeAsync(priced -> {
       if (priced instanceof Failure failure) {
         return done(failure);
       }
@@ -117,7 +115,7 @@ public class TradeService {
   /** Takes the money, then saves the shares; refunds if saving fails. */
   private CompletableFuture<TradeResult> purchase(UUID player, String symbol, long shares,
       Priced p) {
-    BigDecimal value = p.price().multiply(BigDecimal.valueOf(shares));
+    BigDecimal value = Quantities.value(symbol, p.price(), shares);
     BigDecimal fee = rules.fee(value, true);
     BigDecimal total = value.add(fee);
     if (!wallet.withdraw(player, total)) {
@@ -153,7 +151,7 @@ public class TradeService {
       return done(new Failure(Reason.INSUFFICIENT_SHARES));
     }
 
-    return run(player, shares, fromOrder, () -> price(symbol, false).thenComposeAsync(priced -> {
+    return run(player, symbol, shares, fromOrder, () -> price(symbol, false).thenComposeAsync(priced -> {
       if (priced instanceof Failure failure) {
         return done(failure);
       }
@@ -171,7 +169,7 @@ public class TradeService {
   /** Removes the shares in the database first, then pays. */
   private CompletableFuture<TradeResult> sale(UUID player, String symbol, long shares,
       Priced p) {
-    BigDecimal value = p.price().multiply(BigDecimal.valueOf(shares));
+    BigDecimal value = Quantities.value(symbol, p.price(), shares);
     BigDecimal fee = rules.fee(value, false);
     BigDecimal proceeds = value.subtract(fee);
     if (proceeds.signum() <= 0) {
@@ -210,9 +208,9 @@ public class TradeService {
   }
 
   /** Shared checks, the in-flight lock and the cooldown. */
-  private CompletableFuture<TradeResult> run(UUID player, long shares, boolean fromOrder,
-      java.util.function.Supplier<CompletableFuture<TradeResult>> trade) {
-    Failure refused = precheck(player, shares, fromOrder);
+  private CompletableFuture<TradeResult> run(UUID player, String symbol, long shares,
+      boolean fromOrder, java.util.function.Supplier<CompletableFuture<TradeResult>> trade) {
+    Failure refused = precheck(player, symbol, shares);
     if (refused != null) {
       return done(refused);
     }
@@ -224,38 +222,25 @@ public class TradeService {
       inFlight.remove(player);
       throw e;
     }
-    return result.handleAsync((outcome, error) -> finish(player, fromOrder, outcome, error),
-        serverThread);
+    return result.handleAsync((outcome, error) -> finish(player, outcome, error), serverThread);
   }
 
   /** Returns why the trade can't start, or null after taking the player's in-flight slot. */
-  private Failure precheck(UUID player, long shares, boolean fromOrder) {
+  private Failure precheck(UUID player, String symbol, long shares) {
     if (shares <= 0) {
       return new Failure(Reason.INVALID_QUANTITY);
     }
-    if (shares > rules.maxSharesPerTrade()) {
+    if (rules.tooLarge(symbol, shares)) {
       return new Failure(Reason.TOO_MANY_SHARES);
-    }
-    if (!fromOrder && coolingDown(player)) {
-      return new Failure(Reason.COOLDOWN);
     }
     return inFlight.add(player) ? null : new Failure(Reason.BUSY);
   }
 
-  private boolean coolingDown(UUID player) {
-    Instant last = lastTrade.get(player);
-    return last != null && last.plus(rules.cooldown()).isAfter(clock.instant());
-  }
-
-  private TradeResult finish(UUID player, boolean fromOrder, TradeResult outcome,
-      Throwable error) {
+  private TradeResult finish(UUID player, TradeResult outcome, Throwable error) {
     inFlight.remove(player);
     if (error != null) {
       logger.log(Level.SEVERE, "Trade failed unexpectedly", error);
       return new Failure(Reason.DATA_UNAVAILABLE);
-    }
-    if (outcome instanceof Success && !fromOrder) {
-      lastTrade.put(player, clock.instant());
     }
     return outcome;
   }
@@ -282,7 +267,8 @@ public class TradeService {
       }
       Failure problem = assetProblem(asset.join());
       if (problem == null) {
-        problem = quoteProblem(marketClock.join(), quote.join(), buying);
+        problem = quoteProblem(marketClock.join(), quote.join(),
+            buying && assetClass == AssetClass.STOCK);
       }
       if (problem != null) {
         return problem;
@@ -303,9 +289,11 @@ public class TradeService {
     return !a.tradable() || blocked ? new Failure(Reason.NOT_TRADABLE) : null;
   }
 
-  private Failure quoteProblem(MarketClock marketClock, Optional<Quote> quote, boolean buying) {
+  /** @param checkMinimum whether the minimum price applies (stock purchases only) */
+  private Failure quoteProblem(MarketClock marketClock, Optional<Quote> quote,
+      boolean checkMinimum) {
     if (marketClock != null && !marketClock.open()) {
-      return new Failure(Reason.MARKET_CLOSED);
+      return new Failure(Reason.MARKET_CLOSED, marketClock.nextOpen());
     }
     if (quote.isEmpty()) {
       return new Failure(Reason.DATA_UNAVAILABLE);
@@ -315,8 +303,9 @@ public class TradeService {
         > 0) {
       return new Failure(Reason.STALE_PRICE);
     }
-    // Selling is always allowed, so holders of a falling stock can still get out.
-    if (buying && current.price().compareTo(rules.minimumPrice()) < 0) {
+    // Selling is always allowed, so holders of a falling stock can still get out. Crypto has no
+    // minimum: cheap coins are fine to trade in fractions.
+    if (checkMinimum && current.price().compareTo(rules.minimumPrice()) < 0) {
       return new Failure(Reason.PRICE_TOO_LOW);
     }
     return null;

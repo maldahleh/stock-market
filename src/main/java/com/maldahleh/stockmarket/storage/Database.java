@@ -83,6 +83,8 @@ public class Database implements AutoCloseable {
           + "owner CHAR(36) NOT NULL, symbol VARCHAR(32) NOT NULL, type VARCHAR(16) NOT NULL, "
           + "shares BIGINT NOT NULL, target DECIMAL(24,4) NOT NULL, created_at BIGINT NOT NULL, "
           + "expires_at BIGINT NOT NULL)");
+      s.executeUpdate("CREATE TABLE IF NOT EXISTS sm_notices (id " + id + ", "
+          + "owner CHAR(36) NOT NULL, message VARCHAR(1024) NOT NULL, created_at BIGINT NOT NULL)");
       s.executeUpdate("CREATE TABLE IF NOT EXISTS sm_meta (name VARCHAR(64) NOT NULL PRIMARY KEY, "
           + "value VARCHAR(255) NOT NULL)");
       createIndex(s, "sm_ledger_owner", "sm_ledger (owner, created_at)");
@@ -400,6 +402,48 @@ public class Database implements AutoCloseable {
       ps.setLong(1, id);
       ps.executeUpdate();
     }
+  }
+
+  /** Saves lines to show a player the next time they join. */
+  public void addNotices(UUID owner, List<String> lines) throws SQLException {
+    try (Connection c = source.getConnection();
+        PreparedStatement ps = c.prepareStatement(
+            "INSERT INTO sm_notices (owner, message, created_at) VALUES (?, ?, ?)")) {
+      long now = System.currentTimeMillis();
+      for (String line : lines) {
+        ps.setString(1, owner.toString());
+        ps.setString(2, line.length() > 1024 ? line.substring(0, 1024) : line);
+        ps.setLong(3, now);
+        ps.addBatch();
+      }
+      ps.executeBatch();
+    }
+  }
+
+  /** Returns a player's saved lines, oldest first, and deletes them. */
+  public List<String> takeNotices(UUID owner) throws SQLException {
+    List<String> lines = new ArrayList<>();
+    try (Connection c = source.getConnection()) {
+      c.setAutoCommit(false);
+      try (PreparedStatement select = c.prepareStatement(
+              "SELECT message FROM sm_notices WHERE owner = ? ORDER BY id");
+          PreparedStatement delete = c.prepareStatement(
+              "DELETE FROM sm_notices WHERE owner = ?")) {
+        select.setString(1, owner.toString());
+        try (ResultSet rs = select.executeQuery()) {
+          while (rs.next()) {
+            lines.add(rs.getString(1));
+          }
+        }
+        delete.setString(1, owner.toString());
+        delete.executeUpdate();
+        c.commit();
+      } catch (SQLException e) {
+        c.rollback();
+        throw e;
+      }
+    }
+    return lines;
   }
 
   public Optional<String> meta(String name) throws SQLException {

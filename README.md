@@ -14,8 +14,9 @@ risk-free way to learn how the stock market works.
   of a holder's value, and a reverse split would print money.
 - **No trading on old prices.** Stocks trade only while the US market is open, and every trade
   fetches a fresh price. A price older than `max-price-age-minutes` is refused. This stops players
-  from buying on news they've already seen. Selling is always allowed, even below the minimum
-  price, so holders of a falling stock can get out.
+  from buying on news they've already seen. When the market is closed, players are told when
+  it reopens. Selling is always allowed, even below the minimum price, so holders of a falling
+  stock can get out.
 - **Real dividends.** Cash dividends are paid (times the price multiplier) on the real
   payable date to players who held shares before the ex-dividend date, the same rule a real
   broker uses. Buying after the ex-date doesn't qualify.
@@ -71,12 +72,13 @@ owner and Alpaca. Read them before you run this on a public server.
 
 | Setting | Default | Meaning |
 |---|---|---|
-| `price-multiplier` | 20 | Server price = market price × this |
+| `price-multiplier` | 1 | Server price = market price × this |
 | `fees.flat` / `fees.percent` | 10.50 / 0.5 | Charged per trade (percent of trade value) |
 | `trading.max-price-age-minutes` | 15 | Refuse trades on prices older than this |
 | `trading.minimum-price` | 5.0 | Block penny stocks (USD) |
 | `trading.confirm-above` | 10000 | Trades worth this much need a confirmation (0 = off) |
 | `trading.bulk-amount` | 5 | Shares bought with shift-click in menus |
+| `trading.crypto-click-amount` | 0.01 | Coins one menu click buys or sells |
 | `trading.allow-crypto` | true | Allow pairs like `BTC/USD`, 24/7 |
 | `dividends` | true | Pay real cash dividends |
 | `orders.max-open-per-player` | 10 | Open limit and stop orders per player |
@@ -113,9 +115,16 @@ opens the list when right-clicked; it doesn't move or take damage, and `removebr
 the one nearest you (within 5 blocks). With `broker.disable-commands: true`, players must use one
 unless they have `stockmarket.commandbypass`.
 
-In the list and lookup menus: left click buys 1, shift-left buys `bulk-amount`, right click
-sells 1, shift-right sells everything you own (after a confirmation), and Q (drop) opens the
-lookup.
+Clicking a stock in the list opens its lookup. On the lookup's diamonds, left click buys 1
+(or `crypto-click-amount` of a coin), shift-left buys `bulk-amount` times that, right click
+sells the same, and shift-right sells everything you own after a confirmation. The list's bottom
+row opens your portfolio, orders, trades, the server's trades and the tutorial, so players can
+get around without commands.
+
+Crypto can be bought in fractions: `/stocks buy BTC/USD 0.015`. Crypto has no minimum price.
+
+Anything that happens while a player is offline (orders filling or being cancelled, dividends,
+splits) is shown under "While you were away" when they next join.
 
 ## Placeholders
 

@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import com.maldahleh.stockmarket.bukkit.Messages;
 import com.maldahleh.stockmarket.bukkit.Text;
 import com.maldahleh.stockmarket.bukkit.Trader;
+import com.maldahleh.stockmarket.market.Quantities;
 import com.maldahleh.stockmarket.menu.Menus;
 import com.maldahleh.stockmarket.portfolio.Holding;
 import com.maldahleh.stockmarket.portfolio.Portfolios;
@@ -145,7 +146,7 @@ public class StockCommand implements TabExecutor {
         }
         long shares;
         try {
-          shares = args.length == 2 ? Long.parseLong(args[1]) : 1;
+          shares = Quantities.parse(args[0].toUpperCase(), args.length == 2 ? args[1] : "1");
         } catch (NumberFormatException e) {
           messages.send(player, "invalid-quantity");
           return;
@@ -214,7 +215,8 @@ public class StockCommand implements TabExecutor {
       default -> null;
     };
     try {
-      return type == null ? null : new OrderRequest(type, args[1], Long.parseLong(args[2]),
+      return type == null ? null : new OrderRequest(type, args[1],
+          Quantities.parse(args[1].toUpperCase(), args[2]),
           new BigDecimal(args[3].replace("$", "").replace(",", "")));
     } catch (NumberFormatException e) {
       return null;
@@ -232,6 +234,16 @@ public class StockCommand implements TabExecutor {
     } else {
       messages.send(player, "orders.problems." + ((Placement.Rejected) placement).problem().name(),
           Map.of("<symbol>", request.symbol().toUpperCase()));
+    }
+  }
+
+  /** Lists the player's open orders in chat; used by the list menu too. */
+  public void showOrders(Player player) {
+    Services s = services.get();
+    if (s == null) {
+      messages.send(player, "not-configured");
+    } else {
+      listOrders(player, s);
     }
   }
 

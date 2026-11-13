@@ -9,10 +9,10 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
-import org.bukkit.entity.Player;
 import com.maldahleh.stockmarket.bukkit.Brokers;
 import com.maldahleh.stockmarket.bukkit.Formats;
 import com.maldahleh.stockmarket.bukkit.Messages;
+import com.maldahleh.stockmarket.bukkit.Notices;
 import com.maldahleh.stockmarket.bukkit.StockExpansion;
 import com.maldahleh.stockmarket.bukkit.Trader;
 import com.maldahleh.stockmarket.bukkit.VaultWallet;
@@ -61,6 +61,7 @@ public class StockMarketPlugin extends JavaPlugin {
   private Messages messages;
   private Menus menus;
   private Services services;
+  private StockCommand command;
 
   @Override
   public void onEnable() {
@@ -99,7 +100,7 @@ public class StockMarketPlugin extends JavaPlugin {
   }
 
   private void registerCommand(FileConfiguration config) {
-    StockCommand command = new StockCommand(() -> services, messages,
+    command = new StockCommand(() -> services, messages,
         config.getBoolean("broker.disable-commands"), this::reloadFiles);
     var registered = getCommand("stockmarket");
     registered.setExecutor(command);
@@ -154,10 +155,13 @@ public class StockMarketPlugin extends JavaPlugin {
         config.getString("unknown-data", "N/A"));
 
     TradeService trades = new TradeService(market, database, portfolios, wallet, rules, context);
-    Trader trader = new Trader(trades, market, portfolios, messages, formats,
+    Notices notices = new Notices(database, messages, context);
+    Trader trader = new Trader(trades, market, portfolios, messages, formats, notices,
         decimal(config, "trading.confirm-above", "0"), context.serverThread());
     menus = new Menus(getDataFolder(), market, portfolios, database, trader, formats, messages,
-        Math.max(1, config.getLong("trading.bulk-amount", 5)), context);
+        new Menus.Options(Math.max(1, config.getLong("trading.bulk-amount", 5)),
+            decimal(config, "trading.crypto-click-amount", "0.01"), command::showOrders),
+        context);
     Brokers brokers = new Brokers(this, config.getString("broker.name", "&8&lStock Broker"),
         menus);
 
@@ -165,13 +169,13 @@ public class StockMarketPlugin extends JavaPlugin {
     AtomicReference<OrderBook> orderBook = new AtomicReference<>();
     AtomicReference<ActionService> actionService = new AtomicReference<>();
     ActionService actions = new ActionService(market, database, portfolios, wallet, rules,
-        config.getBoolean("dividends", true), actionNotifier(formats, orderBook),
+        config.getBoolean("dividends", true), actionNotifier(formats, notices, orderBook),
         () -> orderBook.get().symbols(), context);
     actionService.set(actions);
     OrderBook orders = new OrderBook(market, database, portfolios, trades, rules,
         new OrderBook.Limits(Math.max(1, config.getInt("orders.max-open-per-player", 10)),
             Duration.ofDays(Math.max(1, config.getLong("orders.expire-days", 30)))),
-        orderNotifier(formats, trader),
+        orderNotifier(formats, notices, trader),
         (symbol, after, until) -> actionService.get().changedBetween(symbol, after, until),
         context);
     loadOrders(orders);
@@ -180,6 +184,7 @@ public class StockMarketPlugin extends JavaPlugin {
 
     getServer().getPluginManager().registerEvents(new MenuListener(), this);
     getServer().getPluginManager().registerEvents(brokers, this);
+    getServer().getPluginManager().registerEvents(notices, this);
     if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
       new StockExpansion(market, portfolios, rules, formats, getDescription().getVersion())
           .register();
@@ -188,19 +193,15 @@ public class StockMarketPlugin extends JavaPlugin {
     checkConnection(market);
   }
 
-  private ActionService.Notifier actionNotifier(Formats formats,
+  private ActionService.Notifier actionNotifier(Formats formats, Notices notices,
       AtomicReference<OrderBook> orderBook) {
     return new ActionService.Notifier() {
       @Override
       public void notify(UUID player, CorporateAction action, BigDecimal payout) {
-        Player online = Bukkit.getPlayer(player);
-        if (online == null) {
-          return;
-        }
         String paid = payout.signum() > 0 ? messages.raw("corporate-action-payout")
             .replace("<amount>", formats.money(payout)) : "";
-        messages.send(online, "corporate-action", Map.of(
-            "<action>", ActionService.describe(action), "<payout>", paid));
+        notices.tell(player, "corporate-action", Map.of(
+            "<action>", ActionService.describe(action), "<payout>", paid), false);
       }
 
       @Override
@@ -213,25 +214,19 @@ public class StockMarketPlugin extends JavaPlugin {
     };
   }
 
-  private OrderBook.Notifier orderNotifier(Formats formats, Trader trader) {
+  private OrderBook.Notifier orderNotifier(Formats formats, Notices notices, Trader trader) {
     return new OrderBook.Notifier() {
       @Override
       public void filled(Order order, TradeResult.Success result) {
-        Player online = Bukkit.getPlayer(order.owner());
-        if (online != null) {
-          messages.send(online, "orders.filled", orderValues(order, formats));
-          trader.report(online, order.symbol(), result, order.type().buying());
-        }
+        notices.tell(order.owner(), "orders.filled", orderValues(order, formats), false);
+        trader.announce(order.owner(), result, order.type().buying());
       }
 
       @Override
       public void cancelled(Order order, OrderBook.CancelCause cause) {
-        Player online = Bukkit.getPlayer(order.owner());
-        if (online != null) {
-          Map<String, String> values = new HashMap<>(orderValues(order, formats));
-          values.put("<reason>", messages.raw("orders.causes." + cause.name()));
-          messages.send(online, "orders.cancelled", values);
-        }
+        Map<String, String> values = new HashMap<>(orderValues(order, formats));
+        values.put("<reason>", messages.raw("orders.causes." + cause.name()));
+        notices.tell(order.owner(), "orders.cancelled", values, false);
       }
     };
   }
@@ -291,7 +286,7 @@ public class StockMarketPlugin extends JavaPlugin {
         "<id>", String.valueOf(order.id()),
         "<type>", order.type().name(),
         "<symbol>", order.symbol(),
-        "<quantity>", formats.number(order.shares()),
+        "<quantity>", formats.quantity(order.symbol(), order.shares()),
         "<target>", formats.money(order.target()),
         "<expires>", formats.date(order.expires()));
   }
@@ -342,8 +337,7 @@ public class StockMarketPlugin extends JavaPlugin {
         Duration.ofMinutes(Math.max(1, config.getLong("trading.max-price-age-minutes", 15))),
         config.getBoolean("trading.allow-crypto", true),
         blocked,
-        Math.max(1, config.getLong("trading.max-shares-per-trade", 10000)),
-        Duration.ofSeconds(Math.max(0, config.getLong("trading.cooldown-seconds", 2))));
+        Math.max(1, config.getLong("trading.max-shares-per-trade", 10000)));
   }
 
   private static BigDecimal decimal(FileConfiguration config, String path, String fallback) {

@@ -6,8 +6,10 @@ import com.maldahleh.stockmarket.bukkit.Messages;
 import com.maldahleh.stockmarket.bukkit.Text;
 import com.maldahleh.stockmarket.bukkit.Trader;
 import com.maldahleh.stockmarket.market.Asset;
+import com.maldahleh.stockmarket.market.AssetClass;
 import com.maldahleh.stockmarket.market.DailyBar;
 import com.maldahleh.stockmarket.market.MarketData;
+import com.maldahleh.stockmarket.market.Quantities;
 import com.maldahleh.stockmarket.market.Quote;
 import com.maldahleh.stockmarket.portfolio.Holding;
 import com.maldahleh.stockmarket.portfolio.LedgerEntry;
@@ -55,7 +57,7 @@ public class Menus {
   private final Executor serverThread;
   private final Executor databaseThread;
   private final Logger logger;
-  private final long bulkAmount;
+  private final Options options;
 
   private YamlConfiguration list;
   private YamlConfiguration lookup;
@@ -66,7 +68,7 @@ public class Menus {
   private PagedTemplate history;
 
   public Menus(File folder, MarketData market, Portfolios portfolios, Database database,
-      Trader trader, Formats formats, Messages messages, long bulkAmount,
+      Trader trader, Formats formats, Messages messages, Options options,
       PluginContext context) {
     this.folder = folder;
     this.market = market;
@@ -76,7 +78,7 @@ public class Menus {
     this.rules = trader.rules();
     this.formats = formats;
     this.messages = messages;
-    this.bulkAmount = bulkAmount;
+    this.options = options;
     this.serverThread = context.serverThread();
     this.databaseThread = context.databaseThread();
     this.logger = context.logger();
@@ -123,15 +125,14 @@ public class Menus {
           Text.color(list.getString("name", "")));
       items.forEach((slot, item) -> {
         if (item.symbol() == null || item.symbol().isBlank()) {
-          menu.set(slot, item.build(Map.of()));
+          menu.set(slot, item.build(Map.of()), click -> runAction(player, item.action()));
           return;
         }
         String symbol = item.symbol().toUpperCase();
-        Map<String, String> values = new HashMap<>(StockView.placeholders(symbol,
+        Map<String, String> values = StockView.placeholders(symbol,
             market.cachedAsset(symbol).orElse(null), quotes.get(symbol), null,
-            owned(player, symbol), rules, formats));
-        values.put("<bulk>", String.valueOf(bulkAmount));
-        menu.set(slot, item.build(values), click -> tradeClick(player, symbol, click));
+            owned(player, symbol), rules, formats);
+        menu.set(slot, item.build(values), click -> openLookup(player, symbol));
       });
       player.openInventory(menu.getInventory());
     }, serverThread);
@@ -153,7 +154,8 @@ public class Menus {
       StockData stock = data.get();
       Map<String, String> values = new HashMap<>(StockView.placeholders(symbol, stock.asset(),
           stock.quote(), stock.bars(), owned(player, symbol), rules, formats));
-      values.put("<bulk>", String.valueOf(bulkAmount));
+      values.put("<one>", formats.quantity(symbol, clickUnits(symbol)));
+      values.put("<bulk>", formats.quantity(symbol, clickUnits(symbol) * options.bulkAmount()));
       MenuHolder menu = new MenuHolder(lookup.getInt("size", 36),
           Text.render(lookup.getString("name", ""), values));
       forEachItem(lookup, (slot, item) -> {
@@ -247,12 +249,12 @@ public class Menus {
   private Map<String, String> holdingValues(Holding holding, Map<String, Quote> quotes) {
     Quote quote = quotes.get(holding.symbol());
     BigDecimal value = quote == null ? null
-        : rules.serverPrice(quote.price()).multiply(BigDecimal.valueOf(holding.shares()));
+        : Quantities.value(holding.symbol(), rules.serverPrice(quote.price()), holding.shares());
     Map<String, String> values = new HashMap<>();
     values.put("<symbol>", holding.symbol());
     values.put("<name>", market.cachedAsset(holding.symbol()).map(Asset::name)
         .orElse(holding.symbol()));
-    values.put("<quantity>", formats.number(holding.shares()));
+    values.put("<quantity>", formats.quantity(holding.symbol(), holding.shares()));
     values.put("<purchase-value>", formats.money(holding.costBasis()));
     values.put("<average-cost>", formats.money(holding.averageCost()));
     values.put("<current-value>", formats.money(value));
@@ -274,8 +276,8 @@ public class Menus {
             formats.unknown(), "<net-value>", formats.unknown(), "<net-percent>",
             formats.unknown());
       }
-      worth = worth.add(rules.serverPrice(quote.price())
-          .multiply(BigDecimal.valueOf(holding.shares())));
+      worth = worth.add(Quantities.value(holding.symbol(), rules.serverPrice(quote.price()),
+          holding.shares()));
     }
     return Map.of(
         "<purchase-value>", formats.money(paid),
@@ -321,7 +323,8 @@ public class Menus {
       values.put("<date>", formats.date(entry.time()));
       values.put("<name>", name(Bukkit.getOfflinePlayer(entry.owner())));
       values.put("<transaction-type>", messages.raw("entry-types." + entry.type().name()));
-      values.put("<quantity>", (entry.shares() > 0 ? "+" : "") + formats.number(entry.shares()));
+      values.put("<quantity>", (entry.shares() > 0 ? "+" : "")
+          + formats.quantity(entry.symbol(), entry.shares()));
       values.put("<price>", formats.money(entry.price()));
       values.put("<broker-fees>", formats.money(entry.fee()));
       values.put("<cash>", formats.signedMoney(entry.cash()));
@@ -347,7 +350,7 @@ public class Menus {
     }
     if (items.isEmpty() && !slots.isEmpty()) {
       menu.set(slots.get(0), new ItemTemplate(org.bukkit.Material.BARRIER,
-          messages.raw("no-data"), List.of(), null, false).build(Map.of()));
+          messages.raw("no-data"), List.of(), null, false, null).build(Map.of()));
     }
 
     if (current > 0) {
@@ -368,15 +371,54 @@ public class Menus {
   // Helpers
 
   private void tradeClick(Player player, String symbol, ClickType click) {
+    long one = clickUnits(symbol);
     switch (click) {
-      case LEFT -> trader.buy(player, symbol, 1, true);
-      case SHIFT_LEFT -> trader.buy(player, symbol, bulkAmount, true);
-      case RIGHT -> trader.sell(player, symbol, 1, true);
+      case LEFT -> trader.buy(player, symbol, one, true);
+      case SHIFT_LEFT -> trader.buy(player, symbol, one * options.bulkAmount(), true);
+      case RIGHT -> trader.sell(player, symbol, one, true);
       case SHIFT_RIGHT -> trader.sellAll(player, symbol, true);
-      case MIDDLE, DROP -> openLookup(player, symbol);
       default -> { }
     }
   }
+
+  /** One click's worth: a share, or {@code crypto-click-amount} of a coin. */
+  private long clickUnits(String symbol) {
+    return AssetClass.of(symbol) == AssetClass.CRYPTO
+        ? Quantities.of(symbol, options.cryptoClickAmount()) : 1;
+  }
+
+  /** What a navigation item in the list does. */
+  private void runAction(Player player, String action) {
+    if (action == null || action.isBlank()) {
+      return;
+    }
+    if (!action.equals("close") && !player.hasPermission("stockmarket." + action)) {
+      messages.send(player, "no-permission");
+      return;
+    }
+    switch (action) {
+      case "portfolio" -> openPortfolio(player, player);
+      case "transactions" -> openTransactions(player, player);
+      case "history" -> openHistory(player, null);
+      case "tutorial" -> openTutorial(player);
+      case "orders" -> {
+        player.closeInventory();
+        options.showOrders().accept(player);
+      }
+      case "close" -> player.closeInventory();
+      default -> { }
+    }
+  }
+
+  /**
+   * Menu settings from config.yml.
+   *
+   * @param bulkAmount clicks with shift trade this many times the normal amount
+   * @param cryptoClickAmount how much of a coin one click trades
+   * @param showOrders lists a player's open orders in chat
+   */
+  public record Options(long bulkAmount, BigDecimal cryptoClickAmount,
+      java.util.function.Consumer<Player> showOrders) {}
 
   private long owned(Player player, String symbol) {
     return portfolios.get(player.getUniqueId(), symbol).map(Holding::shares).orElse(0L);

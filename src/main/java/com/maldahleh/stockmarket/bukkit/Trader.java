@@ -3,6 +3,7 @@ package com.maldahleh.stockmarket.bukkit;
 import com.maldahleh.stockmarket.events.StockPurchaseEvent;
 import com.maldahleh.stockmarket.events.StockSaleEvent;
 import com.maldahleh.stockmarket.market.MarketData;
+import com.maldahleh.stockmarket.market.Quantities;
 import com.maldahleh.stockmarket.market.Quote;
 import com.maldahleh.stockmarket.menu.ItemTemplate;
 import com.maldahleh.stockmarket.menu.MenuHolder;
@@ -43,12 +44,14 @@ public class Trader {
   private final Messages messages;
   private final Formats formats;
   private final BigDecimal confirmAbove;
+  private final Notices notices;
   private final Executor serverThread;
   private final Map<UUID, Pending> pending = new ConcurrentHashMap<>();
 
   public Trader(TradeService trades, MarketData market, Portfolios portfolios, Messages messages,
-      Formats formats, BigDecimal confirmAbove, Executor serverThread) {
+      Formats formats, Notices notices, BigDecimal confirmAbove, Executor serverThread) {
     this.serverThread = serverThread;
+    this.notices = notices;
     this.trades = trades;
     this.market = market;
     this.portfolios = portfolios;
@@ -98,10 +101,10 @@ public class Trader {
     }
     market.quotes(List.of(symbol)).exceptionally(e -> Map.of()).thenAcceptAsync(quotes -> {
       Quote quote = quotes.get(symbol);
-      BigDecimal estimate = quote == null ? null : trades.rules().serverPrice(quote.price())
-          .multiply(BigDecimal.valueOf(shares));
-      boolean large = confirmAbove.signum() > 0 && estimate != null
-          && estimate.compareTo(confirmAbove) >= 0;
+      BigDecimal estimate = quote == null ? null : Quantities.value(symbol,
+          trades.rules().serverPrice(quote.price()), shares);
+      // Without an estimate the trade might be large, so it asks rather than guessing.
+      boolean large = estimate == null || estimate.compareTo(confirmAbove) >= 0;
       if (!player.isOnline()) {
         return;
       }
@@ -117,11 +120,16 @@ public class Trader {
 
   private Map<String, String> summary(String symbol, long shares, boolean buying,
       BigDecimal estimate) {
+    BigDecimal fee = estimate == null ? null : trades.rules().fee(estimate, buying);
+    BigDecimal total = fee == null ? null : buying ? estimate.add(fee) : estimate.subtract(fee);
     return Map.of(
         "<action>", messages.raw(buying ? "confirm.buy" : "confirm.sell"),
-        "<quantity>", formats.number(shares),
+        "<quantity>", formats.quantity(symbol, shares),
         "<symbol>", symbol,
-        "<estimate>", estimate == null ? formats.unknown() : formats.money(estimate));
+        "<estimate>", formats.money(estimate),
+        "<fees>", formats.money(fee),
+        "<total>", formats.money(total),
+        "<direction>", messages.raw(buying ? "confirm.pay" : "confirm.receive"));
   }
 
   private void openConfirm(Player player, String symbol, long shares, boolean buying,
@@ -130,12 +138,12 @@ public class Trader {
     MenuHolder menu = new MenuHolder(9, Text.render(messages.raw("confirm.title"), values));
     List<String> lore = messages.lines("confirm.details");
     menu.set(2, new ItemTemplate(Material.LIME_CONCRETE, messages.raw("confirm.yes"), lore, null,
-        false).build(values), click -> {
+        false, null).build(values), click -> {
           player.closeInventory();
           execute(player, symbol, shares, buying);
         });
     menu.set(6, new ItemTemplate(Material.RED_CONCRETE, messages.raw("confirm.no"), List.of(),
-        null, false).build(values), click -> player.closeInventory());
+        null, false, null).build(values), click -> player.closeInventory());
     player.openInventory(menu.getInventory());
   }
 
@@ -164,17 +172,28 @@ public class Trader {
   public void report(Player player, String symbol, TradeResult result, boolean buying) {
     if (result instanceof Failure failure) {
       if (player.isOnline()) {
-        messages.send(player, "failures." + failure.reason().name(),
-            Map.of("<symbol>", symbol.toUpperCase()));
+        messages.send(player, "failures." + failure.reason().name(), Map.of(
+            "<symbol>", symbol.toUpperCase(),
+            "<reopens>", failure.when() == null ? messages.raw("reopens-soon")
+                : formats.until(failure.when())));
       }
       return;
     }
-    Success success = (Success) result;
+    announce(player.getUniqueId(), (Success) result, buying);
+  }
+
+  /**
+   * Tells the owner about a completed trade (saved for later if they're offline) and fires the
+   * trade event if they're online.
+   */
+  public void announce(UUID owner, Success success, boolean buying) {
+    notices.tell(owner, buying ? "bought" : "sold", values(success), true);
+    Player player = Bukkit.getPlayer(owner);
+    if (player == null) {
+      return;
+    }
     var entry = success.entry();
     long shares = Math.abs(entry.shares());
-    if (player.isOnline()) {
-      messages.sendBlock(player, buying ? "bought" : "sold", values(success));
-    }
     Bukkit.getPluginManager().callEvent(buying
         ? new StockPurchaseEvent(player, entry.symbol(), shares, entry.price(), success.fee(),
             success.total())
@@ -186,7 +205,7 @@ public class Trader {
   public Map<String, String> values(Success success) {
     var entry = success.entry();
     Map<String, String> values = new HashMap<>();
-    values.put("<quantity>", formats.number(Math.abs(entry.shares())));
+    values.put("<quantity>", formats.quantity(entry.symbol(), Math.abs(entry.shares())));
     values.put("<symbol>", entry.symbol());
     values.put("<name>", success.asset().name() == null ? entry.symbol() : success.asset().name());
     values.put("<price>", formats.money(entry.price()));

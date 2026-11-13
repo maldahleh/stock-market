@@ -1,5 +1,6 @@
 package com.maldahleh.stockmarket.bukkit;
 
+import com.maldahleh.stockmarket.market.Quantities;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
@@ -43,6 +44,14 @@ public class Formats {
     return format.format(amount);
   }
 
+  /** Shares as a whole number, or a coin amount such as 0.015 for crypto. */
+  public String quantity(String symbol, long units) {
+    if (Quantities.unitSize(symbol).compareTo(java.math.BigDecimal.ONE) == 0) {
+      return number(units);
+    }
+    return Quantities.amount(symbol, units).toPlainString();
+  }
+
   public String number(long value) {
     return NumberFormat.getIntegerInstance(locale).format(value);
   }
@@ -68,6 +77,17 @@ public class Formats {
     }
     String formatted = money(amount.abs());
     return amount.signum() < 0 ? "-" + formatted : "+" + formatted;
+  }
+
+  /** Time from now until {@code instant}, e.g. "in 2h 15m" or "in 2d 4h". */
+  public String until(Instant instant) {
+    long minutes = Math.max(1, java.time.Duration.between(Instant.now(), instant).toMinutes());
+    long days = minutes / (60 * 24);
+    long hours = minutes / 60 % 24;
+    if (days > 0) {
+      return "in " + days + "d " + hours + "h";
+    }
+    return hours > 0 ? "in " + hours + "h " + minutes % 60 + "m" : "in " + minutes + "m";
   }
 
   public String date(Instant instant) {

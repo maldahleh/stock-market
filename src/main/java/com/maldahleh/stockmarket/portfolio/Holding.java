@@ -1,5 +1,6 @@
 package com.maldahleh.stockmarket.portfolio;
 
+import com.maldahleh.stockmarket.market.Quantities;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -16,8 +17,9 @@ public record Holding(UUID owner, String symbol, long shares, BigDecimal costBas
     }
   }
 
+  /** Cost per share, or per whole coin for crypto. */
   public BigDecimal averageCost() {
     return shares == 0 ? BigDecimal.ZERO
-        : costBasis.divide(BigDecimal.valueOf(shares), 4, java.math.RoundingMode.HALF_UP);
+        : costBasis.divide(Quantities.amount(symbol, shares), 4, java.math.RoundingMode.HALF_UP);
   }
 }

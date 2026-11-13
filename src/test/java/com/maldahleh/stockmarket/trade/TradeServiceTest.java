@@ -44,16 +44,15 @@ class TradeServiceTest {
   private Database database;
   private TradeService trades;
 
-  private static TradeRules rules(Duration cooldown) {
+  private static TradeRules rules() {
     return new TradeRules(new BigDecimal("10"), new BigDecimal("1.00"), new BigDecimal("1"),
-        true, true, new BigDecimal("1"), Duration.ofMinutes(15), true, Set.of("OTC"), 1000,
-        cooldown);
+        true, true, new BigDecimal("1"), Duration.ofMinutes(15), true, Set.of("OTC"), 1000);
   }
 
   @BeforeEach
   void setUp() throws Exception {
     database = Database.sqlite(new File(dir, "test.db"));
-    trades = service(DIRECT, rules(Duration.ZERO));
+    trades = service(DIRECT, rules());
     provider.price("AAPL", "100", NOW.minusSeconds(30));
     wallet.deposit(P, new BigDecimal("5000"));
   }
@@ -110,7 +109,7 @@ class TradeServiceTest {
     buy(1);
     // Hold database work so both sales are in progress at once, as with a double click.
     List<Runnable> queued = new ArrayList<>();
-    trades = service(queued::add, rules(Duration.ZERO));
+    trades = service(queued::add, rules());
     var first = trades.sell(P, "AAPL", 1);
     var second = trades.sell(P, "AAPL", 1);
     queued.forEach(Runnable::run);
@@ -150,13 +149,6 @@ class TradeServiceTest {
   }
 
   @Test
-  void cooldownAppliesBetweenTrades() {
-    trades = service(DIRECT, rules(Duration.ofSeconds(5)));
-    assertInstanceOf(Success.class, buy(1));
-    assertEquals(Reason.COOLDOWN, ((Failure) buy(1)).reason());
-  }
-
-  @Test
   void failedSaveRefundsThePurchase() {
     database.close();
     assertEquals(Reason.STORAGE_ERROR, ((Failure) buy(1)).reason());
@@ -179,11 +171,26 @@ class TradeServiceTest {
         trades.buyAtMost(P, "AAPL", 1, new BigDecimal("1000")).join());
   }
 
+
   @Test
-  void orderFillsIgnoreTheCooldown() {
-    trades = service(DIRECT, rules(Duration.ofMinutes(5)));
-    assertInstanceOf(Success.class, buy(1));
-    assertInstanceOf(Success.class,
-        trades.buyAtMost(P, "AAPL", 1, new BigDecimal("1000")).join());
+  void cryptoTradesInFractionsWithNoMinimumPrice() {
+    provider.price("BTC/USD", "60000", NOW.minusSeconds(1));
+    provider.price("DOGE/USD", "0.20", NOW.minusSeconds(1));
+    // 0.005 BTC × $60,000 × 10 = 3000 is too much; 0.001 BTC = 600 plus fee 7.00
+    long units = com.maldahleh.stockmarket.market.Quantities.parse("BTC/USD", "0.001");
+    Success btc = assertInstanceOf(Success.class, trades.buy(P, "BTC/USD", units).join());
+    assertEquals(0, new BigDecimal("607.00").compareTo(btc.total()));
+    assertEquals(100_000, portfolios.get(P, "BTC/USD").orElseThrow().shares());
+    // DOGE is below the $1 minimum but crypto is exempt
+    long doge = com.maldahleh.stockmarket.market.Quantities.parse("DOGE/USD", "10");
+    assertInstanceOf(Success.class, trades.buy(P, "DOGE/USD", doge).join());
+  }
+
+  @Test
+  void closedMarketSaysWhenItReopens() {
+    provider.open = false;
+    Failure closed = (Failure) buy(1);
+    assertEquals(Reason.MARKET_CLOSED, closed.reason());
+    org.junit.jupiter.api.Assertions.assertNotNull(closed.when());
   }
 }

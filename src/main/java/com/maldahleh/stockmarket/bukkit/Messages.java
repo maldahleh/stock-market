@@ -36,6 +36,12 @@ public class Messages {
     }
   }
 
+  /** The message's lines with placeholders filled and colours applied. */
+  public List<String> render(String key, Map<String, String> placeholders, boolean prefixed) {
+    String prefix = prefixed ? yaml.getString("prefix", "") : "";
+    return lines(key).stream().map(line -> Text.render(prefix + line, placeholders)).toList();
+  }
+
   /** Lines without the prefix, e.g. multi-line summaries and help. */
   public void sendBlock(CommandSender to, String key, Map<String, String> placeholders) {
     for (String line : lines(key)) {

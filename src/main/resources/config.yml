@@ -13,7 +13,9 @@ alpaca:
   live-account: false
 
 # How server money relates to market prices: server price = market price × multiplier.
-price-multiplier: 20
+# 1 means a share costs its real US-dollar price in server money. Raise it if your economy has
+# lots of money in it. Changing it later revalues every holding.
+price-multiplier: 1
 
 fees:
   # Charged on each trade, in server money.
@@ -29,13 +31,16 @@ trading:
   max-price-age-minutes: 15
   # Stocks cheaper than this market price (in USD) can't be traded.
   minimum-price: 5.0
+  # Most shares (or whole coins, for crypto) one trade or order can move.
   max-shares-per-trade: 10000
-  cooldown-seconds: 2
   # Trades worth at least this much server money need a confirmation click. 0 turns it off.
   # Selling all shares of a stock always asks first.
   confirm-above: 10000
   # Shares bought with shift-click in menus.
   bulk-amount: 5
+  # Crypto can be bought in fractions. A click in a crypto lookup buys or sells this much of a
+  # coin (shift-click: this times bulk-amount). Commands take any amount, e.g. 0.015.
+  crypto-click-amount: 0.01
   # Crypto pairs like BTC/USD trade around the clock.
   allow-crypto: true
   # Alpaca exchange codes that can't be traded.

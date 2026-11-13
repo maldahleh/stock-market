@@ -23,7 +23,7 @@ public final class StockView {
     Map<String, String> p = new HashMap<>();
     p.put("<symbol>", symbol);
     p.put("<market-currency>", "USD");
-    p.put("<owned>", f.number(owned));
+    p.put("<owned>", f.quantity(symbol, owned));
     p.put("<broker-flat>", f.money(rules.flatFee()));
     p.put("<broker-percent>", f.plain(rules.percentFee()));
     putAsset(p, symbol, asset, f);

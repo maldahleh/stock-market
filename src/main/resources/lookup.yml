@@ -24,8 +24,8 @@ items:
       - "&e<server-price> &6per share"
       - "&6+ Broker fee: &e<broker-flat> &6+ &e<broker-percent>%"
       - ""
-      - "&6Left click: &eBuy 1 &8| &6Shift: &eBuy <bulk>"
-      - "&6Right click: &eSell 1 &8| &6Shift: &eSell all"
+      - "&6Left click: &eBuy <one> &8| &6Shift: &eBuy <bulk>"
+      - "&6Right click: &eSell <one> &8| &6Shift: &eSell all"
   4:
     material: "BOOK"
     name: "&6&lMarket Price"
@@ -49,8 +49,8 @@ items:
       - "&e<server-price> &6per share"
       - "&6+ Broker fee: &e<broker-flat> &6+ &e<broker-percent>%"
       - ""
-      - "&6Left click: &eBuy 1 &8| &6Shift: &eBuy <bulk>"
-      - "&6Right click: &eSell 1 &8| &6Shift: &eSell all"
+      - "&6Left click: &eBuy <one> &8| &6Shift: &eBuy <bulk>"
+      - "&6Right click: &eSell <one> &8| &6Shift: &eSell all"
   6:
     material: "BOOK"
     name: "&6&lLast Trade"

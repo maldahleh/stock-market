@@ -13,13 +13,18 @@ public sealed interface TradeResult {
   record Success(LedgerEntry entry, Asset asset, Holding holding, BigDecimal value,
       BigDecimal fee, BigDecimal total, BigDecimal net) implements TradeResult {}
 
-  record Failure(Reason reason) implements TradeResult {}
+  /** @param when for MARKET_CLOSED, when the market reopens; otherwise null */
+  record Failure(Reason reason, java.time.Instant when) implements TradeResult {
+
+    public Failure(Reason reason) {
+      this(reason, null);
+    }
+  }
 
   enum Reason {
     INVALID_QUANTITY,
     TOO_MANY_SHARES,
     BUSY,
-    COOLDOWN,
     INVALID_SYMBOL,
     NOT_TRADABLE,
     CRYPTO_DISABLED,

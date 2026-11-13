@@ -116,7 +116,7 @@ public class OrderBook {
   /** Checks that need no market data. Null means the request is fine so far. */
   private Problem requestProblem(UUID owner, OrderType type, String symbol, long shares,
       BigDecimal target) {
-    Problem input = inputProblem(shares, target);
+    Problem input = inputProblem(symbol, shares, target);
     if (input != null) {
       return input;
     }
@@ -129,8 +129,8 @@ public class OrderBook {
     return !type.buying() && owned(owner, symbol) < shares ? Problem.NOT_ENOUGH_SHARES : null;
   }
 
-  private Problem inputProblem(long shares, BigDecimal target) {
-    if (shares <= 0 || shares > rules.maxSharesPerTrade()) {
+  private Problem inputProblem(String symbol, long shares, BigDecimal target) {
+    if (shares <= 0 || rules.tooLarge(symbol, shares)) {
       return Problem.INVALID_QUANTITY;
     }
     return target == null || target.signum() <= 0 ? Problem.INVALID_PRICE : null;
