@@ -2,15 +2,12 @@ package com.maldahleh.stockmarket;
 
 import com.maldahleh.stockmarket.actions.ActionService;
 import com.maldahleh.stockmarket.actions.CorporateAction;
-import com.maldahleh.stockmarket.orders.Order;
-import com.maldahleh.stockmarket.orders.OrderBook;
-import com.maldahleh.stockmarket.trade.TradeResult;
-import java.util.HashMap;
-import java.util.UUID;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 import com.maldahleh.stockmarket.bukkit.Brokers;
 import com.maldahleh.stockmarket.bukkit.Formats;
+import com.maldahleh.stockmarket.bukkit.Health;
+import com.maldahleh.stockmarket.bukkit.JoinSummary;
+import com.maldahleh.stockmarket.bukkit.Leaderboard;
+import com.maldahleh.stockmarket.bukkit.MarketNews;
 import com.maldahleh.stockmarket.bukkit.Messages;
 import com.maldahleh.stockmarket.bukkit.Notices;
 import com.maldahleh.stockmarket.bukkit.StockExpansion;
@@ -23,8 +20,12 @@ import com.maldahleh.stockmarket.market.MarketDataProvider;
 import com.maldahleh.stockmarket.market.alpaca.AlpacaProvider;
 import com.maldahleh.stockmarket.menu.MenuListener;
 import com.maldahleh.stockmarket.menu.Menus;
+import com.maldahleh.stockmarket.orders.Order;
+import com.maldahleh.stockmarket.orders.OrderBook;
+import com.maldahleh.stockmarket.portfolio.EntryType;
 import com.maldahleh.stockmarket.portfolio.Portfolios;
 import com.maldahleh.stockmarket.storage.Database;
+import com.maldahleh.stockmarket.trade.TradeResult;
 import com.maldahleh.stockmarket.trade.TradeRules;
 import com.maldahleh.stockmarket.trade.TradeService;
 import java.io.File;
@@ -32,21 +33,32 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -55,38 +67,125 @@ public class StockMarketPlugin extends JavaPlugin {
   private static final String[] MENU_FILES = {"list.yml", "lookup.yml", "compare.yml",
       "portfolio.yml", "transactions.yml", "history.yml", "tutorial.yml", "messages.yml"};
 
+  private final Health health = new Health();
+  private Economy economy;
+  private Messages messages;
+  private Brokers brokers;
   private ExecutorService network;
   private ExecutorService databaseThread;
   private Database database;
-  private Messages messages;
   private Menus menus;
-  private Services services;
+  private MarketData market;
+  private StockExpansion expansion;
   private StockCommand command;
+  private volatile Services services;
 
   @Override
   public void onEnable() {
     saveFiles();
+    getLogger().addHandler(health);
     messages = loadMessages();
-    Economy economy = economy();
+    economy = economy();
     if (economy == null) {
-      disable("Vault and an economy plugin are required.", null);
+      getLogger().severe("Vault and an economy plugin are required. Disabling.");
+      getServer().getPluginManager().disablePlugin(this);
       return;
     }
+    brokers = new Brokers(this, getConfig().getString("broker.name", "&8&lStock Broker"),
+        () -> menus, messages);
+    command = new StockCommand(() -> services, messages,
+        () -> getConfig().getBoolean("broker.disable-commands"),
+        new StockCommand.Admin(this::reload, this::status));
+    var registered = getCommand("stockmarket");
+    registered.setExecutor(command);
+    registered.setTabCompleter(command);
+    registerAlwaysOn();
+    boot();
+  }
 
+  @Override
+  public void onDisable() {
+    stopServices();
+    getLogger().removeHandler(health);
+  }
+
+  /** Listeners that work whether or not the market is connected. */
+  private void registerAlwaysOn() {
+    getServer().getPluginManager().registerEvents(brokers, this);
+    getServer().getPluginManager().registerEvents(new Listener() {
+      @EventHandler
+      public void onJoin(PlayerJoinEvent event) {
+        if (services == null && event.getPlayer().hasPermission("stockmarket.reload")) {
+          messages.send(event.getPlayer(), "admin-not-configured");
+        }
+      }
+    }, this);
+  }
+
+  /** Reads config.yml and starts trading if a key is set. */
+  private void boot() {
     FileConfiguration config = getConfig();
-    registerCommand(config);
+    brokers.rename(config.getString("broker.name", "&8&lStock Broker"));
     String keyId = config.getString("alpaca.key-id", "").trim();
     String secret = config.getString("alpaca.secret", "").trim();
     if (keyId.isEmpty() || secret.isEmpty()) {
+      health.connected(false, "no key in config.yml");
       getLogger().warning("No Alpaca key in config.yml, so trading is off. Add a free paper "
-          + "trading key from https://alpaca.markets and restart.");
+          + "trading key from https://alpaca.markets and run /stocks reload.");
       return;
     }
-
     Portfolios portfolios = openStorage(config);
     if (portfolios != null) {
-      start(config, economy, portfolios, new AlpacaProvider(keyId, secret,
+      start(config, portfolios, new AlpacaProvider(keyId, secret,
           config.getString("alpaca.feed", "iex"), config.getBoolean("alpaca.live-account")));
+    }
+  }
+
+  /** Re-reads every file and restarts the services, then reports how it went. */
+  private void reload(CommandSender sender) {
+    reloadConfig();
+    messages.reload(YamlConfiguration.loadConfiguration(new File(getDataFolder(),
+        "messages.yml")));
+    stopServices();
+    registerAlwaysOn();
+    boot();
+    if (services == null) {
+      messages.send(sender, "reload.not-configured");
+      return;
+    }
+    messages.send(sender, "reload.checking");
+    checkConnection().thenRun(() -> Bukkit.getScheduler().runTask(this, () ->
+        messages.send(sender, Boolean.TRUE.equals(health.connected()) ? "reload.connected"
+            : "reload.failed", Map.of("<detail>", health.connection()))));
+  }
+
+  private void stopServices() {
+    services = null;
+    menus = null;
+    Bukkit.getScheduler().cancelTasks(this);
+    HandlerList.unregisterAll(this);
+    if (expansion != null) {
+      expansion.unregister();
+      expansion = null;
+    }
+    if (network != null) {
+      network.shutdownNow();
+      network = null;
+    }
+    if (databaseThread != null) {
+      databaseThread.shutdown();
+      try {
+        if (!databaseThread.awaitTermination(10, TimeUnit.SECONDS)) {
+          getLogger().warning("Gave up waiting for database writes to finish.");
+        }
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+      }
+      databaseThread = null;
+    }
+    if (database != null) {
+      database.close();
+      database = null;
     }
   }
 
@@ -99,15 +198,7 @@ public class StockMarketPlugin extends JavaPlugin {
     }
   }
 
-  private void registerCommand(FileConfiguration config) {
-    command = new StockCommand(() -> services, messages,
-        config.getBoolean("broker.disable-commands"), this::reloadFiles);
-    var registered = getCommand("stockmarket");
-    registered.setExecutor(command);
-    registered.setTabCompleter(command);
-  }
-
-  /** Opens the database and loads holdings, or disables the plugin and returns null. */
+  /** Opens the database and loads holdings, or logs why it couldn't and returns null. */
   private Portfolios openStorage(FileConfiguration config) {
     try {
       database = openDatabase(config);
@@ -119,14 +210,11 @@ public class StockMarketPlugin extends JavaPlugin {
       portfolios.load(database.loadHoldings());
       return portfolios;
     } catch (SQLException e) {
-      disable("Couldn't open the database or load holdings.", e);
+      getLogger().log(Level.SEVERE, "Couldn't open the database or load holdings; trading is "
+          + "off until it's fixed and /stocks reload is run.", e);
+      health.connected(false, "database error: " + e.getMessage());
       return null;
     }
-  }
-
-  private void disable(String reason, Exception error) {
-    getLogger().log(Level.SEVERE, reason + " Disabling.", error);
-    getServer().getPluginManager().disablePlugin(this);
   }
 
   private PluginContext startThreads() {
@@ -143,10 +231,10 @@ public class StockMarketPlugin extends JavaPlugin {
         getLogger());
   }
 
-  private void start(FileConfiguration config, Economy economy, Portfolios portfolios,
+  private void start(FileConfiguration config, Portfolios portfolios,
       MarketDataProvider provider) {
     PluginContext context = startThreads();
-    MarketData market = new MarketData(provider, network,
+    market = new MarketData(provider, network,
         Duration.ofSeconds(Math.max(5, config.getLong("cache-seconds", 60))));
     TradeRules rules = rules(config);
     VaultWallet wallet = new VaultWallet(economy);
@@ -157,13 +245,12 @@ public class StockMarketPlugin extends JavaPlugin {
     TradeService trades = new TradeService(market, database, portfolios, wallet, rules, context);
     Notices notices = new Notices(database, messages, context);
     Trader trader = new Trader(trades, market, portfolios, messages, formats, notices,
-        decimal(config, "trading.confirm-above", "0"), context.serverThread());
+        new Trader.Settings(decimal(config, "trading.confirm-above", "0"),
+            decimal(config, "trading.broadcast-above", "0")), context.serverThread());
     menus = new Menus(getDataFolder(), market, portfolios, database, trader, formats, messages,
         new Menus.Options(Math.max(1, config.getLong("trading.bulk-amount", 5)),
             decimal(config, "trading.crypto-click-amount", "0.01"), command::showOrders),
         context);
-    Brokers brokers = new Brokers(this, config.getString("broker.name", "&8&lStock Broker"),
-        menus);
 
     // The two services refer to each other, so each reaches the other through a reference.
     AtomicReference<OrderBook> orderBook = new AtomicReference<>();
@@ -180,17 +267,24 @@ public class StockMarketPlugin extends JavaPlugin {
         context);
     loadOrders(orders);
     orderBook.set(orders);
-    services = new Services(menus, trader, brokers, portfolios, orders, formats);
+    trader.watchOrders(orders);
 
-    getServer().getPluginManager().registerEvents(new MenuListener(), this);
-    getServer().getPluginManager().registerEvents(brokers, this);
-    getServer().getPluginManager().registerEvents(notices, this);
-    if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-      new StockExpansion(market, portfolios, rules, formats, getDescription().getVersion())
-          .register();
+    Leaderboard leaderboard = new Leaderboard(market, portfolios, rules,
+        decimal(config, "leaderboard.minimum-invested", "100"));
+    var events = getServer().getPluginManager();
+    events.registerEvents(new MenuListener(), this);
+    events.registerEvents(notices, this);
+    events.registerEvents(new JoinSummary(market, portfolios, rules, messages, formats,
+        context.serverThread()), this);
+    if (events.isPluginEnabled("PlaceholderAPI")) {
+      expansion = new StockExpansion(market, portfolios, rules, formats,
+          getDescription().getVersion(), leaderboard);
+      expansion.register();
     }
-    schedule(config, actions, orders);
-    checkConnection(market);
+    MarketNews news = new MarketNews(market, messages, context.serverThread());
+    schedule(config, actions, orders, leaderboard, news);
+    services = new Services(menus, trader, brokers, portfolios, orders, formats);
+    checkConnection();
   }
 
   private ActionService.Notifier actionNotifier(Formats formats, Notices notices,
@@ -240,44 +334,92 @@ public class StockMarketPlugin extends JavaPlugin {
     }
   }
 
-  private void schedule(FileConfiguration config, ActionService actions, OrderBook orders) {
+  private void schedule(FileConfiguration config, ActionService actions, OrderBook orders,
+      Leaderboard leaderboard, MarketNews news) {
+    var scheduler = Bukkit.getScheduler();
     long period = Math.max(5, config.getLong("corporate-actions-check-minutes", 60)) * 60 * 20;
-    Bukkit.getScheduler().runTaskTimer(this, actions::runOnce, 20L * 30, period);
+    scheduler.runTaskTimer(this, actions::runOnce, 20L * 30, period);
     long orderPeriod = Math.max(15, config.getLong("orders.check-seconds", 60)) * 20;
-    Bukkit.getScheduler().runTaskTimer(this, orders::check, 20L * 45, orderPeriod);
+    scheduler.runTaskTimer(this, orders::check, 20L * 45, orderPeriod);
+    scheduler.runTaskTimer(this, leaderboard::refresh, 20L * 60, 20L * 60 * 5);
+    scheduler.runTaskTimer(this, news::check, 20L * 20, 20L * 60);
   }
 
   /** Checks the key now, so a typo shows up in the console rather than on a player's trade. */
-  private void checkConnection(MarketData market) {
-    market.clock().whenComplete((clock, error) -> {
+  private CompletableFuture<Void> checkConnection() {
+    return market.clock().handle((clock, error) -> {
       if (error != null) {
         Throwable cause = error.getCause() == null ? error : error.getCause();
+        health.connected(false, cause.getMessage());
         getLogger().severe("Market data check failed: " + cause.getMessage());
       } else {
+        health.connected(true, "connected");
         getLogger().info("Connected to market data. The US stock market is "
             + (clock.open() ? "open." : "closed."));
       }
+      return null;
     });
   }
 
-  @Override
-  public void onDisable() {
-    if (network != null) {
-      network.shutdownNow();
+  /** /stocks status: whether the plugin is healthy, for owners. Works from the console. */
+  private void status(CommandSender sender) {
+    Map<String, String> values = new HashMap<>();
+    values.put("<connection>", services == null ? messages.raw("status.off")
+        : Boolean.TRUE.equals(health.connected()) ? messages.raw("status.connected")
+        : messages.raw("status.failed") + " " + health.connection());
+    Services current = services;
+    values.put("<holders>", current == null ? "-"
+        : String.valueOf(current.portfolios().owners().size()));
+    values.put("<orders>", current == null ? "-" : String.valueOf(current.orders().openCount()));
+    values.put("<problem>", health.lastProblem() == null ? messages.raw("status.no-problems")
+        : health.lastProblem() + " (" + ago(health.lastProblemAt()) + ")");
+    messages.sendBlock(sender, "status.lines", values);
+    if (current != null && database != null) {
+      sendMoneyTotals(sender, current.formats());
     }
-    if (databaseThread != null) {
-      databaseThread.shutdown();
+  }
+
+  private void sendMoneyTotals(CommandSender sender, Formats formats) {
+    Database db = database;
+    CompletableFuture.supplyAsync(() -> {
       try {
-        if (!databaseThread.awaitTermination(10, TimeUnit.SECONDS)) {
-          getLogger().warning("Gave up waiting for database writes to finish.");
-        }
-      } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
+        Instant now = Instant.now();
+        return new Object[] {db.moneySince(now.minus(Duration.ofDays(7))),
+            db.moneySince(now.minus(Duration.ofDays(30)))};
+      } catch (SQLException e) {
+        throw new java.util.concurrent.CompletionException(e);
       }
-    }
-    if (database != null) {
-      database.close();
-    }
+    }, databaseThread).thenAccept(both -> Bukkit.getScheduler().runTask(this, () -> {
+      sendTotals(sender, formats, "7", castTotals(both[0]));
+      sendTotals(sender, formats, "30", castTotals(both[1]));
+    })).exceptionally(error -> null);
+  }
+
+  @SuppressWarnings("unchecked")
+  private static Map<EntryType, BigDecimal[]> castTotals(Object totals) {
+    return (Map<EntryType, BigDecimal[]>) totals;
+  }
+
+  private void sendTotals(CommandSender sender, Formats formats, String days,
+      Map<EntryType, BigDecimal[]> totals) {
+    BigDecimal fees = totals.values().stream().map(t -> t[1] == null ? BigDecimal.ZERO : t[1])
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+    messages.send(sender, "status.money", Map.of(
+        "<days>", days,
+        "<spent>", formats.money(cash(totals, EntryType.BUY).negate()),
+        "<received>", formats.money(cash(totals, EntryType.SELL)),
+        "<fees>", formats.money(fees),
+        "<dividends>", formats.money(cash(totals, EntryType.DIVIDEND))));
+  }
+
+  private static BigDecimal cash(Map<EntryType, BigDecimal[]> totals, EntryType type) {
+    BigDecimal[] row = totals.get(type);
+    return row == null || row[0] == null ? BigDecimal.ZERO : row[0];
+  }
+
+  private static String ago(Instant instant) {
+    long minutes = Duration.between(instant, Instant.now()).toMinutes();
+    return minutes < 60 ? minutes + "m ago" : minutes / 60 + "h ago";
   }
 
   /** Placeholders that describe an order in messages. */
@@ -289,14 +431,6 @@ public class StockMarketPlugin extends JavaPlugin {
         "<quantity>", formats.quantity(order.symbol(), order.shares()),
         "<target>", formats.money(order.target()),
         "<expires>", formats.date(order.expires()));
-  }
-
-  private void reloadFiles() {
-    messages.reload(YamlConfiguration.loadConfiguration(new File(getDataFolder(),
-        "messages.yml")));
-    if (menus != null) {
-      menus.reload();
-    }
   }
 
   private Messages loadMessages() {

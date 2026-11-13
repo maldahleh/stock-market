@@ -135,7 +135,10 @@ class TradeServiceTest {
 
   @Test
   void notEnoughMoneyMovesNothing() {
-    assertEquals(Reason.INSUFFICIENT_FUNDS, ((Failure) buy(10)).reason());
+    Failure failure = (Failure) buy(10);
+    assertEquals(Reason.INSUFFICIENT_FUNDS, failure.reason());
+    // 10 × $100 × 10 = 10,000 plus 1% and 1.00 in fees
+    assertEquals(0, new BigDecimal("10101.00").compareTo(failure.amount()));
     assertEquals(0, portfolios.of(P).size());
   }
 

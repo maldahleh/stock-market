@@ -194,4 +194,18 @@ class OrderBookTest {
     assertEquals(2, database.loadOrders().size());
     assertEquals(Map.of(), Map.of());
   }
+
+  @Test
+  void ordersAboveTheTradeLimitAreRefused() {
+    assertEquals(Problem.TOO_MANY_SHARES, assertInstanceOf(Placement.Rejected.class,
+        book.place(P, OrderType.LIMIT_BUY, "AAPL", 5000, BigDecimal.TEN).join()).problem());
+  }
+
+  @Test
+  void moderatorsCanCancelAnyOrder() {
+    Order order = place(OrderType.LIMIT_BUY, 1, "50");
+    assertTrue(book.cancelAny(order.id()));
+    assertEquals(List.of(CancelCause.BY_MODERATOR), cancelled);
+    assertEquals(0, book.openCount());
+  }
 }

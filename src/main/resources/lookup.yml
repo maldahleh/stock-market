@@ -1,136 +1,81 @@
 name: "&6Stocks &8- &e<symbol>"
-size: 36
+size: 27
 items:
   0:
-    material: "BOOK"
-    name: "&6&lName"
+    material: "NAME_TAG"
+    name: "&6&l<name>"
     lore:
-      - "&e<name>"
-  1:
-    material: "BOOK"
-    name: "&6&lStock Exchange"
-    lore:
-      - "&e<exchange>"
+      - "&7<symbol> on <exchange>"
+      - "<market-status>"
   2:
-    material: "BOOK"
-    name: "&6&lYou Own"
+    material: "PAPER"
+    name: "&6&lToday &7(real market, USD)"
     lore:
-      - "&e<owned> shares"
-  3:
-    material: "DIAMOND"
-    trade: true
-    name: "&6&lServer Price"
-    lore:
-      - "&e<server-price> &6per share"
-      - "&6+ Broker fee: &e<broker-flat> &6+ &e<broker-percent>%"
-      - ""
-      - "&6Left click: &eBuy <one> &8| &6Shift: &eBuy <bulk>"
-      - "&6Right click: &eSell <one> &8| &6Shift: &eSell all"
+      - "&6Price: &e<market-price> &7(<change-close>&7)"
+      - "&6Open: &e<open-price>"
+      - "&6High / low: &e<day-high> &7/ &e<day-low>"
+      - "&6Previous close: &e<close-price>"
+      - "&6Volume: &e<volume>"
+      - "&7Last trade <last-trade>"
   4:
-    material: "BOOK"
-    name: "&6&lMarket Price"
-    lore:
-      - "&e<market-price> <market-currency>"
-      - "&6Change from close:"
-      - "&e<change-close>"
-      - "&6Change from year high:"
-      - "&e<change-year-high>"
-      - "&6Change from year low:"
-      - "&e<change-year-low>"
-      - "&6Change from 50 day moving average:"
-      - "&e<change-50-moving-avg>"
-      - "&6Change from 200 day moving average:"
-      - "&e<change-200-moving-avg>"
-  5:
     material: "DIAMOND"
+    name: "&b&lBuy or sell"
     trade: true
-    name: "&6&lServer Price"
     lore:
-      - "&e<server-price> &6per share"
-      - "&6+ Broker fee: &e<broker-flat> &6+ &e<broker-percent>%"
+      - "&6Server price: &e<server-price>"
+      - "&7(real price × <multiplier>)"
+      - "&6<one> with fees: &e<buy-one-total>"
+      - "&6Fees: &e<broker-flat> &6+ &e<broker-percent>%"
       - ""
-      - "&6Left click: &eBuy <one> &8| &6Shift: &eBuy <bulk>"
-      - "&6Right click: &eSell <one> &8| &6Shift: &eSell all"
+      - "&6Left click: &eBuy <one>"
+      - "&6Shift-left: &eBuy <bulk>"
+      - "&6Right click: &eSell <one>"
+      - "&6Shift-right: &eSell all"
   6:
-    material: "BOOK"
-    name: "&6&lLast Trade"
+    material: "CLOCK"
+    name: "&6&lPast year &7(real market, USD)"
     lore:
-      - "&e<last-trade>"
-  7:
-    material: "BOOK"
-    name: "&6&lCurrency"
-    lore:
-      - "&e<market-currency>"
+      - "&6High: &e<year-high> &7(<change-year-high>&7 from it)"
+      - "&6Low: &e<year-low> &7(<change-year-low>&7 from it)"
+      - "&6vs 50-day average: <change-50-moving-avg>"
+      - "&6vs 200-day average: <change-200-moving-avg>"
   8:
-    material: "BOOK"
-    name: "&6&lSymbol"
+    material: "GOLD_INGOT"
+    name: "&6&lYour position"
     lore:
-      - "&e<symbol>"
-  10:
-    material: "BOOK"
-    name: "&6&lDay High"
-    lore:
-      - "&e<day-high> <market-currency>"
-  11:
-    material: "BOOK"
-    name: "&6&lDay Low"
-    lore:
-      - "&e<day-low> <market-currency>"
-  12:
-    material: "BOOK"
-    name: "&6&lOpen Price"
-    lore:
-      - "&e<open-price> <market-currency>"
-  13:
-    material: "BOOK"
-    name: "&6&lVolume"
-    lore:
-      - "&e<volume>"
-  14:
-    material: "BOOK"
-    name: "&6&lPrevious Close Price"
-    lore:
-      - "&e<close-price> <market-currency>"
-  15:
-    material: "BOOK"
-    name: "&6&lYear High"
-    lore:
-      - "&e<year-high> <market-currency>"
-  16:
-    material: "BOOK"
-    name: "&6&lYear Low"
-    lore:
-      - "&e<year-low> <market-currency>"
-historical:
-  data:
-    material: "ENCHANTED_BOOK"
-    name: "&6&l<date>"
-    lore:
-      - "&6Day Open:"
-      - "&e<day-open> <market-currency>"
-      - "&6Day Close:"
-      - "&e<day-close> <market-currency>"
-      - "&6Volume:"
-      - "&e<volume>"
-      - "&6Day High:"
-      - "&e<day-high> <market-currency>"
-      - "&6Day Low:"
-      - "&e<day-low> <market-currency>"
-  no-data:
+      - "&6You own: &e<owned>"
+      - "&6Worth: &e<position-value>"
+      - "&6Gain or loss after fees: <position-net>"
+  18:
+    material: "ARROW"
+    name: "&6Back"
+    action: "back"
+  22:
+    material: "SUNFLOWER"
+    name: "&6Refresh"
+    action: "refresh"
+  26:
     material: "BARRIER"
-    name: "&6&lNo Historical Data"
+    name: "&cClose"
+    action: "close"
+historical:
+  up:
+    material: "LIME_CONCRETE"
+    name: "&a<date>"
     lore:
-      - "&eNo Data Available"
-  slots:
-    - 18
-    - 19
-    - 20
-    - 21
-    - 22
-    - 23
-    - 24
-    - 25
-    - 26
-    - 30
-    - 31
-    - 32
+      - "&6Open: &e<day-open>"
+      - "&6Close: &e<day-close>"
+      - "&6High / low: &e<day-high> &7/ &e<day-low>"
+      - "&6Volume: &e<volume>"
+  down:
+    material: "RED_CONCRETE"
+    name: "&c<date>"
+    lore:
+      - "&6Open: &e<day-open>"
+      - "&6Close: &e<day-close>"
+      - "&6High / low: &e<day-high> &7/ &e<day-low>"
+      - "&6Volume: &e<volume>"
+  no-data:
+    material: "GRAY_STAINED_GLASS_PANE"
+    name: "&7No price history"
+  slots: [9, 10, 11, 12, 13, 14, 15, 16, 17]

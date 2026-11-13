@@ -3,12 +3,15 @@ package com.maldahleh.stockmarket.bukkit;
 import com.maldahleh.stockmarket.menu.Menus;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import java.util.function.Supplier;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 
@@ -16,13 +19,20 @@ import org.bukkit.plugin.Plugin;
 public class Brokers implements Listener {
 
   private final NamespacedKey key;
-  private final String name;
-  private final Menus menus;
+  private final Supplier<Menus> menus;
+  private final Messages messages;
+  private volatile String name;
 
-  public Brokers(Plugin plugin, String name, Menus menus) {
+  /** @param menus null while the market isn't connected */
+  public Brokers(Plugin plugin, String name, Supplier<Menus> menus, Messages messages) {
     this.key = new NamespacedKey(plugin, "broker");
     this.name = name;
     this.menus = menus;
+    this.messages = messages;
+  }
+
+  public void rename(String newName) {
+    this.name = newName;
   }
 
   public void spawn(Location location) {
@@ -68,11 +78,22 @@ public class Brokers implements Listener {
 
   @EventHandler(ignoreCancelled = true)
   public void onInteract(PlayerInteractEntityEvent event) {
-    if (isBroker(event.getRightClicked())) {
-      event.setCancelled(true);
-      if (event.getPlayer().hasPermission("stockmarket.list")) {
-        menus.openList(event.getPlayer());
-      }
+    if (!isBroker(event.getRightClicked())) {
+      return;
+    }
+    event.setCancelled(true);
+    // Spigot fires this once per hand; answer only the main hand.
+    if (event.getHand() != EquipmentSlot.HAND) {
+      return;
+    }
+    Player player = event.getPlayer();
+    Menus current = menus.get();
+    if (current == null) {
+      messages.send(player, "not-configured");
+    } else if (!player.hasPermission("stockmarket.list")) {
+      messages.send(player, "no-permission");
+    } else {
+      current.openList(player);
     }
   }
 

@@ -108,14 +108,18 @@ Aliases: `/sm`, `/stock`, `/stocks`.
 | `/stockmarket orders` | `stockmarket.orders` |
 | `/stockmarket spawnbroker` | `stockmarket.spawnbroker` |
 | `/stockmarket removebroker` | `stockmarket.spawnbroker` |
-| `/stockmarket reload` | `stockmarket.reload` |
+| `/stockmarket orders [player]` | `stockmarket.orders` (`.other` for others) |
+| `/stockmarket status` | `stockmarket.reload` |
+| `/stockmarket reload` | `stockmarket.reload` (re-reads every file and reconnects) |
 
 `stockmarket.use` (default: everyone) grants every player command. A broker is a villager that
 opens the list when right-clicked; it doesn't move or take damage, and `removebroker` deletes
 the one nearest you (within 5 blocks). With `broker.disable-commands: true`, players must use one
 unless they have `stockmarket.commandbypass`.
 
-Clicking a stock in the list opens its lookup. On the lookup's diamonds, left click buys 1
+Clicking a stock in the list opens its lookup: today's numbers, the past year, your position,
+and the last 9 trading days as green (up) and red (down) blocks. Menus have Back, Refresh and
+Close, and refresh by themselves when a trade fills. On the lookup's diamond, left click buys 1
 (or `crypto-click-amount` of a coin), shift-left buys `bulk-amount` times that, right click
 sells the same, and shift-right sells everything you own after a confirmation. The list's bottom
 row opens your portfolio, orders, trades, the server's trades and the tutorial, so players can
@@ -126,9 +130,27 @@ Crypto can be bought in fractions: `/stocks buy BTC/USD 0.015`. Crypto has no mi
 Anything that happens while a player is offline (orders filling or being cancelled, dividends,
 splits) is shown under "While you were away" when they next join.
 
+## For owners
+
+- `/stocks status` shows whether market data is connected, how many players hold stocks, open
+  orders, the last warning, and money bought, sold, paid in fees and paid in dividends over the
+  last 7 and 30 days. It works from the console.
+- `/stocks reload` re-reads `config.yml` and every menu and message file, then reconnects, so a
+  key typo doesn't need a restart. Admins see a reminder on join while trading is off.
+- From the console, `/stocks portfolio <player>`, `/stocks transactions <player>` and
+  `/stocks orders <player>` print text. Moderators with `stockmarket.orders.other` can view and
+  cancel anyone's orders.
+- `trading.broadcast-above` announces big trades to everyone (off by default).
+- The market opening and closing is announced in chat, and players see a one-line portfolio
+  summary when they join. Blank the `market-news` or `portfolio-on-join` messages to turn them
+  off.
+
 ## Placeholders
 
 - `%sm_portfolio-value%`: the player's holdings at current server prices
+- `%sm_top-<n>-name%`, `%sm_top-<n>-gain%`: the leaderboard, ranked by percent gain, refreshed
+  every 5 minutes. Players with less than `leaderboard.minimum-invested` aren't ranked.
+- `%sm_rank%`: the player's place on the leaderboard, or `-`
 - `%sm_sd-<symbol>-<point>%`: a stock's data, where point is `name`, `sp` (server price),
   `price` (market price in USD), `vol` or `change` (percent since yesterday's close).
   Example: `%sm_sd-AAPL-sp%`. Shows N/A until the first price loads.

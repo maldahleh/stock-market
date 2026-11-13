@@ -14,6 +14,7 @@ public class MenuHolder implements InventoryHolder {
 
   private final Inventory inventory;
   private final Map<Integer, Consumer<ClickType>> actions = new HashMap<>();
+  private Runnable refresh;
 
   public MenuHolder(int size, String title) {
     this.inventory = Bukkit.createInventory(this, Math.max(9, Math.min(54, roundUp(size))), title);
@@ -32,6 +33,20 @@ public class MenuHolder implements InventoryHolder {
   public void set(int slot, ItemStack item, Consumer<ClickType> action) {
     set(slot, item);
     actions.put(slot, action);
+  }
+
+  /** Reopens this menu with current data, e.g. after a trade fills. */
+  public void onRefresh(Runnable refresh) {
+    this.refresh = refresh;
+  }
+
+  /** Reopens the menu if it knows how to; returns false otherwise. */
+  public boolean refresh() {
+    if (refresh == null) {
+      return false;
+    }
+    refresh.run();
+    return true;
   }
 
   void click(int slot, ClickType type) {

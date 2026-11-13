@@ -119,7 +119,7 @@ public class TradeService {
     BigDecimal fee = rules.fee(value, true);
     BigDecimal total = value.add(fee);
     if (!wallet.withdraw(player, total)) {
-      return done(new Failure(Reason.INSUFFICIENT_FUNDS));
+      return done(new Failure(Reason.INSUFFICIENT_FUNDS, null, total));
     }
 
     LedgerEntry entry = new LedgerEntry(player, EntryType.BUY, symbol, shares, p.price(), fee,

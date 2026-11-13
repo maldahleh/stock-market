@@ -30,10 +30,12 @@ public class StockExpansion extends PlaceholderExpansion {
   private final TradeRules rules;
   private final Formats formats;
   private final String version;
+  private final Leaderboard leaderboard;
   private final Map<String, Instant> requested = new ConcurrentHashMap<>();
 
   public StockExpansion(MarketData market, Portfolios portfolios, TradeRules rules,
-      Formats formats, String version) {
+      Formats formats, String version, Leaderboard leaderboard) {
+    this.leaderboard = leaderboard;
     this.market = market;
     this.portfolios = portfolios;
     this.rules = rules;
@@ -66,9 +68,18 @@ public class StockExpansion extends PlaceholderExpansion {
     if (params.equalsIgnoreCase("portfolio-value")) {
       return player == null ? formats.unknown() : portfolioValue(player);
     }
-    if (!params.toLowerCase().startsWith("sd-")) {
-      return null;
+    if (params.equalsIgnoreCase("rank")) {
+      int rank = player == null ? 0 : leaderboard.rankOf(player.getUniqueId());
+      return rank == 0 ? "-" : String.valueOf(rank);
     }
+    if (params.toLowerCase().startsWith("top-")) {
+      return top(params.toLowerCase());
+    }
+    return params.toLowerCase().startsWith("sd-") ? stockData(params) : null;
+  }
+
+  /** %sm_sd-SYMBOL-POINT%. */
+  private String stockData(String params) {
     int split = params.lastIndexOf('-');
     if (split <= 3) {
       return null;
@@ -85,6 +96,33 @@ public class StockExpansion extends PlaceholderExpansion {
       case "vol" -> quote.map(q -> formats.compact(q.volume())).orElse(formats.unknown());
       case "change" -> quote.map(q -> formats.percent(q.changeFromClose()))
           .orElse(formats.unknown());
+      default -> null;
+    };
+  }
+
+  /** %sm_top-1-name% or %sm_top-1-gain%. */
+  private String top(String params) {
+    String[] parts = params.split("-");
+    if (parts.length != 3) {
+      return null;
+    }
+    int place;
+    try {
+      place = Integer.parseInt(parts[1]);
+    } catch (NumberFormatException e) {
+      return null;
+    }
+    List<Leaderboard.Entry> ranking = leaderboard.ranking();
+    if (place < 1 || place > ranking.size()) {
+      return "-";
+    }
+    Leaderboard.Entry entry = ranking.get(place - 1);
+    return switch (parts[2]) {
+      case "name" -> {
+        String name = org.bukkit.Bukkit.getOfflinePlayer(entry.player()).getName();
+        yield name == null ? "-" : name;
+      }
+      case "gain" -> formats.percent(entry.gainPercent());
       default -> null;
     };
   }

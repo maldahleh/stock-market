@@ -51,7 +51,7 @@ public final class StockView {
     }
     p.put("<market-price>", f.usd(quote.price()));
     p.put("<server-price>", f.money(rules.serverPrice(quote.price())));
-    p.put("<change-close>", f.percent(quote.changeFromClose()));
+    p.put("<change-close>", f.tint(quote.changeFromClose(), f.percent(quote.changeFromClose())));
     p.put("<open-price>", f.usd(quote.open()));
     p.put("<day-high>", f.usd(quote.high()));
     p.put("<day-low>", f.usd(quote.low()));
@@ -68,10 +68,15 @@ public final class StockView {
         .min(Comparator.naturalOrder()).orElse(null);
     p.put("<year-high>", f.usd(yearHigh));
     p.put("<year-low>", f.usd(yearLow));
-    p.put("<change-year-high>", f.percent(change(price, yearHigh)));
-    p.put("<change-year-low>", f.percent(change(price, yearLow)));
-    p.put("<change-50-moving-avg>", f.percent(change(price, average(year, 50))));
-    p.put("<change-200-moving-avg>", f.percent(change(price, average(year, 200))));
+    putChange(p, "<change-year-high>", change(price, yearHigh), f);
+    putChange(p, "<change-year-low>", change(price, yearLow), f);
+    putChange(p, "<change-50-moving-avg>", change(price, average(year, 50)), f);
+    putChange(p, "<change-200-moving-avg>", change(price, average(year, 200)), f);
+  }
+
+  private static void putChange(Map<String, String> p, String key, BigDecimal change,
+      Formats f) {
+    p.put(key, f.tint(change, f.percent(change)));
   }
 
   public static Map<String, String> bar(DailyBar bar, Formats f) {

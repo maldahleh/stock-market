@@ -243,3 +243,14 @@ Branch `real-market`, reviewed from the code and YAML only. Nothing has been run
 5. **Queued fills:** one waiting trade per player; drop `trading.cooldown-seconds` (U3).
 6. **Default multiplier:** lower from 20 to 1.
 7. **Closed market:** keep refusing stock trades, but say when the market reopens (U16).
+
+## Built (2026-11-13)
+
+- From the owner decisions: fractional crypto, list clicks open the lookup, list navigation row,
+  offline notices, confirm when no estimate plus fees shown (U6), reopen time (part of U16), no
+  cooldown, default multiplier 1.
+- Second round: U14, U15, U16 (market status in menus), U17, U18, U19, U20, U21, U22, U23, U24,
+  U25, U26, U27, U28 (without the request budget, which comes with Tiingo), U29, U30, U31, U32,
+  U33.
+- Still open: U1 is done; U2, U3, U9 and U11 come with the Tiingo switch; U5, U8, U10, U12
+  (crypto list slots) and U13 remain.

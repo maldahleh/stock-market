@@ -25,6 +25,11 @@ public class Formats {
     this.unknown = unknown;
   }
 
+  /** The player's current balance, formatted. */
+  public String balance(java.util.UUID player) {
+    return economy.format(economy.getBalance(org.bukkit.Bukkit.getOfflinePlayer(player)));
+  }
+
   public String unknown() {
     return unknown;
   }
@@ -68,6 +73,12 @@ public class Formats {
     }
     BigDecimal rounded = value.setScale(2, RoundingMode.HALF_UP);
     return (rounded.signum() > 0 ? "+" : "") + rounded.toPlainString() + "%";
+  }
+
+  /** Colours a value's text green if positive, red if negative, grey if zero or unknown. */
+  public String tint(BigDecimal value, String text) {
+    String colour = value == null || value.signum() == 0 ? "&7" : value.signum() > 0 ? "&a" : "&c";
+    return colour + text;
   }
 
   /** Signed server money, e.g. +$12.00 or -$3.50. */

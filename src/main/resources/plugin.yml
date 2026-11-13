@@ -28,6 +28,8 @@ permissions:
     default: op
   stockmarket.transactions.other:
     default: op
+  stockmarket.orders.other:
+    default: op
   stockmarket.spawnbroker:
     default: op
   stockmarket.commandbypass:

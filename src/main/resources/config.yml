@@ -14,7 +14,8 @@ alpaca:
 
 # How server money relates to market prices: server price = market price × multiplier.
 # 1 means a share costs its real US-dollar price in server money. Raise it if your economy has
-# lots of money in it. Changing it later revalues every holding.
+# lots of money in it. Set it before players trade: changing it later revalues every holding
+# and can trigger open orders, since their prices are in server money.
 price-multiplier: 1
 
 fees:
@@ -36,6 +37,8 @@ trading:
   # Trades worth at least this much server money need a confirmation click. 0 turns it off.
   # Selling all shares of a stock always asks first.
   confirm-above: 10000
+  # Trades worth at least this much server money are announced to everyone. 0 turns it off.
+  broadcast-above: 0
   # Shares bought with shift-click in menus.
   bulk-amount: 5
   # Crypto can be bought in fractions. A click in a crypto lookup buys or sells this much of a
@@ -62,6 +65,11 @@ orders:
   max-open-per-player: 10
   expire-days: 30
   check-seconds: 60
+
+leaderboard:
+  # %sm_top-1-name%, %sm_top-1-gain% and %sm_rank% rank players by percent gain. Players who've
+  # put in less than this are left out, so tiny portfolios don't top the board.
+  minimum-invested: 100
 
 broker:
   # When true, players must use a broker villager instead of commands.

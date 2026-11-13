@@ -46,6 +46,17 @@ public class Portfolios {
         .toList();
   }
 
+  /** Every player who holds anything. */
+  public java.util.Set<UUID> owners() {
+    java.util.Set<UUID> owners = new java.util.HashSet<>();
+    holdings.forEach((owner, byOwner) -> {
+      if (!byOwner.isEmpty()) {
+        owners.add(owner);
+      }
+    });
+    return owners;
+  }
+
   /** Every symbol anyone holds. */
   public java.util.Set<String> heldSymbols() {
     java.util.Set<String> symbols = new java.util.TreeSet<>();

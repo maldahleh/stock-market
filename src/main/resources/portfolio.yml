@@ -7,34 +7,31 @@ base-item:
     - "&6Shares: &e<quantity>"
     - "&6Paid: &e<purchase-value> &7(<average-cost> each)"
     - "&6Worth now: &e<current-value>"
-    - "&6Gain or loss: &e<net>"
-    - "&6Today: &e<change-close>"
+    - "&6If sold now: &e<sell-value> &7(after fees)"
+    - "&6Gain or loss: <net>"
+    - "&6Today: <change-close>"
     - ""
     - "&7Click to look up"
 previous-page:
   slot: 36
   previous-page:
     material: "ARROW"
-    name: "&6Go To Previous Page"
+    name: "&6Previous page"
     lore:
-      - "&eGo to the previous page"
+      - "&7Page <page> of <pages>"
   no-previous:
-    material: "BARRIER"
-    name: "&4No Previous Page"
-    lore:
-      - "&cThere's no previous page"
+    material: "GRAY_STAINED_GLASS_PANE"
+    name: "&7Page <page> of <pages>"
 next-page:
   slot: 44
   next-page:
     material: "ARROW"
-    name: "&6Go To Next Page"
+    name: "&6Next page"
     lore:
-      - "&eGo to the next page"
+      - "&7Page <page> of <pages>"
   no-next:
-    material: "BARRIER"
-    name: "&4No Next Page"
-    lore:
-      - "&cThere's no next page"
+    material: "GRAY_STAINED_GLASS_PANE"
+    name: "&7Page <page> of <pages>"
 content-slots:
   - 0
   - 1
@@ -81,5 +78,12 @@ extra-items:
       - "&e<current-value>"
       - "&6Purchase Value:"
       - "&e<purchase-value>"
-      - "&6Net:"
-      - "&e<net-value> &7(<net-percent>)"
+      - "&6If sold now (after fees):"
+      - "&e<sell-value>"
+      - "&6Gain or loss:"
+      - "<net-value> &7(<net-percent>&7)"
+empty:
+  material: "GRAY_STAINED_GLASS_PANE"
+  name: "&7No shares yet"
+  lore:
+    - "&7Buy from &6/stocks list &7or a broker."

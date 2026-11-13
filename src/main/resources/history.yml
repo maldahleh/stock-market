@@ -9,31 +9,29 @@ base-item:
     - "&6Shares: &e<quantity>"
     - "&6Price: &e<price>"
     - "&6Fees: &e<broker-fees>"
-    - "&6Money: &e<cash>"
+    - "&6Money: <cash>"
+    - ""
+    - "&7Click to look up"
 previous-page:
   slot: 36
   previous-page:
     material: "ARROW"
-    name: "&6Go To Previous Page"
+    name: "&6Previous page"
     lore:
-      - "&eGo to the previous page"
+      - "&7Page <page> of <pages>"
   no-previous:
-    material: "BARRIER"
-    name: "&4No Previous Page"
-    lore:
-      - "&cThere's no previous page"
+    material: "GRAY_STAINED_GLASS_PANE"
+    name: "&7Page <page> of <pages>"
 next-page:
   slot: 44
   next-page:
     material: "ARROW"
-    name: "&6Go To Next Page"
+    name: "&6Next page"
     lore:
-      - "&eGo to the next page"
+      - "&7Page <page> of <pages>"
   no-next:
-    material: "BARRIER"
-    name: "&4No Next Page"
-    lore:
-      - "&cThere's no next page"
+    material: "GRAY_STAINED_GLASS_PANE"
+    name: "&7Page <page> of <pages>"
 content-slots:
   - 0
   - 1
@@ -71,3 +69,6 @@ content-slots:
   - 33
   - 34
   - 35
+empty:
+  material: "GRAY_STAINED_GLASS_PANE"
+  name: "&7No trades yet"

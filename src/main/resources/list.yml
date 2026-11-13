@@ -1,4 +1,4 @@
-name: "&6Stocks &8- &eList"
+name: "&6Stocks &8(<market-status>&8)"
 size: 45
 items:
   0:
@@ -6,7 +6,7 @@ items:
     name: "&6&lAMD"
     symbol: "AMD"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   1:
@@ -14,7 +14,7 @@ items:
     name: "&6&lAmazon"
     symbol: "AMZN"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   2:
@@ -22,7 +22,7 @@ items:
     name: "&6&lApple"
     symbol: "AAPL"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   3:
@@ -30,7 +30,7 @@ items:
     name: "&6&lAT&T"
     symbol: "T"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   4:
@@ -38,7 +38,7 @@ items:
     name: "&6&lBoeing"
     symbol: "BA"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   5:
@@ -46,7 +46,7 @@ items:
     name: "&6&lChipotle"
     symbol: "CMG"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   6:
@@ -54,7 +54,7 @@ items:
     name: "&6&lCoca-Cola"
     symbol: "KO"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   7:
@@ -62,7 +62,7 @@ items:
     name: "&6&lCostco"
     symbol: "COST"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   8:
@@ -70,7 +70,7 @@ items:
     name: "&6&lFedEx"
     symbol: "FDX"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   9:
@@ -78,7 +78,7 @@ items:
     name: "&6&lFord"
     symbol: "F"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   10:
@@ -86,7 +86,7 @@ items:
     name: "&6&lGeneral Motors"
     symbol: "GM"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   11:
@@ -94,7 +94,7 @@ items:
     name: "&6&lGoogle"
     symbol: "GOOG"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   12:
@@ -102,7 +102,7 @@ items:
     name: "&6&lHome Depot"
     symbol: "HD"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   13:
@@ -110,7 +110,7 @@ items:
     name: "&6&lJPMorgan Chase"
     symbol: "JPM"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   14:
@@ -118,7 +118,7 @@ items:
     name: "&6&lLowe's"
     symbol: "LOW"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   15:
@@ -126,7 +126,7 @@ items:
     name: "&6&lMastercard"
     symbol: "MA"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   16:
@@ -134,7 +134,7 @@ items:
     name: "&6&lMcDonald's"
     symbol: "MCD"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   17:
@@ -142,7 +142,7 @@ items:
     name: "&6&lMeta"
     symbol: "META"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   18:
@@ -150,7 +150,7 @@ items:
     name: "&6&lMicrosoft"
     symbol: "MSFT"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   19:
@@ -158,7 +158,7 @@ items:
     name: "&6&lNetflix"
     symbol: "NFLX"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   20:
@@ -166,7 +166,7 @@ items:
     name: "&6&lNvidia"
     symbol: "NVDA"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   21:
@@ -174,7 +174,7 @@ items:
     name: "&6&lSix Flags"
     symbol: "FUN"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   22:
@@ -182,7 +182,7 @@ items:
     name: "&6&lSnapchat"
     symbol: "SNAP"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   23:
@@ -190,7 +190,7 @@ items:
     name: "&6&lStarbucks"
     symbol: "SBUX"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   24:
@@ -198,7 +198,7 @@ items:
     name: "&6&lTesla"
     symbol: "TSLA"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   25:
@@ -206,7 +206,7 @@ items:
     name: "&6&lUber"
     symbol: "UBER"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   26:
@@ -214,7 +214,7 @@ items:
     name: "&6&lUnited Airlines"
     symbol: "UAL"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   27:
@@ -222,7 +222,7 @@ items:
     name: "&6&lVisa"
     symbol: "V"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   28:
@@ -230,7 +230,7 @@ items:
     name: "&6&lWalmart"
     symbol: "WMT"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   29:
@@ -238,7 +238,7 @@ items:
     name: "&6&lWalt Disney Company"
     symbol: "DIS"
     lore:
-      - "&6Price: &e<server-price> &7(<change-close> today)"
+      - "&6Price: &e<server-price> &7(<change-close>&7 today)"
       - "&6You own: &e<owned>"
       - "&7Click for details and to trade"
   36:

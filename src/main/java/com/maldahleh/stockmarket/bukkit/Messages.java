@@ -17,6 +17,10 @@ public class Messages {
     this.yaml = updated;
   }
 
+  public boolean has(String key) {
+    return yaml.contains(key);
+  }
+
   public String raw(String key) {
     return yaml.getString(key, key);
   }

@@ -27,4 +27,22 @@ class NoticesStorageTest {
       assertEquals(List.of("someone else's"), database.takeNotices(other));
     }
   }
+
+  @Test
+  void moneyTotalsGroupByType() throws Exception {
+    UUID player = UUID.randomUUID();
+    java.time.Instant now = java.time.Instant.now();
+    try (Database database = Database.sqlite(new File(dir, "money.db"))) {
+      database.buy(player, "AAPL", 2, new java.math.BigDecimal("210"),
+          new com.maldahleh.stockmarket.portfolio.LedgerEntry(player,
+              com.maldahleh.stockmarket.portfolio.EntryType.BUY, "AAPL", 2,
+              new java.math.BigDecimal("100"), java.math.BigDecimal.TEN,
+              new java.math.BigDecimal("-210"), now, null));
+      var totals = database.moneySince(now.minusSeconds(60));
+      var buys = totals.get(com.maldahleh.stockmarket.portfolio.EntryType.BUY);
+      assertEquals(0, new java.math.BigDecimal("-210").compareTo(buys[0]));
+      assertEquals(0, java.math.BigDecimal.TEN.compareTo(buys[1]));
+      assertTrue(database.moneySince(now.plusSeconds(60)).isEmpty());
+    }
+  }
 }

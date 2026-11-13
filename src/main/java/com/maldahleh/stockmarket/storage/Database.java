@@ -446,6 +446,23 @@ public class Database implements AutoCloseable {
     return lines;
   }
 
+  /** Money moved since {@code since}, by entry type: [cash total, fees total]. */
+  public Map<EntryType, BigDecimal[]> moneySince(Instant since) throws SQLException {
+    Map<EntryType, BigDecimal[]> totals = new java.util.EnumMap<>(EntryType.class);
+    try (Connection c = source.getConnection();
+        PreparedStatement ps = c.prepareStatement("SELECT type, SUM(cash), SUM(fee) "
+            + "FROM sm_ledger WHERE created_at >= ? GROUP BY type")) {
+      ps.setLong(1, since.toEpochMilli());
+      try (ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+          totals.put(EntryType.valueOf(rs.getString(1)), new BigDecimal[] {
+              rs.getBigDecimal(2), rs.getBigDecimal(3)});
+        }
+      }
+    }
+    return totals;
+  }
+
   public Optional<String> meta(String name) throws SQLException {
     try (Connection c = source.getConnection();
         PreparedStatement ps = c.prepareStatement("SELECT value FROM sm_meta WHERE name = ?")) {

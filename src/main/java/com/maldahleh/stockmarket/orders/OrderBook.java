@@ -130,8 +130,11 @@ public class OrderBook {
   }
 
   private Problem inputProblem(String symbol, long shares, BigDecimal target) {
-    if (shares <= 0 || rules.tooLarge(symbol, shares)) {
+    if (shares <= 0) {
       return Problem.INVALID_QUANTITY;
+    }
+    if (rules.tooLarge(symbol, shares)) {
+      return Problem.TOO_MANY_SHARES;
     }
     return target == null || target.signum() <= 0 ? Problem.INVALID_PRICE : null;
   }
@@ -171,6 +174,25 @@ public class OrderBook {
     }
     close(order, CancelCause.BY_PLAYER, false);
     return true;
+  }
+
+  /** Cancels any player's order, for moderators. */
+  public boolean cancelAny(long id) {
+    Order order = open.get(id);
+    if (order == null) {
+      return false;
+    }
+    close(order, CancelCause.BY_MODERATOR, true);
+    return true;
+  }
+
+  public int maxOpenPerPlayer() {
+    return maxOpenPerPlayer;
+  }
+
+  /** Every open order, for the status report. */
+  public int openCount() {
+    return open.size();
   }
 
   /** Cancels every open order on the symbols, e.g. after a split changed what a price means. */
@@ -307,6 +329,7 @@ public class OrderBook {
   /** Why an order closed without filling. */
   public enum CancelCause {
     BY_PLAYER,
+    BY_MODERATOR,
     EXPIRED,
     NOT_ENOUGH_MONEY,
     NOT_ENOUGH_SHARES,
@@ -322,6 +345,7 @@ public class OrderBook {
 
   public enum Problem {
     INVALID_QUANTITY,
+    TOO_MANY_SHARES,
     INVALID_PRICE,
     TOO_MANY_ORDERS,
     NOT_ENOUGH_SHARES,
