@@ -105,10 +105,12 @@ Aliases: `/sm`, `/stock`, `/stocks`.
 | `/stockmarket order cancel <id>` | `stockmarket.orders` |
 | `/stockmarket orders` | `stockmarket.orders` |
 | `/stockmarket spawnbroker` | `stockmarket.spawnbroker` |
+| `/stockmarket removebroker` | `stockmarket.spawnbroker` |
 | `/stockmarket reload` | `stockmarket.reload` |
 
 `stockmarket.use` (default: everyone) grants every player command. A broker is a villager that
-opens the list when right-clicked. With `broker.disable-commands: true`, players must use one
+opens the list when right-clicked; it doesn't move or take damage, and `removebroker` deletes
+the one nearest you (within 5 blocks). With `broker.disable-commands: true`, players must use one
 unless they have `stockmarket.commandbypass`.
 
 In the list and lookup menus: left click buys 1, shift-left buys `bulk-amount`, right click
@@ -131,3 +133,6 @@ lookup.
 Version 4 is a rewrite. It uses new database tables, and 3.x trades are not carried over. The
 menu files changed too: delete or rename the old `.yml` files in `plugins/StockMarket` so the new
 ones are created.
+
+The default stock list was updated: `FB` now belongs to an unrelated ETF, so Facebook is listed
+as `META`, and the delisted `K`, `TWX` and `TWTR` were replaced with Tesla, JPMorgan and AMD.

@@ -121,7 +121,7 @@ public class Menus {
       MenuHolder menu = new MenuHolder(list.getInt("size", 36),
           Text.color(list.getString("name", "")));
       items.forEach((slot, item) -> {
-        if (item.symbol() == null) {
+        if (item.symbol() == null || item.symbol().isBlank()) {
           menu.set(slot, item.build(Map.of()));
           return;
         }

@@ -39,6 +39,29 @@ public class Brokers implements Listener {
     });
   }
 
+  /**
+   * Removes the broker nearest to {@code location}, within {@code radius} blocks.
+   *
+   * @return false if there is none that close
+   */
+  public boolean removeNearest(Location location, double radius) {
+    Entity nearest = null;
+    double best = Double.MAX_VALUE;
+    for (Entity entity : location.getWorld().getNearbyEntities(location, radius, radius,
+        radius)) {
+      double distance = entity.getLocation().distanceSquared(location);
+      if (isBroker(entity) && distance < best) {
+        nearest = entity;
+        best = distance;
+      }
+    }
+    if (nearest == null) {
+      return false;
+    }
+    nearest.remove();
+    return true;
+  }
+
   private boolean isBroker(Entity entity) {
     return entity.getPersistentDataContainer().has(key, PersistentDataType.BYTE);
   }

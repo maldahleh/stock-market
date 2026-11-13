@@ -9,6 +9,8 @@ compare-max: "&eYou can compare up to 3 symbols at a time."
 no-data: "&eNo data was found."
 not-configured: "&cThe stock market isn't set up yet. An admin needs to add an Alpaca key to config.yml."
 broker-spawned: "&eStock broker spawned."
+broker-removed: "&eRemoved the nearest stock broker."
+no-broker-nearby: "&eThere's no stock broker within 5 blocks of you."
 nothing-to-confirm: "&eThere's no trade waiting for confirmation."
 confirm:
   buy: "Buy"
@@ -76,6 +78,7 @@ commands:
   orders: "&e/stocks orders &6- &eYour open orders (cancel with /stocks order cancel <id>)"
   confirm: "&e/stocks confirm &6- &eConfirm a large trade"
   spawnbroker: "&e/stocks spawnbroker &6- &eSpawn a broker villager here"
+  removebroker: "&e/stocks removebroker &6- &eRemove the nearest broker (within 5 blocks)"
   reload: "&e/stocks reload &6- &eReload messages and menus"
 entry-types:
   BUY: "Purchase"

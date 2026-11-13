@@ -31,8 +31,9 @@ public class StockCommand implements TabExecutor {
 
   private static final List<String> SUBCOMMANDS = List.of("help", "list", "tutorial", "lookup",
       "compare", "portfolio", "transactions", "history", "buy", "sell", "confirm", "order",
-      "orders", "spawnbroker", "reload");
+      "orders", "spawnbroker", "removebroker", "reload");
   private static final int MAX_COMPARE = 3;
+  private static final double BROKER_REMOVE_RADIUS = 5;
 
   /** Null until the plugin has a working Alpaca key. */
   public record Services(Menus menus, Trader trader, Brokers brokers, Portfolios portfolios,
@@ -78,7 +79,7 @@ public class StockCommand implements TabExecutor {
       messages.send(sender, "player-only");
       return true;
     }
-    if (commandsDisabled && !sub.equals("spawnbroker")
+    if (commandsDisabled && !sub.equals("spawnbroker") && !sub.equals("removebroker")
         && !player.hasPermission("stockmarket.commandbypass")) {
       messages.send(player, "commands-disabled");
       return true;
@@ -156,6 +157,9 @@ public class StockCommand implements TabExecutor {
         s.brokers().spawn(player.getLocation());
         messages.send(player, "broker-spawned");
       }
+      case "removebroker" -> messages.send(player,
+          s.brokers().removeNearest(player.getLocation(), BROKER_REMOVE_RADIUS)
+              ? "broker-removed" : "no-broker-nearby");
       default -> messages.send(player, "invalid-syntax");
     }
   }
@@ -267,7 +271,7 @@ public class StockCommand implements TabExecutor {
   private static String permission(String sub) {
     return switch (sub) {
       case "help" -> "stockmarket.use";
-      case "spawnbroker" -> "stockmarket.spawnbroker";
+      case "spawnbroker", "removebroker" -> "stockmarket.spawnbroker";
       case "confirm" -> "stockmarket.use";
       case "order", "orders" -> "stockmarket.orders";
       default -> "stockmarket." + sub;
