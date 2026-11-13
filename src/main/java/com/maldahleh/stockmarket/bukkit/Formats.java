@@ -46,7 +46,7 @@ public class Formats {
 
   /** Shares as a whole number, or a coin amount such as 0.015 for crypto. */
   public String quantity(String symbol, long units) {
-    if (Quantities.unitSize(symbol).compareTo(java.math.BigDecimal.ONE) == 0) {
+    if (Quantities.unitSize(symbol).compareTo(BigDecimal.ONE) == 0) {
       return number(units);
     }
     return Quantities.amount(symbol, units).toPlainString();

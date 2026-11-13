@@ -75,17 +75,17 @@ public class TradeService {
   private record Priced(Asset asset, Quote quote, BigDecimal price) {}
 
   public CompletableFuture<TradeResult> buy(UUID player, String symbol, long shares) {
-    return buy(player, symbol, shares, null, false);
+    return buy(player, symbol, shares, null);
   }
 
   /** A buy for a limit order: refuses a server price above the limit. */
   public CompletableFuture<TradeResult> buyAtMost(UUID player, String symbol, long shares,
       BigDecimal limit) {
-    return buy(player, symbol, shares, limit, true);
+    return buy(player, symbol, shares, limit);
   }
 
   public CompletableFuture<TradeResult> sell(UUID player, String symbol, long shares) {
-    return sell(player, symbol, shares, null, false);
+    return sell(player, symbol, shares, null);
   }
 
   /**
@@ -94,13 +94,13 @@ public class TradeService {
    */
   public CompletableFuture<TradeResult> sellAtLeast(UUID player, String symbol, long shares,
       BigDecimal limit) {
-    return sell(player, symbol, shares, limit, true);
+    return sell(player, symbol, shares, limit);
   }
 
   private CompletableFuture<TradeResult> buy(UUID player, String rawSymbol, long shares,
-      BigDecimal limit, boolean fromOrder) {
+      BigDecimal limit) {
     String symbol = normalize(rawSymbol);
-    return run(player, symbol, shares, fromOrder, () -> price(symbol, true).thenComposeAsync(priced -> {
+    return run(player, symbol, shares, () -> price(symbol, true).thenComposeAsync(priced -> {
       if (priced instanceof Failure failure) {
         return done(failure);
       }
@@ -144,14 +144,14 @@ public class TradeService {
   }
 
   private CompletableFuture<TradeResult> sell(UUID player, String rawSymbol, long shares,
-      BigDecimal limit, boolean fromOrder) {
+      BigDecimal limit) {
     String symbol = normalize(rawSymbol);
     long owned = portfolios.get(player, symbol).map(Holding::shares).orElse(0L);
     if (owned < shares && shares > 0) {
       return done(new Failure(Reason.INSUFFICIENT_SHARES));
     }
 
-    return run(player, symbol, shares, fromOrder, () -> price(symbol, false).thenComposeAsync(priced -> {
+    return run(player, symbol, shares, () -> price(symbol, false).thenComposeAsync(priced -> {
       if (priced instanceof Failure failure) {
         return done(failure);
       }
@@ -209,7 +209,7 @@ public class TradeService {
 
   /** Shared checks, the in-flight lock and the cooldown. */
   private CompletableFuture<TradeResult> run(UUID player, String symbol, long shares,
-      boolean fromOrder, java.util.function.Supplier<CompletableFuture<TradeResult>> trade) {
+      java.util.function.Supplier<CompletableFuture<TradeResult>> trade) {
     Failure refused = precheck(player, symbol, shares);
     if (refused != null) {
       return done(refused);
