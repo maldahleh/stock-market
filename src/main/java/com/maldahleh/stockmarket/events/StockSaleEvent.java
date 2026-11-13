@@ -1,28 +1,24 @@
 package com.maldahleh.stockmarket.events;
 
 import java.math.BigDecimal;
-import lombok.Getter;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 
-@Getter
-public class StockSaleEvent extends StockPurchaseEvent {
+public class StockSaleEvent extends StockTradeEvent {
 
-  private final BigDecimal initialPurchase;
-  private final BigDecimal netOnTransaction;
+  private static final HandlerList HANDLERS = new HandlerList();
 
-  @SuppressWarnings("java:S107") // too many constructor args
-  public StockSaleEvent(
-      Player player,
-      String stockSymbol,
-      int quantity,
-      BigDecimal stockValue,
-      BigDecimal brokerFees,
-      BigDecimal grandTotal,
-      BigDecimal initialPurchase,
-      BigDecimal netOnTransaction) {
-    super(player, stockSymbol, quantity, stockValue, brokerFees, grandTotal);
+  public StockSaleEvent(Player player, String symbol, long shares, BigDecimal price,
+      BigDecimal fees, BigDecimal total) {
+    super(player, symbol, shares, price, fees, total);
+  }
 
-    this.initialPurchase = initialPurchase;
-    this.netOnTransaction = netOnTransaction;
+  @Override
+  public HandlerList getHandlers() {
+    return HANDLERS;
+  }
+
+  public static HandlerList getHandlerList() {
+    return HANDLERS;
   }
 }
