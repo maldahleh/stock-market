@@ -6,6 +6,7 @@ import com.maldahleh.stockmarket.orders.Order;
 import com.maldahleh.stockmarket.orders.OrderBook;
 import com.maldahleh.stockmarket.trade.TradeResult;
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import org.bukkit.entity.Player;
@@ -18,6 +19,7 @@ import com.maldahleh.stockmarket.bukkit.VaultWallet;
 import com.maldahleh.stockmarket.command.StockCommand;
 import com.maldahleh.stockmarket.command.StockCommand.Services;
 import com.maldahleh.stockmarket.market.MarketData;
+import com.maldahleh.stockmarket.market.MarketDataProvider;
 import com.maldahleh.stockmarket.market.alpaca.AlpacaProvider;
 import com.maldahleh.stockmarket.menu.MenuListener;
 import com.maldahleh.stockmarket.menu.Menus;
@@ -62,28 +64,16 @@ public class StockMarketPlugin extends JavaPlugin {
 
   @Override
   public void onEnable() {
-    saveDefaultConfig();
-    for (String file : MENU_FILES) {
-      if (!new File(getDataFolder(), file).exists()) {
-        saveResource(file, false);
-      }
-    }
+    saveFiles();
     messages = loadMessages();
-
     Economy economy = economy();
     if (economy == null) {
-      getLogger().severe("Vault and an economy plugin are required. Disabling.");
-      getServer().getPluginManager().disablePlugin(this);
+      disable("Vault and an economy plugin are required.", null);
       return;
     }
 
     FileConfiguration config = getConfig();
-    StockCommand command = new StockCommand(() -> services, messages,
-        config.getBoolean("broker.disable-commands"), this::reloadFiles);
-    var registered = getCommand("stockmarket");
-    registered.setExecutor(command);
-    registered.setTabCompleter(command);
-
+    registerCommand(config);
     String keyId = config.getString("alpaca.key-id", "").trim();
     String secret = config.getString("alpaca.secret", "").trim();
     if (keyId.isEmpty() || secret.isEmpty()) {
@@ -92,27 +82,53 @@ public class StockMarketPlugin extends JavaPlugin {
       return;
     }
 
+    Portfolios portfolios = openStorage(config);
+    if (portfolios != null) {
+      start(config, economy, portfolios, new AlpacaProvider(keyId, secret,
+          config.getString("alpaca.feed", "iex"), config.getBoolean("alpaca.live-account")));
+    }
+  }
+
+  private void saveFiles() {
+    saveDefaultConfig();
+    for (String file : MENU_FILES) {
+      if (!new File(getDataFolder(), file).exists()) {
+        saveResource(file, false);
+      }
+    }
+  }
+
+  private void registerCommand(FileConfiguration config) {
+    StockCommand command = new StockCommand(() -> services, messages,
+        config.getBoolean("broker.disable-commands"), this::reloadFiles);
+    var registered = getCommand("stockmarket");
+    registered.setExecutor(command);
+    registered.setTabCompleter(command);
+  }
+
+  /** Opens the database and loads holdings, or disables the plugin and returns null. */
+  private Portfolios openStorage(FileConfiguration config) {
     try {
       database = openDatabase(config);
       if (database.meta(ActionService.INSTALL_DATE_KEY).isEmpty()) {
         database.setMeta(ActionService.INSTALL_DATE_KEY,
             LocalDate.now(ZoneId.of("America/New_York")).toString());
       }
-    } catch (SQLException e) {
-      getLogger().log(Level.SEVERE, "Couldn't open the database. Disabling.", e);
-      getServer().getPluginManager().disablePlugin(this);
-      return;
-    }
-
-    Portfolios portfolios = new Portfolios();
-    try {
+      Portfolios portfolios = new Portfolios();
       portfolios.load(database.loadHoldings());
+      return portfolios;
     } catch (SQLException e) {
-      getLogger().log(Level.SEVERE, "Couldn't load holdings. Disabling.", e);
-      getServer().getPluginManager().disablePlugin(this);
-      return;
+      disable("Couldn't open the database or load holdings.", e);
+      return null;
     }
+  }
 
+  private void disable(String reason, Exception error) {
+    getLogger().log(Level.SEVERE, reason + " Disabling.", error);
+    getServer().getPluginManager().disablePlugin(this);
+  }
+
+  private PluginContext startThreads() {
     network = Executors.newFixedThreadPool(2, threads("StockMarket-Network"));
     databaseThread = Executors.newSingleThreadExecutor(threads("StockMarket-Database"));
     Executor serverThread = task -> {
@@ -122,81 +138,44 @@ public class StockMarketPlugin extends JavaPlugin {
         Bukkit.getScheduler().runTask(this, task);
       }
     };
+    return new PluginContext(serverThread, databaseThread, network, Clock.systemUTC(),
+        getLogger());
+  }
 
-    MarketData market = new MarketData(new AlpacaProvider(keyId, secret,
-        config.getString("alpaca.feed", "iex"), config.getBoolean("alpaca.live-account")),
-        network, Duration.ofSeconds(Math.max(5, config.getLong("cache-seconds", 60))));
+  private void start(FileConfiguration config, Economy economy, Portfolios portfolios,
+      MarketDataProvider provider) {
+    PluginContext context = startThreads();
+    MarketData market = new MarketData(provider, network,
+        Duration.ofSeconds(Math.max(5, config.getLong("cache-seconds", 60))));
     TradeRules rules = rules(config);
     VaultWallet wallet = new VaultWallet(economy);
     Formats formats = new Formats(economy, Locale.forLanguageTag(config.getString("locale",
         "en-US")), config.getString("date-format", "yyyy-MM-dd HH:mm"),
         config.getString("unknown-data", "N/A"));
 
-    TradeService trades = new TradeService(market, database, portfolios, wallet, rules,
-        serverThread, databaseThread, Clock.systemUTC(), getLogger());
+    TradeService trades = new TradeService(market, database, portfolios, wallet, rules, context);
     Trader trader = new Trader(trades, market, portfolios, messages, formats,
-        decimal(config, "trading.confirm-above", "0"), serverThread);
-    menus = new Menus(getDataFolder(), market, portfolios, database, trader, rules, formats,
-        messages, serverThread, databaseThread, getLogger(),
-        Math.max(1, config.getLong("trading.bulk-amount", 5)));
+        decimal(config, "trading.confirm-above", "0"), context.serverThread());
+    menus = new Menus(getDataFolder(), market, portfolios, database, trader, formats, messages,
+        Math.max(1, config.getLong("trading.bulk-amount", 5)), context);
     Brokers brokers = new Brokers(this, config.getString("broker.name", "&8&lStock Broker"),
         menus);
 
-    AtomicReference<OrderBook> orderBookRef = new AtomicReference<>();
-    AtomicReference<ActionService> actionsRef = new AtomicReference<>();
+    // The two services refer to each other, so each reaches the other through a reference.
+    AtomicReference<OrderBook> orderBook = new AtomicReference<>();
+    AtomicReference<ActionService> actionService = new AtomicReference<>();
     ActionService actions = new ActionService(market, database, portfolios, wallet, rules,
-        config.getBoolean("dividends", true),
-        (player, action, payout) -> {
-          Player online = Bukkit.getPlayer(player);
-          if (online != null) {
-            String paid = payout.signum() > 0 ? messages.raw("corporate-action-payout")
-                .replace("<amount>", formats.money(payout)) : "";
-            messages.send(online, "corporate-action", Map.of(
-                "<action>", ActionService.describe(action), "<payout>", paid));
-          }
-        },
-        action -> {
-          if (!(action instanceof CorporateAction.CashDividend)) {
-            orderBookRef.get().cancelSymbols(action.sourceSymbols(),
-                OrderBook.CancelCause.CORPORATE_ACTION);
-          }
-        },
-        () -> orderBookRef.get().symbols(),
-        network, serverThread, databaseThread, Clock.systemUTC(), getLogger());
-    actionsRef.set(actions);
-
+        config.getBoolean("dividends", true), actionNotifier(formats, orderBook),
+        () -> orderBook.get().symbols(), context);
+    actionService.set(actions);
     OrderBook orders = new OrderBook(market, database, portfolios, trades, rules,
-        Math.max(1, config.getInt("orders.max-open-per-player", 10)),
-        Duration.ofDays(Math.max(1, config.getLong("orders.expire-days", 30))),
-        new OrderBook.Notifier() {
-          @Override
-          public void filled(Order order, TradeResult.Success result) {
-            Player online = Bukkit.getPlayer(order.owner());
-            if (online != null) {
-              messages.send(online, "orders.filled", orderValues(order, formats));
-              trader.report(online, order.symbol(), result, order.type().buying());
-            }
-          }
-
-          @Override
-          public void cancelled(Order order, OrderBook.CancelCause cause) {
-            Player online = Bukkit.getPlayer(order.owner());
-            if (online != null) {
-              Map<String, String> values = new HashMap<>(orderValues(order, formats));
-              values.put("<reason>", messages.raw("orders.causes." + cause.name()));
-              messages.send(online, "orders.cancelled", values);
-            }
-          }
-        },
-        (symbol, after, until) -> actionsRef.get().changedBetween(symbol, after, until),
-        serverThread, databaseThread, Clock.systemUTC(), getLogger());
-    try {
-      orders.load(database.loadOrders());
-    } catch (SQLException e) {
-      getLogger().log(Level.SEVERE, "Couldn't load open orders; they won't fill until restart.",
-          e);
-    }
-    orderBookRef.set(orders);
+        new OrderBook.Limits(Math.max(1, config.getInt("orders.max-open-per-player", 10)),
+            Duration.ofDays(Math.max(1, config.getLong("orders.expire-days", 30)))),
+        orderNotifier(formats, trader),
+        (symbol, after, until) -> actionService.get().changedBetween(symbol, after, until),
+        context);
+    loadOrders(orders);
+    orderBook.set(orders);
     services = new Services(menus, trader, brokers, portfolios, orders, formats);
 
     getServer().getPluginManager().registerEvents(new MenuListener(), this);
@@ -205,19 +184,82 @@ public class StockMarketPlugin extends JavaPlugin {
       new StockExpansion(market, portfolios, rules, formats, getDescription().getVersion())
           .register();
     }
+    schedule(config, actions, orders);
+    checkConnection(market);
+  }
 
+  private ActionService.Notifier actionNotifier(Formats formats,
+      AtomicReference<OrderBook> orderBook) {
+    return new ActionService.Notifier() {
+      @Override
+      public void notify(UUID player, CorporateAction action, BigDecimal payout) {
+        Player online = Bukkit.getPlayer(player);
+        if (online == null) {
+          return;
+        }
+        String paid = payout.signum() > 0 ? messages.raw("corporate-action-payout")
+            .replace("<amount>", formats.money(payout)) : "";
+        messages.send(online, "corporate-action", Map.of(
+            "<action>", ActionService.describe(action), "<payout>", paid));
+      }
+
+      @Override
+      public void applied(CorporateAction action) {
+        if (!(action instanceof CorporateAction.CashDividend)) {
+          orderBook.get().cancelSymbols(action.sourceSymbols(),
+              OrderBook.CancelCause.CORPORATE_ACTION);
+        }
+      }
+    };
+  }
+
+  private OrderBook.Notifier orderNotifier(Formats formats, Trader trader) {
+    return new OrderBook.Notifier() {
+      @Override
+      public void filled(Order order, TradeResult.Success result) {
+        Player online = Bukkit.getPlayer(order.owner());
+        if (online != null) {
+          messages.send(online, "orders.filled", orderValues(order, formats));
+          trader.report(online, order.symbol(), result, order.type().buying());
+        }
+      }
+
+      @Override
+      public void cancelled(Order order, OrderBook.CancelCause cause) {
+        Player online = Bukkit.getPlayer(order.owner());
+        if (online != null) {
+          Map<String, String> values = new HashMap<>(orderValues(order, formats));
+          values.put("<reason>", messages.raw("orders.causes." + cause.name()));
+          messages.send(online, "orders.cancelled", values);
+        }
+      }
+    };
+  }
+
+  private void loadOrders(OrderBook orders) {
+    try {
+      orders.load(database.loadOrders());
+    } catch (SQLException e) {
+      getLogger().log(Level.SEVERE, "Couldn't load open orders; they won't fill until restart.",
+          e);
+    }
+  }
+
+  private void schedule(FileConfiguration config, ActionService actions, OrderBook orders) {
     long period = Math.max(5, config.getLong("corporate-actions-check-minutes", 60)) * 60 * 20;
     Bukkit.getScheduler().runTaskTimer(this, actions::runOnce, 20L * 30, period);
     long orderPeriod = Math.max(15, config.getLong("orders.check-seconds", 60)) * 20;
     Bukkit.getScheduler().runTaskTimer(this, orders::check, 20L * 45, orderPeriod);
+  }
 
-    // Check the key now so a typo shows up in the console, not on a player's first trade.
+  /** Checks the key now, so a typo shows up in the console rather than on a player's trade. */
+  private void checkConnection(MarketData market) {
     market.clock().whenComplete((clock, error) -> {
       if (error != null) {
-        getLogger().severe("Alpaca check failed: " + (error.getCause() == null
-            ? error.getMessage() : error.getCause().getMessage()));
+        Throwable cause = error.getCause() == null ? error : error.getCause();
+        getLogger().severe("Market data check failed: " + cause.getMessage());
       } else {
-        getLogger().info("Connected to Alpaca. The US stock market is "
+        getLogger().info("Connected to market data. The US stock market is "
             + (clock.open() ? "open." : "closed."));
       }
     });

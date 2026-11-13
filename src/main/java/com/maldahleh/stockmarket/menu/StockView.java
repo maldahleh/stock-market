@@ -22,26 +22,46 @@ public final class StockView {
       List<DailyBar> bars, long owned, TradeRules rules, Formats f) {
     Map<String, String> p = new HashMap<>();
     p.put("<symbol>", symbol);
-    p.put("<name>", asset == null || asset.name() == null ? symbol : asset.name());
-    p.put("<exchange>", asset == null || asset.exchange() == null ? f.unknown()
-        : asset.exchange());
     p.put("<market-currency>", "USD");
     p.put("<owned>", f.number(owned));
     p.put("<broker-flat>", f.money(rules.flatFee()));
     p.put("<broker-percent>", f.plain(rules.percentFee()));
+    putAsset(p, symbol, asset, f);
+    putQuote(p, quote, rules, f);
+    putYear(p, quote == null ? null : quote.price(), bars == null ? List.of() : bars, f);
+    return p;
+  }
 
-    BigDecimal price = quote == null ? null : quote.price();
-    p.put("<market-price>", f.usd(price));
-    p.put("<server-price>", price == null ? f.unknown() : f.money(rules.serverPrice(price)));
-    p.put("<change-close>", f.percent(quote == null ? null : quote.changeFromClose()));
-    p.put("<open-price>", f.usd(quote == null ? null : quote.open()));
-    p.put("<day-high>", f.usd(quote == null ? null : quote.high()));
-    p.put("<day-low>", f.usd(quote == null ? null : quote.low()));
-    p.put("<close-price>", f.usd(quote == null ? null : quote.previousClose()));
-    p.put("<volume>", quote == null ? f.unknown() : f.compact(quote.volume()));
-    p.put("<last-trade>", quote == null ? f.unknown() : f.date(quote.tradeTime()));
+  private static void putAsset(Map<String, String> p, String symbol, Asset asset, Formats f) {
+    String name = asset == null ? null : asset.name();
+    String exchange = asset == null ? null : asset.exchange();
+    p.put("<name>", name == null ? symbol : name);
+    p.put("<exchange>", exchange == null ? f.unknown() : exchange);
+  }
 
-    List<DailyBar> year = bars == null ? List.of() : bars;
+  private static void putQuote(Map<String, String> p, Quote quote, TradeRules rules,
+      Formats f) {
+    if (quote == null) {
+      for (String key : List.of("<market-price>", "<server-price>", "<change-close>",
+          "<open-price>", "<day-high>", "<day-low>", "<close-price>", "<volume>",
+          "<last-trade>")) {
+        p.put(key, f.unknown());
+      }
+      return;
+    }
+    p.put("<market-price>", f.usd(quote.price()));
+    p.put("<server-price>", f.money(rules.serverPrice(quote.price())));
+    p.put("<change-close>", f.percent(quote.changeFromClose()));
+    p.put("<open-price>", f.usd(quote.open()));
+    p.put("<day-high>", f.usd(quote.high()));
+    p.put("<day-low>", f.usd(quote.low()));
+    p.put("<close-price>", f.usd(quote.previousClose()));
+    p.put("<volume>", f.compact(quote.volume()));
+    p.put("<last-trade>", f.date(quote.tradeTime()));
+  }
+
+  private static void putYear(Map<String, String> p, BigDecimal price, List<DailyBar> year,
+      Formats f) {
     BigDecimal yearHigh = year.stream().map(DailyBar::high).filter(Objects::nonNull)
         .max(Comparator.naturalOrder()).orElse(null);
     BigDecimal yearLow = year.stream().map(DailyBar::low).filter(Objects::nonNull)
@@ -52,7 +72,6 @@ public final class StockView {
     p.put("<change-year-low>", f.percent(change(price, yearLow)));
     p.put("<change-50-moving-avg>", f.percent(change(price, average(year, 50))));
     p.put("<change-200-moving-avg>", f.percent(change(price, average(year, 200))));
-    return p;
   }
 
   public static Map<String, String> bar(DailyBar bar, Formats f) {

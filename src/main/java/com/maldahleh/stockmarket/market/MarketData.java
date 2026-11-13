@@ -24,8 +24,6 @@ public class MarketData {
   private static final Duration BARS_TTL = Duration.ofHours(1);
   private static final Duration CLOCK_TTL = Duration.ofMinutes(1);
 
-  private record Timed<T>(T value, Instant at) {}
-
   private final MarketDataProvider provider;
   private final Executor network;
   private final Duration quoteTtl;
@@ -151,4 +149,6 @@ public class MarketData {
       }
     };
   }
+
+  private record Timed<T>(T value, Instant at) {}
 }

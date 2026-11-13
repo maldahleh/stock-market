@@ -37,8 +37,6 @@ public class Trader {
 
   private static final Duration CONFIRM_WINDOW = Duration.ofSeconds(30);
 
-  private record Pending(String symbol, long shares, boolean buying, Instant expires) {}
-
   private final TradeService trades;
   private final MarketData market;
   private final Portfolios portfolios;
@@ -76,6 +74,10 @@ public class Trader {
       return;
     }
     request(player, upper, owned, false, true, fromMenu);
+  }
+
+  public com.maldahleh.stockmarket.trade.TradeRules rules() {
+    return trades.rules();
   }
 
   /** Runs the trade waiting for confirmation, if any. */
@@ -194,4 +196,6 @@ public class Trader {
     values.put("<net>", formats.signedMoney(success.net()));
     return values;
   }
+
+  private record Pending(String symbol, long shares, boolean buying, Instant expires) {}
 }

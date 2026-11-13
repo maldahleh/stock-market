@@ -30,34 +30,6 @@ public final class ActionApplier {
 
   private static final int MATH_SCALE = 10;
 
-  /** Server price per share, or null if it can't be found right now. */
-  @FunctionalInterface
-  public interface Prices {
-    BigDecimal serverPrice(String symbol);
-  }
-
-  /** Thrown when a price the math needs is missing; the action should be retried later. */
-  public static class MissingPriceException extends Exception {
-    public MissingPriceException(String symbol) {
-      super("No price for " + symbol);
-    }
-  }
-
-  /**
-   * A holder of the action's source symbol.
-   *
-   * @param sharesAtEffective shares they held just before the action took effect. Shares bought
-   *     later were bought at the new price and must not be adjusted again.
-   */
-  public record Position(Holding holding, long sharesAtEffective) {}
-
-  /**
-   * @param holdings new state of every holding touched; zero shares means delete it
-   * @param payouts money to give each player, already in server currency
-   */
-  public record Outcome(List<Holding> holdings, List<LedgerEntry> entries,
-      Map<UUID, BigDecimal> payouts) {}
-
   private final BigDecimal priceMultiplier;
 
   public ActionApplier(BigDecimal priceMultiplier) {
@@ -307,4 +279,32 @@ public final class ActionApplier {
       return owner + "|" + symbol;
     }
   }
+
+  /** Server price per share, or null if it can't be found right now. */
+  @FunctionalInterface
+  public interface Prices {
+    BigDecimal serverPrice(String symbol);
+  }
+
+  /** Thrown when a price the math needs is missing; the action should be retried later. */
+  public static class MissingPriceException extends Exception {
+    public MissingPriceException(String symbol) {
+      super("No price for " + symbol);
+    }
+  }
+
+  /**
+   * A holder of the action's source symbol.
+   *
+   * @param sharesAtEffective shares they held just before the action took effect. Shares bought
+   *     later were bought at the new price and must not be adjusted again.
+   */
+  public record Position(Holding holding, long sharesAtEffective) {}
+
+  /**
+   * @param holdings new state of every holding touched; zero shares means delete it
+   * @param payouts money to give each player, already in server currency
+   */
+  public record Outcome(List<Holding> holdings, List<LedgerEntry> entries,
+      Map<UUID, BigDecimal> payouts) {}
 }

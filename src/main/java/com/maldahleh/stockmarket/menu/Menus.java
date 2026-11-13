@@ -1,5 +1,6 @@
 package com.maldahleh.stockmarket.menu;
 
+import com.maldahleh.stockmarket.PluginContext;
 import com.maldahleh.stockmarket.bukkit.Formats;
 import com.maldahleh.stockmarket.bukkit.Messages;
 import com.maldahleh.stockmarket.bukkit.Text;
@@ -65,20 +66,20 @@ public class Menus {
   private PagedTemplate history;
 
   public Menus(File folder, MarketData market, Portfolios portfolios, Database database,
-      Trader trader, TradeRules rules, Formats formats, Messages messages, Executor serverThread,
-      Executor databaseThread, Logger logger, long bulkAmount) {
-    this.bulkAmount = bulkAmount;
+      Trader trader, Formats formats, Messages messages, long bulkAmount,
+      PluginContext context) {
     this.folder = folder;
     this.market = market;
     this.portfolios = portfolios;
     this.database = database;
     this.trader = trader;
-    this.rules = rules;
+    this.rules = trader.rules();
     this.formats = formats;
     this.messages = messages;
-    this.serverThread = serverThread;
-    this.databaseThread = databaseThread;
-    this.logger = logger;
+    this.bulkAmount = bulkAmount;
+    this.serverThread = context.serverThread();
+    this.databaseThread = context.databaseThread();
+    this.logger = context.logger();
     reload();
   }
 
@@ -237,44 +238,50 @@ public class Menus {
         return;
       }
       String title = Text.render(portfolio.name(), Map.of("<player>", name(target)));
-      BigDecimal paid = BigDecimal.ZERO;
-      BigDecimal worth = BigDecimal.ZERO;
-      boolean complete = true;
-      for (Holding holding : holdings) {
-        Quote quote = quotes.get(holding.symbol());
-        paid = paid.add(holding.costBasis());
-        if (quote == null) {
-          complete = false;
-        } else {
-          worth = worth.add(rules.serverPrice(quote.price())
-              .multiply(BigDecimal.valueOf(holding.shares())));
-        }
-      }
-      Map<String, String> totals = Map.of(
-          "<purchase-value>", formats.money(paid),
-          "<current-value>", complete ? formats.money(worth) : formats.unknown(),
-          "<net-value>", complete ? formats.signedMoney(worth.subtract(paid)) : formats.unknown(),
-          "<net-percent>", complete ? formats.percent(StockView.change(worth, paid))
-              : formats.unknown());
-      openPaged(viewer, portfolio, title, holdings, holding -> {
-        Quote quote = quotes.get(holding.symbol());
-        BigDecimal value = quote == null ? null
-            : rules.serverPrice(quote.price()).multiply(BigDecimal.valueOf(holding.shares()));
-        Map<String, String> values = new HashMap<>();
-        values.put("<symbol>", holding.symbol());
-        values.put("<name>", market.cachedAsset(holding.symbol()).map(Asset::name)
-            .orElse(holding.symbol()));
-        values.put("<quantity>", formats.number(holding.shares()));
-        values.put("<purchase-value>", formats.money(holding.costBasis()));
-        values.put("<average-cost>", formats.money(holding.averageCost()));
-        values.put("<current-value>", formats.money(value));
-        values.put("<net>", value == null ? formats.unknown()
-            : formats.signedMoney(value.subtract(holding.costBasis())));
-        values.put("<change-close>", formats.percent(quote == null ? null
-            : quote.changeFromClose()));
-        return values;
-      }, (holding, click) -> openLookup(viewer, holding.symbol()), totals, 0);
+      openPaged(viewer, portfolio, title, holdings, holding -> holdingValues(holding, quotes),
+          (holding, click) -> openLookup(viewer, holding.symbol()),
+          portfolioTotals(holdings, quotes), 0);
     }, serverThread);
+  }
+
+  private Map<String, String> holdingValues(Holding holding, Map<String, Quote> quotes) {
+    Quote quote = quotes.get(holding.symbol());
+    BigDecimal value = quote == null ? null
+        : rules.serverPrice(quote.price()).multiply(BigDecimal.valueOf(holding.shares()));
+    Map<String, String> values = new HashMap<>();
+    values.put("<symbol>", holding.symbol());
+    values.put("<name>", market.cachedAsset(holding.symbol()).map(Asset::name)
+        .orElse(holding.symbol()));
+    values.put("<quantity>", formats.number(holding.shares()));
+    values.put("<purchase-value>", formats.money(holding.costBasis()));
+    values.put("<average-cost>", formats.money(holding.averageCost()));
+    values.put("<current-value>", formats.money(value));
+    values.put("<net>", value == null ? formats.unknown()
+        : formats.signedMoney(value.subtract(holding.costBasis())));
+    values.put("<change-close>", formats.percent(quote == null ? null : quote.changeFromClose()));
+    return values;
+  }
+
+  /** What the whole portfolio cost and is worth now; unknown if any price is missing. */
+  private Map<String, String> portfolioTotals(List<Holding> holdings, Map<String, Quote> quotes) {
+    BigDecimal paid = holdings.stream().map(Holding::costBasis)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+    BigDecimal worth = BigDecimal.ZERO;
+    for (Holding holding : holdings) {
+      Quote quote = quotes.get(holding.symbol());
+      if (quote == null) {
+        return Map.of("<purchase-value>", formats.money(paid), "<current-value>",
+            formats.unknown(), "<net-value>", formats.unknown(), "<net-percent>",
+            formats.unknown());
+      }
+      worth = worth.add(rules.serverPrice(quote.price())
+          .multiply(BigDecimal.valueOf(holding.shares())));
+    }
+    return Map.of(
+        "<purchase-value>", formats.money(paid),
+        "<current-value>", formats.money(worth),
+        "<net-value>", formats.signedMoney(worth.subtract(paid)),
+        "<net-percent>", formats.percent(StockView.change(worth, paid)));
   }
 
   public void openTransactions(Player viewer, OfflinePlayer target) {

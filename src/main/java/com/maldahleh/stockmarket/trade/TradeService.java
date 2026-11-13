@@ -1,5 +1,6 @@
 package com.maldahleh.stockmarket.trade;
 
+import com.maldahleh.stockmarket.PluginContext;
 import com.maldahleh.stockmarket.market.Asset;
 import com.maldahleh.stockmarket.market.AssetClass;
 import com.maldahleh.stockmarket.market.MarketClock;
@@ -57,17 +58,16 @@ public class TradeService {
   private final Map<UUID, Instant> lastTrade = new ConcurrentHashMap<>();
 
   public TradeService(MarketData market, Database database, Portfolios portfolios, Wallet wallet,
-      TradeRules rules, Executor serverThread, Executor databaseThread, Clock clock,
-      Logger logger) {
+      TradeRules rules, PluginContext context) {
     this.market = market;
     this.database = database;
     this.portfolios = portfolios;
     this.wallet = wallet;
     this.rules = rules;
-    this.serverThread = serverThread;
-    this.databaseThread = databaseThread;
-    this.clock = clock;
-    this.logger = logger;
+    this.serverThread = context.serverThread();
+    this.databaseThread = context.databaseThread();
+    this.clock = context.clock();
+    this.logger = context.logger();
   }
 
   public TradeRules rules() {
@@ -110,33 +110,39 @@ public class TradeService {
       if (limit != null && p.price().compareTo(limit) > 0) {
         return done(new Failure(Reason.PRICE_MOVED));
       }
-      BigDecimal value = p.price().multiply(BigDecimal.valueOf(shares));
-      BigDecimal fee = rules.fee(value, true);
-      BigDecimal total = value.add(fee);
-      if (!wallet.withdraw(player, total)) {
-        return done(new Failure(Reason.INSUFFICIENT_FUNDS));
-      }
-
-      LedgerEntry entry = new LedgerEntry(player, EntryType.BUY, symbol, shares, p.price(), fee,
-          total.negate(), clock.instant(), null);
-      return CompletableFuture.supplyAsync(() -> {
-        try {
-          return database.buy(player, symbol, shares, total, entry);
-        } catch (SQLException e) {
-          throw new CompletionException(e);
-        }
-      }, databaseThread).handleAsync((holding, error) -> {
-        if (error != null) {
-          logger.log(Level.SEVERE, "Couldn't save a purchase; refunding " + total, error);
-          if (!wallet.deposit(player, total)) {
-            logger.severe("Refund of " + total + " to " + player + " failed; pay it by hand.");
-          }
-          return new Failure(Reason.STORAGE_ERROR);
-        }
-        portfolios.put(holding);
-        return new Success(entry, p.asset(), holding, value, fee, total, null);
-      }, serverThread);
+      return purchase(player, symbol, shares, p);
     }, serverThread));
+  }
+
+  /** Takes the money, then saves the shares; refunds if saving fails. */
+  private CompletableFuture<TradeResult> purchase(UUID player, String symbol, long shares,
+      Priced p) {
+    BigDecimal value = p.price().multiply(BigDecimal.valueOf(shares));
+    BigDecimal fee = rules.fee(value, true);
+    BigDecimal total = value.add(fee);
+    if (!wallet.withdraw(player, total)) {
+      return done(new Failure(Reason.INSUFFICIENT_FUNDS));
+    }
+
+    LedgerEntry entry = new LedgerEntry(player, EntryType.BUY, symbol, shares, p.price(), fee,
+        total.negate(), clock.instant(), null);
+    return CompletableFuture.supplyAsync(() -> {
+      try {
+        return database.buy(player, symbol, shares, total, entry);
+      } catch (SQLException e) {
+        throw new CompletionException(e);
+      }
+    }, databaseThread).handleAsync((holding, error) -> {
+      if (error != null) {
+        logger.log(Level.SEVERE, "Couldn't save a purchase; refunding " + total, error);
+        if (!wallet.deposit(player, total)) {
+          logger.severe("Refund of " + total + " to " + player + " failed; pay it by hand.");
+        }
+        return new Failure(Reason.STORAGE_ERROR);
+      }
+      portfolios.put(holding);
+      return new Success(entry, p.asset(), holding, value, fee, total, null);
+    }, serverThread);
   }
 
   private CompletableFuture<TradeResult> sell(UUID player, String rawSymbol, long shares,
@@ -155,56 +161,60 @@ public class TradeService {
       if (limit != null && p.price().compareTo(limit) < 0) {
         return done(new Failure(Reason.PRICE_MOVED));
       }
-      BigDecimal value = p.price().multiply(BigDecimal.valueOf(shares));
-      BigDecimal fee = rules.fee(value, false);
-      BigDecimal proceeds = value.subtract(fee);
-      if (proceeds.signum() <= 0) {
-        return done(new Failure(Reason.PRICE_TOO_LOW));
-      }
-
-      LedgerEntry entry = new LedgerEntry(player, EntryType.SELL, symbol, -shares, p.price(), fee,
-          proceeds, clock.instant(), null);
-      return CompletableFuture.supplyAsync(() -> {
-        try {
-          return database.sell(player, symbol, shares, entry);
-        } catch (SQLException | InsufficientSharesException e) {
-          throw new CompletionException(e);
-        }
-      }, databaseThread).handleAsync((Sale sale, Throwable error) -> {
-        if (error != null) {
-          Throwable cause = error instanceof CompletionException ? error.getCause() : error;
-          if (cause instanceof InsufficientSharesException) {
-            return new Failure(Reason.INSUFFICIENT_SHARES);
-          }
-          logger.log(Level.SEVERE, "Couldn't save a sale; nothing was sold", cause);
-          return new Failure(Reason.STORAGE_ERROR);
-        }
-        portfolios.put(sale.holding());
-        if (!wallet.deposit(player, proceeds)) {
-          logger.severe("Sold " + shares + " " + symbol + " for " + player
-              + " but the economy refused the payment of " + proceeds + "; pay it by hand.");
-        }
-        return new Success(entry, p.asset(), sale.holding(), value, fee, proceeds,
-            proceeds.subtract(sale.basisRemoved()));
-      }, serverThread);
+      return sale(player, symbol, shares, p);
     }, serverThread));
+  }
+
+  private record SaleTerms(BigDecimal value, BigDecimal fee, BigDecimal proceeds,
+      LedgerEntry entry, Priced priced) {}
+
+  /** Removes the shares in the database first, then pays. */
+  private CompletableFuture<TradeResult> sale(UUID player, String symbol, long shares,
+      Priced p) {
+    BigDecimal value = p.price().multiply(BigDecimal.valueOf(shares));
+    BigDecimal fee = rules.fee(value, false);
+    BigDecimal proceeds = value.subtract(fee);
+    if (proceeds.signum() <= 0) {
+      return done(new Failure(Reason.PRICE_TOO_LOW));
+    }
+
+    LedgerEntry entry = new LedgerEntry(player, EntryType.SELL, symbol, -shares, p.price(), fee,
+        proceeds, clock.instant(), null);
+    SaleTerms terms = new SaleTerms(value, fee, proceeds, entry, p);
+    return CompletableFuture.supplyAsync(() -> {
+      try {
+        return database.sell(player, symbol, shares, entry);
+      } catch (SQLException | InsufficientSharesException e) {
+        throw new CompletionException(e);
+      }
+    }, databaseThread).handleAsync((sale, error) -> settleSale(player, terms, sale, error),
+        serverThread);
+  }
+
+  private TradeResult settleSale(UUID player, SaleTerms terms, Sale sale, Throwable error) {
+    if (error != null) {
+      Throwable cause = error instanceof CompletionException ? error.getCause() : error;
+      if (cause instanceof InsufficientSharesException) {
+        return new Failure(Reason.INSUFFICIENT_SHARES);
+      }
+      logger.log(Level.SEVERE, "Couldn't save a sale; nothing was sold", cause);
+      return new Failure(Reason.STORAGE_ERROR);
+    }
+    portfolios.put(sale.holding());
+    if (!wallet.deposit(player, terms.proceeds())) {
+      logger.severe("Sold " + terms.entry().symbol() + " for " + player
+          + " but the economy refused the payment of " + terms.proceeds() + "; pay it by hand.");
+    }
+    return new Success(terms.entry(), terms.priced().asset(), sale.holding(), terms.value(),
+        terms.fee(), terms.proceeds(), terms.proceeds().subtract(sale.basisRemoved()));
   }
 
   /** Shared checks, the in-flight lock and the cooldown. */
   private CompletableFuture<TradeResult> run(UUID player, long shares, boolean fromOrder,
       java.util.function.Supplier<CompletableFuture<TradeResult>> trade) {
-    if (shares <= 0) {
-      return done(new Failure(Reason.INVALID_QUANTITY));
-    }
-    if (shares > rules.maxSharesPerTrade()) {
-      return done(new Failure(Reason.TOO_MANY_SHARES));
-    }
-    Instant last = lastTrade.get(player);
-    if (!fromOrder && last != null && last.plus(rules.cooldown()).isAfter(clock.instant())) {
-      return done(new Failure(Reason.COOLDOWN));
-    }
-    if (!inFlight.add(player)) {
-      return done(new Failure(Reason.BUSY));
+    Failure refused = precheck(player, shares, fromOrder);
+    if (refused != null) {
+      return done(refused);
     }
 
     CompletableFuture<TradeResult> result;
@@ -214,17 +224,40 @@ public class TradeService {
       inFlight.remove(player);
       throw e;
     }
-    return result.handleAsync((outcome, error) -> {
-      inFlight.remove(player);
-      if (error != null) {
-        logger.log(Level.SEVERE, "Trade failed unexpectedly", error);
-        return new Failure(Reason.DATA_UNAVAILABLE);
-      }
-      if (outcome instanceof Success && !fromOrder) {
-        lastTrade.put(player, clock.instant());
-      }
-      return outcome;
-    }, serverThread);
+    return result.handleAsync((outcome, error) -> finish(player, fromOrder, outcome, error),
+        serverThread);
+  }
+
+  /** Returns why the trade can't start, or null after taking the player's in-flight slot. */
+  private Failure precheck(UUID player, long shares, boolean fromOrder) {
+    if (shares <= 0) {
+      return new Failure(Reason.INVALID_QUANTITY);
+    }
+    if (shares > rules.maxSharesPerTrade()) {
+      return new Failure(Reason.TOO_MANY_SHARES);
+    }
+    if (!fromOrder && coolingDown(player)) {
+      return new Failure(Reason.COOLDOWN);
+    }
+    return inFlight.add(player) ? null : new Failure(Reason.BUSY);
+  }
+
+  private boolean coolingDown(UUID player) {
+    Instant last = lastTrade.get(player);
+    return last != null && last.plus(rules.cooldown()).isAfter(clock.instant());
+  }
+
+  private TradeResult finish(UUID player, boolean fromOrder, TradeResult outcome,
+      Throwable error) {
+    inFlight.remove(player);
+    if (error != null) {
+      logger.log(Level.SEVERE, "Trade failed unexpectedly", error);
+      return new Failure(Reason.DATA_UNAVAILABLE);
+    }
+    if (outcome instanceof Success && !fromOrder) {
+      lastTrade.put(player, clock.instant());
+    }
+    return outcome;
   }
 
   /**
@@ -247,34 +280,46 @@ public class TradeService {
         logger.warning("Couldn't get market data for " + symbol + ": " + rootMessage(error));
         return new Failure(Reason.DATA_UNAVAILABLE);
       }
-      Optional<Asset> foundAsset = asset.join();
-      if (foundAsset.isEmpty()) {
-        return new Failure(Reason.INVALID_SYMBOL);
+      Failure problem = assetProblem(asset.join());
+      if (problem == null) {
+        problem = quoteProblem(marketClock.join(), quote.join(), buying);
       }
-      Asset a = foundAsset.get();
-      if (!a.tradable() || (a.exchange() != null
-          && rules.blockedExchanges().contains(a.exchange().toUpperCase()))) {
-        return new Failure(Reason.NOT_TRADABLE);
+      if (problem != null) {
+        return problem;
       }
-      MarketClock c = marketClock.join();
-      if (c != null && !c.open()) {
-        return new Failure(Reason.MARKET_CLOSED);
-      }
-      Optional<Quote> q = quote.join();
-      if (q.isEmpty()) {
-        return new Failure(Reason.DATA_UNAVAILABLE);
-      }
-      Quote current = q.get();
-      if (Duration.between(current.tradeTime(), clock.instant()).compareTo(rules.maxQuoteAge())
-          > 0) {
-        return new Failure(Reason.STALE_PRICE);
-      }
-      // Selling is always allowed, so holders of a falling stock can still get out.
-      if (buying && current.price().compareTo(rules.minimumPrice()) < 0) {
-        return new Failure(Reason.PRICE_TOO_LOW);
-      }
-      return new Priced(a, current, rules.serverPrice(current.price()));
+      Quote current = quote.join().orElseThrow();
+      return new Priced(asset.join().orElseThrow(), current,
+          rules.serverPrice(current.price()));
     });
+  }
+
+  private Failure assetProblem(Optional<Asset> asset) {
+    if (asset.isEmpty()) {
+      return new Failure(Reason.INVALID_SYMBOL);
+    }
+    Asset a = asset.get();
+    boolean blocked = a.exchange() != null
+        && rules.blockedExchanges().contains(a.exchange().toUpperCase());
+    return !a.tradable() || blocked ? new Failure(Reason.NOT_TRADABLE) : null;
+  }
+
+  private Failure quoteProblem(MarketClock marketClock, Optional<Quote> quote, boolean buying) {
+    if (marketClock != null && !marketClock.open()) {
+      return new Failure(Reason.MARKET_CLOSED);
+    }
+    if (quote.isEmpty()) {
+      return new Failure(Reason.DATA_UNAVAILABLE);
+    }
+    Quote current = quote.get();
+    if (Duration.between(current.tradeTime(), clock.instant()).compareTo(rules.maxQuoteAge())
+        > 0) {
+      return new Failure(Reason.STALE_PRICE);
+    }
+    // Selling is always allowed, so holders of a falling stock can still get out.
+    if (buying && current.price().compareTo(rules.minimumPrice()) < 0) {
+      return new Failure(Reason.PRICE_TOO_LOW);
+    }
+    return null;
   }
 
   private static String rootMessage(Throwable error) {

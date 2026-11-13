@@ -35,10 +35,6 @@ public class StockCommand implements TabExecutor {
   private static final int MAX_COMPARE = 3;
   private static final double BROKER_REMOVE_RADIUS = 5;
 
-  /** Null until the plugin has a working Alpaca key. */
-  public record Services(Menus menus, Trader trader, Brokers brokers, Portfolios portfolios,
-      OrderBook orders, Formats formats) {}
-
   private final Supplier<Services> services;
   private final Messages messages;
   private final boolean commandsDisabled;
@@ -54,43 +50,53 @@ public class StockCommand implements TabExecutor {
 
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-    String sub = args.length == 0 ? "help" : args[0].toLowerCase();
-    if (sub.equals("simplebroker")) {
-      sub = "spawnbroker";
-    }
-    if (!SUBCOMMANDS.contains(sub)) {
-      messages.send(sender, "invalid-syntax");
-      return true;
-    }
-    if (!sender.hasPermission(permission(sub))) {
-      messages.send(sender, "no-permission");
+    String sub = subcommand(args);
+    String refusal = refusal(sender, sub);
+    if (refusal != null) {
+      messages.send(sender, refusal);
       return true;
     }
     if (sub.equals("help")) {
       help(sender);
-      return true;
-    }
-    if (sub.equals("reload")) {
+    } else if (sub.equals("reload")) {
       reload.run();
       messages.send(sender, "reloaded");
-      return true;
+    } else {
+      runAsPlayer(sender, sub, Arrays.copyOfRange(args, Math.min(1, args.length), args.length));
     }
+    return true;
+  }
+
+  private static String subcommand(String[] args) {
+    String sub = args.length == 0 ? "help" : args[0].toLowerCase();
+    return sub.equals("simplebroker") ? "spawnbroker" : sub;
+  }
+
+  /** The message key explaining why the sender can't run this, or null if they can. */
+  private String refusal(CommandSender sender, String sub) {
+    if (!SUBCOMMANDS.contains(sub)) {
+      return "invalid-syntax";
+    }
+    return sender.hasPermission(permission(sub)) ? null : "no-permission";
+  }
+
+  private void runAsPlayer(CommandSender sender, String sub, String[] args) {
     if (!(sender instanceof Player player)) {
       messages.send(sender, "player-only");
-      return true;
+      return;
     }
-    if (commandsDisabled && !sub.equals("spawnbroker") && !sub.equals("removebroker")
+    boolean brokerCommand = sub.equals("spawnbroker") || sub.equals("removebroker");
+    if (commandsDisabled && !brokerCommand
         && !player.hasPermission("stockmarket.commandbypass")) {
       messages.send(player, "commands-disabled");
-      return true;
+      return;
     }
     Services s = services.get();
     if (s == null) {
       messages.send(player, "not-configured");
-      return true;
+      return;
     }
-    run(player, sub, Arrays.copyOfRange(args, 1, args.length), s);
-    return true;
+    run(player, sub, args, s);
   }
 
   private void run(Player player, String sub, String[] args, Services s) {
@@ -164,26 +170,42 @@ public class StockCommand implements TabExecutor {
     }
   }
 
+  private record OrderRequest(OrderType type, String symbol, long shares, BigDecimal target) {}
+
   private void order(Player player, String[] args, Services s) {
     if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
       listOrders(player, s);
       return;
     }
     if (args.length == 2 && args[0].equalsIgnoreCase("cancel")) {
-      long id;
-      try {
-        id = Long.parseLong(args[1].replace("#", ""));
-      } catch (NumberFormatException e) {
-        messages.send(player, "orders.usage");
-        return;
-      }
-      messages.send(player, s.orders().cancel(player.getUniqueId(), id)
-          ? "orders.cancelled-by-you" : "orders.not-found", Map.of("<id>", String.valueOf(id)));
+      cancelOrder(player, args[1], s);
       return;
     }
-    if (args.length != 4) {
+    OrderRequest request = parseOrder(args);
+    if (request == null) {
       messages.send(player, "orders.usage");
       return;
+    }
+    s.orders().place(player.getUniqueId(), request.type(), request.symbol(), request.shares(),
+        request.target()).thenAccept(placement -> reportPlacement(player, request, placement, s));
+  }
+
+  private void cancelOrder(Player player, String rawId, Services s) {
+    long id;
+    try {
+      id = Long.parseLong(rawId.replace("#", ""));
+    } catch (NumberFormatException e) {
+      messages.send(player, "orders.usage");
+      return;
+    }
+    messages.send(player, s.orders().cancel(player.getUniqueId(), id)
+        ? "orders.cancelled-by-you" : "orders.not-found", Map.of("<id>", String.valueOf(id)));
+  }
+
+  /** Reads "buy|sell|stop <symbol> <shares> <price>", or returns null if it doesn't parse. */
+  private static OrderRequest parseOrder(String[] args) {
+    if (args.length != 4) {
+      return null;
     }
     OrderType type = switch (args[0].toLowerCase()) {
       case "buy" -> OrderType.LIMIT_BUY;
@@ -191,34 +213,26 @@ public class StockCommand implements TabExecutor {
       case "stop" -> OrderType.STOP_SELL;
       default -> null;
     };
-    long shares;
-    BigDecimal target;
     try {
-      shares = Long.parseLong(args[2]);
-      target = new BigDecimal(args[3].replace("$", "").replace(",", ""));
+      return type == null ? null : new OrderRequest(type, args[1], Long.parseLong(args[2]),
+          new BigDecimal(args[3].replace("$", "").replace(",", "")));
     } catch (NumberFormatException e) {
-      type = null;
-      shares = 0;
-      target = null;
+      return null;
     }
-    if (type == null) {
-      messages.send(player, "orders.usage");
+  }
+
+  private void reportPlacement(Player player, OrderRequest request, Placement placement,
+      Services s) {
+    if (!player.isOnline()) {
       return;
     }
-    s.orders().place(player.getUniqueId(), type, args[1], shares, target)
-        .thenAccept(placement -> {
-          if (!player.isOnline()) {
-            return;
-          }
-          if (placement instanceof Placement.Placed placed) {
-            messages.send(player, "orders.placed." + placed.order().type().name(),
-                StockMarketPlugin.orderValues(placed.order(), s.formats()));
-          } else {
-            messages.send(player, "orders.problems."
-                + ((Placement.Rejected) placement).problem().name(),
-                Map.of("<symbol>", args[1].toUpperCase()));
-          }
-        });
+    if (placement instanceof Placement.Placed placed) {
+      messages.send(player, "orders.placed." + placed.order().type().name(),
+          StockMarketPlugin.orderValues(placed.order(), s.formats()));
+    } else {
+      messages.send(player, "orders.problems." + ((Placement.Rejected) placement).problem().name(),
+          Map.of("<symbol>", request.symbol().toUpperCase()));
+    }
   }
 
   private void listOrders(Player player, Services s) {
@@ -301,4 +315,8 @@ public class StockCommand implements TabExecutor {
     }
     return List.of();
   }
+
+  /** Null until the plugin has a working Alpaca key. */
+  public record Services(Menus menus, Trader trader, Brokers brokers, Portfolios portfolios,
+      OrderBook orders, Formats formats) {}
 }

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.maldahleh.stockmarket.FakeProvider;
 import com.maldahleh.stockmarket.FakeWallet;
+import com.maldahleh.stockmarket.PluginContext;
 import com.maldahleh.stockmarket.market.MarketData;
 import com.maldahleh.stockmarket.orders.OrderBook.CancelCause;
 import com.maldahleh.stockmarket.orders.OrderBook.Placement;
@@ -75,9 +76,11 @@ class OrderBookTest {
       }
     };
     MarketData market = new MarketData(provider, DIRECT, Duration.ofNanos(1));
-    trades = new TradeService(market, database, portfolios, wallet, rules, DIRECT, DIRECT, clock,
+    PluginContext context = new PluginContext(DIRECT, DIRECT, DIRECT, clock,
         Logger.getAnonymousLogger());
-    book = new OrderBook(market, database, portfolios, trades, rules, 3, Duration.ofDays(30),
+    trades = new TradeService(market, database, portfolios, wallet, rules, context);
+    book = new OrderBook(market, database, portfolios, trades, rules,
+        new OrderBook.Limits(3, Duration.ofDays(30)),
         new OrderBook.Notifier() {
           @Override
           public void filled(Order order, Success result) {
@@ -88,8 +91,7 @@ class OrderBookTest {
           public void cancelled(Order order, CancelCause cause) {
             cancelled.add(cause);
           }
-        }, (symbol, after, until) -> splitHappened, DIRECT, DIRECT, clock,
-        Logger.getAnonymousLogger());
+        }, (symbol, after, until) -> splitHappened, context);
     provider.price("AAPL", "100", now);
     wallet.deposit(P, new BigDecimal("1000"));
   }

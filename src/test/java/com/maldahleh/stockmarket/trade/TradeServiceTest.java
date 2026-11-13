@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import com.maldahleh.stockmarket.FakeProvider;
 import com.maldahleh.stockmarket.FakeWallet;
+import com.maldahleh.stockmarket.PluginContext;
 import com.maldahleh.stockmarket.market.MarketData;
 import com.maldahleh.stockmarket.portfolio.Portfolios;
 import com.maldahleh.stockmarket.storage.Database;
@@ -59,8 +60,8 @@ class TradeServiceTest {
 
   private TradeService service(Executor databaseThread, TradeRules rules) {
     return new TradeService(new MarketData(provider, DIRECT, Duration.ofMinutes(5)), database,
-        portfolios, wallet, rules, DIRECT, databaseThread, Clock.fixed(NOW, ZoneOffset.UTC),
-        Logger.getAnonymousLogger());
+        portfolios, wallet, rules, new PluginContext(DIRECT, databaseThread, DIRECT,
+            Clock.fixed(NOW, ZoneOffset.UTC), Logger.getAnonymousLogger()));
   }
 
   @AfterEach

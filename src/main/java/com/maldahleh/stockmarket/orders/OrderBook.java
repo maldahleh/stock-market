@@ -1,5 +1,6 @@
 package com.maldahleh.stockmarket.orders;
 
+import com.maldahleh.stockmarket.PluginContext;
 import com.maldahleh.stockmarket.market.Asset;
 import com.maldahleh.stockmarket.market.AssetClass;
 import com.maldahleh.stockmarket.market.MarketClock;
@@ -46,46 +47,6 @@ import java.util.logging.Logger;
  */
 public class OrderBook {
 
-  /** Why an order closed without filling. */
-  public enum CancelCause {
-    BY_PLAYER,
-    EXPIRED,
-    NOT_ENOUGH_MONEY,
-    NOT_ENOUGH_SHARES,
-    NOT_TRADABLE,
-    CORPORATE_ACTION
-  }
-
-  public sealed interface Placement {
-    record Placed(Order order) implements Placement {}
-
-    record Rejected(Problem problem) implements Placement {}
-  }
-
-  public enum Problem {
-    INVALID_QUANTITY,
-    INVALID_PRICE,
-    TOO_MANY_ORDERS,
-    NOT_ENOUGH_SHARES,
-    INVALID_SYMBOL,
-    NOT_TRADABLE,
-    CRYPTO_DISABLED,
-    DATA_UNAVAILABLE,
-    STORAGE_ERROR
-  }
-
-  /** Whether a corporate action changed the symbol's price scale between two instants. */
-  @FunctionalInterface
-  public interface ActionWatch {
-    boolean changedBetween(String symbol, Instant after, Instant until);
-  }
-
-  public interface Notifier {
-    void filled(Order order, Success result);
-
-    void cancelled(Order order, CancelCause cause);
-  }
-
   /** Failures that mean the order can never fill as placed. */
   private static final Set<Reason> FATAL = EnumSet.of(Reason.INSUFFICIENT_FUNDS,
       Reason.INSUFFICIENT_SHARES, Reason.NOT_TRADABLE, Reason.INVALID_SYMBOL,
@@ -109,22 +70,21 @@ public class OrderBook {
   private final AtomicBoolean checking = new AtomicBoolean();
 
   public OrderBook(MarketData market, Database database, Portfolios portfolios,
-      TradeService trades, TradeRules rules, int maxOpenPerPlayer, Duration lifetime,
-      Notifier notifier, ActionWatch actionWatch, Executor serverThread, Executor databaseThread,
-      Clock clock, Logger logger) {
-    this.actionWatch = actionWatch;
+      TradeService trades, TradeRules rules, Limits limits, Notifier notifier,
+      ActionWatch actionWatch, PluginContext context) {
     this.market = market;
     this.database = database;
     this.portfolios = portfolios;
     this.trades = trades;
     this.rules = rules;
-    this.maxOpenPerPlayer = maxOpenPerPlayer;
-    this.lifetime = lifetime;
+    this.maxOpenPerPlayer = limits.maxOpenPerPlayer();
+    this.lifetime = limits.lifetime();
     this.notifier = notifier;
-    this.serverThread = serverThread;
-    this.databaseThread = databaseThread;
-    this.clock = clock;
-    this.logger = logger;
+    this.actionWatch = actionWatch;
+    this.serverThread = context.serverThread();
+    this.databaseThread = context.databaseThread();
+    this.clock = context.clock();
+    this.logger = context.logger();
   }
 
   public void load(List<Order> orders) {
@@ -140,57 +100,67 @@ public class OrderBook {
   public CompletableFuture<Placement> place(UUID owner, OrderType type, String rawSymbol,
       long shares, BigDecimal target) {
     String symbol = rawSymbol.trim().toUpperCase();
-    if (shares <= 0 || shares > rules.maxSharesPerTrade()) {
-      return rejected(Problem.INVALID_QUANTITY);
+    Problem problem = requestProblem(owner, type, symbol, shares, target);
+    if (problem != null) {
+      return rejected(problem);
     }
-    if (target == null || target.signum() <= 0) {
-      return rejected(Problem.INVALID_PRICE);
+    return market.asset(symbol)
+        .handleAsync((asset, error) -> error != null ? Problem.DATA_UNAVAILABLE
+            : assetProblem(asset), serverThread)
+        .thenCompose(assetProblem -> assetProblem != null ? rejected(assetProblem)
+            : save(new Order(0, owner, symbol, type, shares,
+                target.setScale(2, java.math.RoundingMode.HALF_UP), clock.instant(),
+                clock.instant().plus(lifetime))));
+  }
+
+  /** Checks that need no market data. Null means the request is fine so far. */
+  private Problem requestProblem(UUID owner, OrderType type, String symbol, long shares,
+      BigDecimal target) {
+    Problem input = inputProblem(shares, target);
+    if (input != null) {
+      return input;
     }
     if (of(owner).size() >= maxOpenPerPlayer) {
-      return rejected(Problem.TOO_MANY_ORDERS);
+      return Problem.TOO_MANY_ORDERS;
     }
     if (AssetClass.of(symbol) == AssetClass.CRYPTO && !rules.allowCrypto()) {
-      return rejected(Problem.CRYPTO_DISABLED);
+      return Problem.CRYPTO_DISABLED;
     }
-    if (!type.buying() && owned(owner, symbol) < shares) {
-      return rejected(Problem.NOT_ENOUGH_SHARES);
-    }
+    return !type.buying() && owned(owner, symbol) < shares ? Problem.NOT_ENOUGH_SHARES : null;
+  }
 
-    return market.asset(symbol).handleAsync((asset, error) -> {
+  private Problem inputProblem(long shares, BigDecimal target) {
+    if (shares <= 0 || shares > rules.maxSharesPerTrade()) {
+      return Problem.INVALID_QUANTITY;
+    }
+    return target == null || target.signum() <= 0 ? Problem.INVALID_PRICE : null;
+  }
+
+  private Problem assetProblem(Optional<Asset> asset) {
+    if (asset.isEmpty()) {
+      return Problem.INVALID_SYMBOL;
+    }
+    Asset a = asset.get();
+    boolean blocked = a.exchange() != null
+        && rules.blockedExchanges().contains(a.exchange().toUpperCase());
+    return !a.tradable() || blocked ? Problem.NOT_TRADABLE : null;
+  }
+
+  private CompletableFuture<Placement> save(Order order) {
+    return CompletableFuture.supplyAsync(() -> {
+      try {
+        return database.insertOrder(order);
+      } catch (SQLException e) {
+        throw new CompletionException(e);
+      }
+    }, databaseThread).handleAsync((saved, error) -> {
       if (error != null) {
-        return Optional.<Problem>of(Problem.DATA_UNAVAILABLE);
+        logger.log(Level.SEVERE, "Couldn't save an order", error);
+        return (Placement) new Placement.Rejected(Problem.STORAGE_ERROR);
       }
-      if (asset.isEmpty()) {
-        return Optional.of(Problem.INVALID_SYMBOL);
-      }
-      Asset a = asset.get();
-      if (!a.tradable() || (a.exchange() != null
-          && rules.blockedExchanges().contains(a.exchange().toUpperCase()))) {
-        return Optional.of(Problem.NOT_TRADABLE);
-      }
-      return Optional.<Problem>empty();
-    }, serverThread).thenCompose(problem -> {
-      if (problem.isPresent()) {
-        return rejected(problem.get());
-      }
-      Instant now = clock.instant();
-      Order order = new Order(0, owner, symbol, type, shares,
-          target.setScale(2, java.math.RoundingMode.HALF_UP), now, now.plus(lifetime));
-      return CompletableFuture.supplyAsync(() -> {
-        try {
-          return database.insertOrder(order);
-        } catch (SQLException e) {
-          throw new CompletionException(e);
-        }
-      }, databaseThread).handleAsync((saved, error) -> {
-        if (error != null) {
-          logger.log(Level.SEVERE, "Couldn't save an order", error);
-          return (Placement) new Placement.Rejected(Problem.STORAGE_ERROR);
-        }
-        open.put(saved.id(), saved);
-        return new Placement.Placed(saved);
-      }, serverThread);
-    });
+      open.put(saved.id(), saved);
+      return new Placement.Placed(saved);
+    }, serverThread);
   }
 
   /** @return false if the player has no open order with that id */
@@ -224,51 +194,51 @@ public class OrderBook {
     if (open.isEmpty() || !checking.compareAndSet(false, true)) {
       return;
     }
-    Instant now = clock.instant();
-    for (Order order : List.copyOf(open.values())) {
-      if (!order.expires().isAfter(now)) {
-        close(order, CancelCause.EXPIRED, true);
-      } else if (actionWatch.changedBetween(order.symbol(), order.created(), now)) {
-        // A split or merger since the order was placed means its target price no longer
-        // means what the player intended.
-        close(order, CancelCause.CORPORATE_ACTION, true);
-      }
-    }
-
-    Set<String> symbols = new TreeSet<>();
-    boolean anyStocks = false;
-    for (Order order : open.values()) {
-      symbols.add(order.symbol());
-      anyStocks |= AssetClass.of(order.symbol()) == AssetClass.STOCK;
-    }
+    closeStale(clock.instant());
+    Set<String> symbols = symbols();
     if (symbols.isEmpty()) {
       checking.set(false);
       return;
     }
 
+    boolean anyStocks = symbols.stream().anyMatch(s -> AssetClass.of(s) == AssetClass.STOCK);
     CompletableFuture<MarketClock> marketClock = anyStocks ? market.clock()
         : CompletableFuture.completedFuture(null);
-    marketClock.thenCombine(market.quotes(symbols), (status, quotes) -> {
-      boolean stocksOpen = status != null && status.open();
-      List<Order> triggered = new ArrayList<>();
-      for (Order order : open.values()) {
-        if (AssetClass.of(order.symbol()) == AssetClass.STOCK && !stocksOpen) {
-          continue;
-        }
-        Quote quote = quotes.get(order.symbol());
-        if (quote != null
-            && order.type().triggeredBy(rules.serverPrice(quote.price()), order.target())) {
-          triggered.add(order);
-        }
+    marketClock.thenCombine(market.quotes(symbols), this::triggered)
+        .thenComposeAsync(this::fillInOrder, serverThread)
+        .whenComplete((ignored, error) -> {
+          checking.set(false);
+          if (error != null) {
+            logger.log(Level.WARNING, "Order check failed", error);
+          }
+        });
+  }
+
+  /** Closes expired orders, and orders a split or merger has made meaningless. */
+  private void closeStale(Instant now) {
+    for (Order order : List.copyOf(open.values())) {
+      if (!order.expires().isAfter(now)) {
+        close(order, CancelCause.EXPIRED, true);
+      } else if (actionWatch.changedBetween(order.symbol(), order.created(), now)) {
+        close(order, CancelCause.CORPORATE_ACTION, true);
       }
-      triggered.sort(Comparator.comparingLong(Order::id));
-      return triggered;
-    }).thenComposeAsync(this::fillInOrder, serverThread).whenComplete((ignored, error) -> {
-      checking.set(false);
-      if (error != null) {
-        logger.log(Level.WARNING, "Order check failed", error);
+    }
+  }
+
+  /** Open orders whose target the latest prices have reached, oldest first. */
+  private List<Order> triggered(MarketClock status, Map<String, Quote> quotes) {
+    boolean stocksOpen = status != null && status.open();
+    List<Order> triggered = new ArrayList<>();
+    for (Order order : open.values()) {
+      boolean tradingNow = stocksOpen || AssetClass.of(order.symbol()) != AssetClass.STOCK;
+      Quote quote = quotes.get(order.symbol());
+      if (tradingNow && quote != null
+          && order.type().triggeredBy(rules.serverPrice(quote.price()), order.target())) {
+        triggered.add(order);
       }
-    });
+    }
+    triggered.sort(Comparator.comparingLong(Order::id));
+    return triggered;
   }
 
   private CompletableFuture<Void> fillInOrder(List<Order> triggered) {
@@ -329,5 +299,48 @@ public class OrderBook {
 
   private static CompletableFuture<Placement> rejected(Problem problem) {
     return CompletableFuture.completedFuture(new Placement.Rejected(problem));
+  }
+
+  /** How many orders a player may keep open, and for how long. */
+  public record Limits(int maxOpenPerPlayer, Duration lifetime) {}
+
+  /** Why an order closed without filling. */
+  public enum CancelCause {
+    BY_PLAYER,
+    EXPIRED,
+    NOT_ENOUGH_MONEY,
+    NOT_ENOUGH_SHARES,
+    NOT_TRADABLE,
+    CORPORATE_ACTION
+  }
+
+  public sealed interface Placement {
+    record Placed(Order order) implements Placement {}
+
+    record Rejected(Problem problem) implements Placement {}
+  }
+
+  public enum Problem {
+    INVALID_QUANTITY,
+    INVALID_PRICE,
+    TOO_MANY_ORDERS,
+    NOT_ENOUGH_SHARES,
+    INVALID_SYMBOL,
+    NOT_TRADABLE,
+    CRYPTO_DISABLED,
+    DATA_UNAVAILABLE,
+    STORAGE_ERROR
+  }
+
+  /** Whether a corporate action changed the symbol's price scale between two instants. */
+  @FunctionalInterface
+  public interface ActionWatch {
+    boolean changedBetween(String symbol, Instant after, Instant until);
+  }
+
+  public interface Notifier {
+    void filled(Order order, Success result);
+
+    void cancelled(Order order, CancelCause cause);
   }
 }

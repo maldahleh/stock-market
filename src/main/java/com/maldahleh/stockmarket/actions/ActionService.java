@@ -1,5 +1,6 @@
 package com.maldahleh.stockmarket.actions;
 
+import com.maldahleh.stockmarket.PluginContext;
 import com.maldahleh.stockmarket.actions.ActionApplier.MissingPriceException;
 import com.maldahleh.stockmarket.actions.ActionApplier.Outcome;
 import com.maldahleh.stockmarket.actions.ActionApplier.Position;
@@ -36,7 +37,6 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,12 +54,6 @@ public class ActionService {
   private static final int LOOKBACK_DAYS = 60;
   private static final int LOOKAHEAD_DAYS = 14;
 
-  /** Tells online players what happened to their shares. Called on the server thread. */
-  @FunctionalInterface
-  public interface Notifier {
-    void notify(UUID player, CorporateAction action, BigDecimal payout);
-  }
-
   private final MarketData market;
   private final Database database;
   private final Portfolios portfolios;
@@ -74,31 +68,28 @@ public class ActionService {
   private final Logger logger;
 
   private final boolean dividends;
-  private final Consumer<CorporateAction> afterApply;
   private final Supplier<Set<String>> watchedSymbols;
   private final Map<String, Set<Instant>> changes = new ConcurrentHashMap<>();
   private final AtomicBoolean running = new AtomicBoolean();
   private volatile boolean warnedUnavailable;
 
   public ActionService(MarketData market, Database database, Portfolios portfolios, Wallet wallet,
-      TradeRules rules, boolean dividends, Notifier notifier, Consumer<CorporateAction> afterApply,
-      Supplier<Set<String>> watchedSymbols, Executor network, Executor serverThread, Executor databaseThread, Clock clock,
-      Logger logger) {
-    this.dividends = dividends;
-    this.afterApply = afterApply;
-    this.watchedSymbols = watchedSymbols;
+      TradeRules rules, boolean dividends, Notifier notifier,
+      Supplier<Set<String>> watchedSymbols, PluginContext context) {
     this.market = market;
     this.database = database;
     this.portfolios = portfolios;
     this.wallet = wallet;
     this.rules = rules;
     this.applier = new ActionApplier(rules.priceMultiplier());
+    this.dividends = dividends;
     this.notifier = notifier;
-    this.network = network;
-    this.serverThread = serverThread;
-    this.databaseThread = databaseThread;
-    this.clock = clock;
-    this.logger = logger;
+    this.watchedSymbols = watchedSymbols;
+    this.network = context.network();
+    this.serverThread = context.serverThread();
+    this.databaseThread = context.databaseThread();
+    this.clock = context.clock();
+    this.logger = context.logger();
   }
 
   /** The moment an action took effect: market open, New York time, on its effective date. */
@@ -207,7 +198,7 @@ public class ActionService {
             return;
           }
           portfolios.putAll(outcome.holdings());
-          afterApply.accept(action);
+          notifier.applied(action);
           Set<UUID> affected = new LinkedHashSet<>();
           outcome.entries().forEach(entry -> affected.add(entry.owner()));
           for (UUID player : affected) {
@@ -308,5 +299,15 @@ public class ActionService {
       case CorporateAction.CashDividend d -> d.symbol() + " paid a dividend of $"
           + d.rate().stripTrailingZeros().toPlainString() + " a share";
     };
+  }
+
+  /** Hears about applied actions. Called on the server thread. */
+  public interface Notifier {
+
+    /** Tells a player what happened to their shares. */
+    void notify(UUID player, CorporateAction action, BigDecimal payout);
+
+    /** Called once per action after every holder has been updated. */
+    void applied(CorporateAction action);
   }
 }

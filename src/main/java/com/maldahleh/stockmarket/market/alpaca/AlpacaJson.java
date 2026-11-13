@@ -23,11 +23,17 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /** Turns Alpaca's JSON into the plugin's types. Package-private so tests can feed it fixtures. */
 final class AlpacaJson {
+
+  /** How to read each group of Alpaca's response, in the order results are listed. */
+  private static final Map<String, Function<JsonObject, CorporateAction>> PARSERS =
+      parsers();
 
   private AlpacaJson() {}
 
@@ -90,70 +96,69 @@ final class AlpacaJson {
         instant(clock, "next_open"), instant(clock, "next_close"), now);
   }
 
+  private static Map<String, Function<JsonObject, CorporateAction>> parsers() {
+    Map<String, Function<JsonObject, CorporateAction>> parsers = new LinkedHashMap<>();
+    parsers.put("forward_splits", a -> new Split(string(a, "id"), date(a, "ex_date"),
+        string(a, "symbol"), null, decimal(a, "old_rate"), decimal(a, "new_rate")));
+    parsers.put("reverse_splits", a -> new Split(string(a, "id"), date(a, "ex_date"),
+        string(a, "symbol"), string(a, "new_symbol"), decimal(a, "old_rate"),
+        decimal(a, "new_rate")));
+    parsers.put("stock_dividends", AlpacaJson::stockDividend);
+    parsers.put("name_changes", a -> new NameChange(string(a, "id"), date(a, "process_date"),
+        string(a, "old_symbol"), string(a, "new_symbol")));
+    parsers.put("cash_mergers", a -> new Merger(string(a, "id"), date(a, "effective_date"),
+        string(a, "acquiree_symbol"), null, null, null, decimal(a, "rate")));
+    parsers.put("stock_mergers", a -> new Merger(string(a, "id"), date(a, "effective_date"),
+        string(a, "acquiree_symbol"), string(a, "acquirer_symbol"),
+        decimal(a, "acquiree_rate"), decimal(a, "acquirer_rate"), BigDecimal.ZERO));
+    parsers.put("stock_and_cash_mergers", a -> new Merger(string(a, "id"),
+        date(a, "effective_date"), string(a, "acquiree_symbol"), string(a, "acquirer_symbol"),
+        decimal(a, "acquiree_rate"), decimal(a, "acquirer_rate"), decimal(a, "cash_rate")));
+    parsers.put("redemptions", a -> new Merger(string(a, "id"), date(a, "process_date"),
+        string(a, "symbol"), null, null, null, decimal(a, "rate")));
+    parsers.put("spin_offs", a -> new SpinOff(string(a, "id"), date(a, "ex_date"),
+        string(a, "source_symbol"), string(a, "new_symbol"), decimal(a, "source_rate"),
+        decimal(a, "new_rate")));
+    parsers.put("cash_dividends", AlpacaJson::cashDividend);
+    parsers.put("worthless_removals", a -> new Removal(string(a, "id"),
+        date(a, "process_date"), string(a, "symbol")));
+    return parsers;
+  }
+
   static List<CorporateAction> parseCorporateActions(JsonObject body) {
     JsonObject groups = object(body, "corporate_actions");
     List<CorporateAction> actions = new ArrayList<>();
     if (groups == null) {
       return actions;
     }
-
-    for (JsonObject a : objects(groups, "forward_splits")) {
-      actions.add(new Split(string(a, "id"), date(a, "ex_date"), string(a, "symbol"), null,
-          decimal(a, "old_rate"), decimal(a, "new_rate")));
-    }
-    for (JsonObject a : objects(groups, "reverse_splits")) {
-      actions.add(new Split(string(a, "id"), date(a, "ex_date"), string(a, "symbol"),
-          string(a, "new_symbol"), decimal(a, "old_rate"), decimal(a, "new_rate")));
-    }
-    for (JsonObject a : objects(groups, "stock_dividends")) {
-      BigDecimal rate = decimal(a, "rate");
-      if (rate != null) {
-        actions.add(new Split(string(a, "id"), date(a, "ex_date"), string(a, "symbol"), null,
-            BigDecimal.ONE, BigDecimal.ONE.add(rate)));
+    PARSERS.forEach((group, parser) -> {
+      for (JsonObject a : objects(groups, group)) {
+        CorporateAction action = parser.apply(a);
+        if (action != null && !incomplete(action)) {
+          actions.add(action);
+        }
       }
-    }
-    for (JsonObject a : objects(groups, "name_changes")) {
-      actions.add(new NameChange(string(a, "id"), date(a, "process_date"),
-          string(a, "old_symbol"), string(a, "new_symbol")));
-    }
-    for (JsonObject a : objects(groups, "cash_mergers")) {
-      actions.add(new Merger(string(a, "id"), date(a, "effective_date"),
-          string(a, "acquiree_symbol"), null, null, null, decimal(a, "rate")));
-    }
-    for (JsonObject a : objects(groups, "stock_mergers")) {
-      actions.add(new Merger(string(a, "id"), date(a, "effective_date"),
-          string(a, "acquiree_symbol"), string(a, "acquirer_symbol"),
-          decimal(a, "acquiree_rate"), decimal(a, "acquirer_rate"), BigDecimal.ZERO));
-    }
-    for (JsonObject a : objects(groups, "stock_and_cash_mergers")) {
-      actions.add(new Merger(string(a, "id"), date(a, "effective_date"),
-          string(a, "acquiree_symbol"), string(a, "acquirer_symbol"),
-          decimal(a, "acquiree_rate"), decimal(a, "acquirer_rate"), decimal(a, "cash_rate")));
-    }
-    for (JsonObject a : objects(groups, "redemptions")) {
-      actions.add(new Merger(string(a, "id"), date(a, "process_date"), string(a, "symbol"),
-          null, null, null, decimal(a, "rate")));
-    }
-    for (JsonObject a : objects(groups, "spin_offs")) {
-      actions.add(new SpinOff(string(a, "id"), date(a, "ex_date"), string(a, "source_symbol"),
-          string(a, "new_symbol"), decimal(a, "source_rate"), decimal(a, "new_rate")));
-    }
-    for (JsonObject a : objects(groups, "cash_dividends")) {
-      String currency = string(a, "currency");
-      if (currency != null && !currency.isBlank() && !currency.equalsIgnoreCase("USD")) {
-        continue;
-      }
-      LocalDate payable = date(a, "payable_date");
-      actions.add(new CashDividend(string(a, "id"), date(a, "ex_date"),
-          payable == null ? date(a, "process_date") : payable, string(a, "symbol"),
-          decimal(a, "rate")));
-    }
-    for (JsonObject a : objects(groups, "worthless_removals")) {
-      actions.add(new Removal(string(a, "id"), date(a, "process_date"), string(a, "symbol")));
-    }
-
-    actions.removeIf(AlpacaJson::incomplete);
+    });
     return actions;
+  }
+
+  /** A stock dividend is a split that adds {@code rate} shares per share held. */
+  private static CorporateAction stockDividend(JsonObject a) {
+    BigDecimal rate = decimal(a, "rate");
+    return rate == null ? null : new Split(string(a, "id"), date(a, "ex_date"),
+        string(a, "symbol"), null, BigDecimal.ONE, BigDecimal.ONE.add(rate));
+  }
+
+  /** Only US-dollar dividends; others would need a currency conversion. */
+  private static CorporateAction cashDividend(JsonObject a) {
+    String currency = string(a, "currency");
+    if (currency != null && !currency.isBlank() && !currency.equalsIgnoreCase("USD")) {
+      return null;
+    }
+    LocalDate payable = date(a, "payable_date");
+    return new CashDividend(string(a, "id"), date(a, "ex_date"),
+        payable == null ? date(a, "process_date") : payable, string(a, "symbol"),
+        decimal(a, "rate"));
   }
 
   /** Drops records missing the fields their math needs, rather than guessing. */
